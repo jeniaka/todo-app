@@ -165,18 +165,29 @@ def verify_state(state_tok):
         return False
 
 # ─── Google OAuth ─────────────────────────────────────────────────────────────
-def google_auth_url(state_tok):
+def request_redirect_uri(handler):
+    """Build redirect_uri from the incoming request's Host header so the app
+    works on any domain (mytasks.bar, onrender.com, localhost) without needing
+    to update the REDIRECT_URI env var each time the domain changes."""
+    host = handler.headers.get("Host", "")
+    if not host:
+        return REDIRECT_URI  # fallback to env var
+    is_local = host.startswith("localhost") or host.startswith("127.")
+    scheme = "http" if is_local else "https"
+    return f"{scheme}://{host}/auth/callback"
+
+def google_auth_url(state_tok, redirect_uri):
     params = urllib.parse.urlencode({
-        "client_id": GOOGLE_CLIENT_ID, "redirect_uri": REDIRECT_URI,
+        "client_id": GOOGLE_CLIENT_ID, "redirect_uri": redirect_uri,
         "response_type": "code", "scope": "openid email profile",
         "state": state_tok, "prompt": "select_account",
     })
     return f"https://accounts.google.com/o/oauth2/v2/auth?{params}"
 
-def exchange_code(code):
+def exchange_code(code, redirect_uri):
     data = urllib.parse.urlencode({
         "code": code, "client_id": GOOGLE_CLIENT_ID,
-        "client_secret": GOOGLE_CLIENT_SECRET, "redirect_uri": REDIRECT_URI,
+        "client_secret": GOOGLE_CLIENT_SECRET, "redirect_uri": redirect_uri,
         "grant_type": "authorization_code",
     }).encode()
     req = urllib.request.Request("https://oauth2.googleapis.com/token", data=data)
@@ -245,7 +256,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def session_cookie(self, user):
         token = create_session(user)
-        secure = "Secure; " if "https" in REDIRECT_URI else ""
+        host = self.headers.get("Host", "")
+        is_local = host.startswith("localhost") or host.startswith("127.")
+        secure = "" if is_local else "Secure; "
         return f"session={token}; HttpOnly; {secure}SameSite=Lax; Path=/; Max-Age=2592000"
 
     def ok(self, content_type, body):
@@ -288,7 +301,8 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/auth/google":
             if not GOOGLE_CLIENT_ID:
                 return self.ok("text/plain", b"GOOGLE_CLIENT_ID not configured")
-            return self.redirect(google_auth_url(create_state()))
+            redirect_uri = request_redirect_uri(self)
+            return self.redirect(google_auth_url(create_state(), redirect_uri))
 
         if path == "/auth/callback":
             code  = qs.get("code",  [None])[0]
@@ -296,7 +310,8 @@ class Handler(BaseHTTPRequestHandler):
             if not code or not state_tok or not verify_state(state_tok):
                 return self.redirect("/login")
             try:
-                tokens    = exchange_code(code)
+                redirect_uri = request_redirect_uri(self)
+                tokens    = exchange_code(code, redirect_uri)
                 user_info = get_google_user(tokens["access_token"])
                 user = {
                     "id":      user_info["sub"],
