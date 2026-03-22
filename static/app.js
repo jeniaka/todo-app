@@ -400,9 +400,11 @@ function migrateTodo(raw) {
     description: raw.description || '',
     tags:        raw.tags        || [],
     subtasks:    (raw.subtasks   || []).map(s => ({
-      id:   s.id   || Date.now() + Math.random(),
-      text: s.text || '',
-      done: !!s.done,
+      id:          s.id          || Date.now() + Math.random(),
+      text:        s.text        || '',
+      done:        !!s.done,
+      createdAt:   s.createdAt   || Date.now(),
+      completedAt: s.completedAt || null,
     })),
     createdAt:   raw.createdAt   || Date.now(),
     completedAt: raw.completedAt || null,
@@ -543,11 +545,12 @@ function subBarHTML(todo) {
 }
 
 function taskCardHTML(todo) {
-  const dur = todo.done && todo.completedAt ? duration(todo.createdAt, todo.completedAt) : '';
-  const p   = todo.priority || 'none';
+  const dur      = todo.done && todo.completedAt ? duration(todo.createdAt, todo.completedAt) : '';
+  const p        = todo.priority || 'none';
+  const blocked  = !todo.done && todo.subtasks && todo.subtasks.some(s => !s.done);
   return `<div class="task-card${todo.done ? ' done-card' : ''}" data-id="${todo.id}" data-p="${p}" role="button" tabindex="0">
   <div class="task-inner">
-    <button class="task-cb${todo.done ? ' ticked' : ''}" data-check="${todo.id}" aria-label="${todo.done ? 'Mark incomplete' : 'Mark complete'}">
+    <button class="task-cb${todo.done ? ' ticked' : ''}${blocked ? ' blocked' : ''}" data-check="${todo.id}" aria-label="${todo.done ? 'Mark incomplete' : 'Mark complete'}"${blocked ? ' title="Complete all sub-tasks first"' : ''}>
       <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
         <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -642,6 +645,8 @@ setInterval(() => {
 async function toggleTodo(id, checkEl) {
   const todo = state.todos.find(x => x.id === id);
   if (!todo) return;
+  // Block marking done while subtasks remain incomplete
+  if (!todo.done && todo.subtasks && todo.subtasks.some(s => !s.done)) return;
   todo.done        = !todo.done;
   todo.completedAt = todo.done ? Date.now() : null;
   if (todo.done) {
@@ -761,20 +766,30 @@ function renderSubtasks(todo) {
     wrap.style.display = 'none';
   }
 
-  document.getElementById('subtaskList').innerHTML = subs.map(s => `
+  document.getElementById('subtaskList').innerHTML = subs.map(s => {
+    const subDur = s.done && s.completedAt ? duration(s.createdAt, s.completedAt) : '';
+    const subAge = relativeTime(s.createdAt);
+    return `
     <div class="sub-item${s.done ? ' done-sub' : ''}">
       <button class="sub-cb${s.done ? ' ticked' : ''}" data-stoggle="${s.id}">
         <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
           <path d="M1 3.5L3 5.5L8 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-      <span class="sub-text" contenteditable="true" data-sedit="${s.id}">${esc(s.text)}</span>
+      <div class="sub-body">
+        <span class="sub-text" contenteditable="true" data-sedit="${s.id}">${esc(s.text)}</span>
+        <div class="sub-meta">
+          <span class="sub-time">${subAge}</span>
+          ${subDur ? `<span class="sub-dur">${t('took')} ${subDur}</span>` : ''}
+        </div>
+      </div>
       <button class="sub-del" data-sdel="${s.id}">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
       </button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function flushDrawerSave() {
@@ -1054,7 +1069,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!text || state.activeDrawer === null) return;
     const todo = state.todos.find(x => x.id === state.activeDrawer);
     if (!todo) return;
-    todo.subtasks.push({ id: Date.now(), text, done: false });
+    todo.subtasks.push({ id: Date.now(), text, done: false, createdAt: Date.now(), completedAt: null });
     inp.value = '';
     renderSubtasks(todo);
     render();
@@ -1073,7 +1088,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (toggleBtn) {
       const sid = parseFloat(toggleBtn.dataset.stoggle);
       const sub = todo.subtasks.find(s => s.id === sid);
-      if (sub) { sub.done = !sub.done; renderSubtasks(todo); render(); await apiSave(); }
+      if (sub) {
+        sub.done = !sub.done;
+        sub.completedAt = sub.done ? Date.now() : null;
+        renderSubtasks(todo); render(); await apiSave();
+      }
       return;
     }
     const delBtn = e.target.closest('[data-sdel]');
