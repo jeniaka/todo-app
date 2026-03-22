@@ -412,20 +412,22 @@ function migrateTodo(raw) {
 }
 
 // ─── Confetti ─────────────────────────────────────────────────────────────────
-function burst(x, y) {
+function burst(x, y, count = 12) {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const colors = ['#2563EB','#7C3AED','#16A34A','#F59E0B','#EF4444','#FBBF24'];
-  for (let i = 0; i < 12; i++) {
+  const colors = ['#6366F1','#8B5CF6','#EC4899','#F59E0B','#EF4444','#10B981','#FBBF24','#3B82F6'];
+  for (let i = 0; i < count; i++) {
     const el = document.createElement('div');
     el.className = 'cp';
-    el.style.cssText = `left:${x}px;top:${y}px;background:${colors[i % colors.length]}`;
+    const sz = 5 + Math.random() * 5;
+    const isCircle = Math.random() > 0.5;
+    el.style.cssText = `left:${x}px;top:${y}px;background:${colors[i % colors.length]};width:${sz}px;height:${sz}px;border-radius:${isCircle ? '50%' : '2px'}`;
     document.body.appendChild(el);
-    const tx = (Math.random() - 0.5) * 90;
-    const ty = -(Math.random() * 70 + 20);
+    const tx = (Math.random() - 0.5) * 120;
+    const ty = -(Math.random() * 100 + 30);
     el.animate([
-      { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
-      { transform: `translate(${tx}px,${ty}px) rotate(${Math.random()*360}deg)`, opacity: 0 },
-    ], { duration: 900, easing: 'cubic-bezier(0,0,0.2,1)', fill: 'forwards' })
+      { transform: 'translate(0,0) rotate(0deg) scale(1)', opacity: 1 },
+      { transform: `translate(${tx}px,${ty}px) rotate(${Math.random()*540}deg) scale(0.3)`, opacity: 0 },
+    ], { duration: 700 + Math.random() * 400, easing: 'cubic-bezier(0,0,0.2,1)', fill: 'forwards' })
       .finished.then(() => el.remove());
   }
 }
@@ -673,6 +675,18 @@ async function addTodo(text) {
   state.todos.unshift(todo);
   resetPriorityPicker();
   render();
+  // Confetti burst from add button
+  const btn = document.getElementById('addSubmit');
+  if (btn) {
+    const r = btn.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height / 2, 20);
+  }
+  // Bounce-in the new card
+  const firstCard = document.querySelector('#taskList .task-card');
+  if (firstCard) {
+    firstCard.classList.add('card-new');
+    firstCard.addEventListener('animationend', () => firstCard.classList.remove('card-new'), { once: true });
+  }
   await apiSave();
 }
 
