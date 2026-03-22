@@ -369,7 +369,7 @@ body{
 }
 
 /* ─── Add form ────────────────────────────────────────────────────────────── */
-.add-wrap{margin-block-end:4px;position:relative}
+.add-wrap{margin-block-end:12px;position:relative}
 .add-bar{
   display:flex;gap:8px;align-items:center;
   background:var(--bg-card);border:1.5px solid var(--border);
@@ -419,24 +419,33 @@ body{
   50%{background:rgba(239,68,68,0.2)}
 }
 
-/* Priority dropdown */
-.p-dropdown{
-  position:absolute;inset-block-start:calc(100% + 6px);inset-inline-start:0;
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--radius-md);padding:4px;
-  box-shadow:var(--shadow-lg);z-index:300;width:160px;
-  animation:fadeUp var(--duration-normal) var(--ease-out);
+/* Add form dropdown (slides down on input focus) */
+.add-dropdown{
+  overflow:hidden;max-height:0;
+  transition:max-height 0.3s var(--ease-out),opacity 0.25s var(--ease-out);
+  opacity:0;
 }
+.add-dropdown.open{max-height:140px;opacity:1}
+.add-p-row{display:flex;gap:6px;padding:10px 2px 8px;flex-wrap:wrap}
+.add-p-btn{
+  padding:6px 14px;border-radius:var(--radius-full);
+  border:1.5px solid var(--border-strong);background:transparent;
+  color:var(--text-secondary);font-size:13px;font-weight:600;
+  font-family:var(--font-body);cursor:pointer;
+  transition:all var(--duration-fast);min-height:32px;
+  -webkit-tap-highlight-color:transparent;
+}
+.add-p-btn:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.add-p-btn[data-p=low].active{color:var(--priority-low);border-color:var(--priority-low);background:rgba(99,102,241,0.1)}
+.add-p-btn[data-p=medium].active{color:var(--priority-medium);border-color:var(--priority-medium);background:rgba(245,158,11,0.1)}
+.add-p-btn[data-p=high].active{color:var(--priority-high);border-color:var(--priority-high);background:rgba(239,68,68,0.1)}
+.add-dropdown-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:4px 2px 10px;gap:8px;
+}
+
+/* Legacy dropdown (kept for safety) */
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.p-opt{
-  display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;
-  border:none;background:transparent;border-radius:var(--radius-sm);
-  cursor:pointer;font-family:var(--font-body);font-size:13px;
-  color:var(--text-primary);text-align:start;transition:background var(--duration-fast);
-  min-height:36px;
-}
-.p-opt:hover{background:var(--bg-secondary)}
-.p-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 
 /* Notify-when-done row */
 .notify-done-row{
@@ -465,12 +474,20 @@ body{
   width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;
 }
 
-/* ─── Filters ─────────────────────────────────────────────────────────────── */
+/* ─── Filter + mini progress row ─────────────────────────────────────────── */
+.filter-progress-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-block:0 16px;flex-wrap:wrap;
+}
 .filter-row{
-  display:flex;gap:4px;margin-block:12px 16px;
+  display:flex;gap:4px;
   background:var(--bg-secondary);border-radius:var(--radius-full);
   padding:3px;width:fit-content;
 }
+.progress-mini{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.progress-track-mini{width:80px;height:4px;background:var(--bg-secondary);border-radius:var(--radius-full);overflow:hidden;border:1px solid var(--border)}
+
+/* ─── Filters ─────────────────────────────────────────────────────────────── */
 .filter-btn{
   padding:7px 18px;border-radius:var(--radius-full);border:none;background:transparent;
   color:var(--text-secondary);font-size:13px;font-weight:600;font-family:var(--font-body);
@@ -520,6 +537,13 @@ body{
 .task-card[data-p=medium]:hover{box-shadow:0 6px 24px rgba(245,158,11,0.15),var(--shadow-md)}
 .task-card.done-card{opacity:0.5}
 .task-card.done-card:hover{opacity:0.7;transform:none;box-shadow:var(--shadow-sm)}
+
+/* Task remove animation */
+@keyframes taskRemove{
+  0%{opacity:1;transform:scale(1) rotate(0);filter:blur(0)}
+  100%{opacity:0;transform:scale(0.7) rotate(3deg);filter:blur(6px)}
+}
+.task-card.removing{animation:taskRemove 0.38s ease-in forwards;pointer-events:none}
 
 /* New card bounce-in animation */
 @keyframes cardNew{

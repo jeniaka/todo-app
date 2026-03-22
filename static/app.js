@@ -5,7 +5,7 @@ const state = {
   todos: [],
   filter: 'all',
   lang: 'en',
-  newPriority: 'none',
+  newPriority: 'low',
   activeDrawer: null,
   settings: null,
   chartView: false,
@@ -998,9 +998,11 @@ async function addTodo(text) {
 }
 
 function resetPriorityPicker() {
-  state.newPriority = 'none';
-  document.getElementById('pIndicator').style.background = 'var(--priority-none)';
-  document.getElementById('pDropdown').style.display = 'none';
+  state.newPriority = 'low';
+  document.querySelectorAll('.add-p-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.p === 'low')
+  );
+  document.getElementById('addDropdown').classList.remove('open');
 }
 
 // ─── Filter ───────────────────────────────────────────────────────────────────
@@ -1347,29 +1349,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     inp.focus();
   });
 
-  // ── Priority picker ───────────────────────────────────────────────────────
-  const pColors = {
-    high: 'var(--priority-high)', medium: 'var(--priority-medium)',
-    low:  'var(--priority-low)',  none:   'var(--priority-none)',
-  };
-
-  document.getElementById('priorityTrigger').addEventListener('click', e => {
-    e.stopPropagation();
-    const drop = document.getElementById('pDropdown');
-    drop.style.display = drop.style.display === 'none' ? '' : 'none';
+  // ── Priority picker (inline dropdown, opens on input focus) ──────────────
+  document.querySelectorAll('.add-p-btn').forEach(btn => {
+    btn.addEventListener('mousedown', e => e.preventDefault()); // prevent blur
+    btn.addEventListener('click', () => {
+      state.newPriority = btn.dataset.p;
+      document.querySelectorAll('.add-p-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.p === btn.dataset.p)
+      );
+    });
   });
 
-  document.getElementById('pDropdown').addEventListener('click', e => {
-    const opt = e.target.closest('[data-p]');
-    if (!opt) return;
-    state.newPriority = opt.dataset.p;
-    document.getElementById('pIndicator').style.background = pColors[opt.dataset.p] || '';
-    document.getElementById('pDropdown').style.display = 'none';
+  const addInput = document.getElementById('addInput');
+  const addDropdown = document.getElementById('addDropdown');
+  addInput.addEventListener('focus', () => addDropdown.classList.add('open'));
+  addInput.addEventListener('blur', () => {
+    setTimeout(() => {
+      if (!document.getElementById('addForm').contains(document.activeElement))
+        addDropdown.classList.remove('open');
+    }, 180);
   });
 
   document.addEventListener('click', e => {
-    if (!e.target.closest('#priorityTrigger') && !e.target.closest('#pDropdown'))
-      document.getElementById('pDropdown').style.display = 'none';
+    if (!e.target.closest('#addForm'))
+      addDropdown.classList.remove('open');
   });
 
   // ── Filters ───────────────────────────────────────────────────────────────
@@ -1379,6 +1382,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Clear done ────────────────────────────────────────────────────────────
   document.getElementById('clearDoneBtn').addEventListener('click', async () => {
+    const doneCards = document.querySelectorAll('.task-card.done-card');
+    if (!doneCards.length) return;
+    doneCards.forEach(card => card.classList.add('removing'));
+    await new Promise(r => setTimeout(r, 420));
     state.todos = state.todos.filter(x => !x.done);
     render();
     await apiSave();
