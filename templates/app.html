@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#F8F7F4">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
+  <title>My Tasks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- ─── Navbar ──────────────────────────────────────────────────────────────── -->
+<nav class="navbar" role="navigation">
+  <div class="nav-brand">
+    <span class="nav-brand-dot"></span>
+    My Tasks
+  </div>
+  <div class="nav-actions">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button class="lang-btn active" aria-label="English">EN</button>
+      <button class="lang-btn" aria-label="Hebrew">עב</button>
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+    <div class="user-pill">
+      {{AVATAR}}
+      <span class="user-name">{{NAME}}</span>
+    </div>
+    <form method="post" action="/auth/logout" style="margin:0">
+      <button class="logout-btn-nav" id="logoutBtnNav" type="submit">Sign out</button>
+    </form>
+  </div>
+</nav>
+
+<!-- ─── Main ────────────────────────────────────────────────────────────────── -->
+<main class="main" role="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1 class="hero-title" id="hero-title">My Tasks</h1>
+    <p class="hero-sub" id="hero-date"></p>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-card" role="progressbar" aria-label="Task completion">
+    <div class="progress-row">
+      <span class="progress-label" id="statsText">0 tasks remaining</span>
+      <span class="progress-pct" id="progPct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Add form -->
+  <div class="add-wrap">
+    <form class="add-bar" id="addForm" role="search">
+      <input class="add-input" id="addInput" type="text" autocomplete="off" aria-label="New task"/>
+      <div class="add-options">
+        <div style="position:relative">
+          <button type="button" class="priority-pick" data-p="none" aria-label="Set priority" aria-haspopup="true">
+            <div class="priority-dot"></div>
+          </button>
+          <div class="priority-popover" id="priorityPopover" style="display:none" role="listbox">
+            <button class="priority-opt" data-p="high" role="option">
+              <span class="p-dot" style="background:var(--p-high)"></span> High
+            </button>
+            <button class="priority-opt" data-p="medium" role="option">
+              <span class="p-dot" style="background:var(--p-med)"></span> Medium
+            </button>
+            <button class="priority-opt" data-p="low" role="option">
+              <span class="p-dot" style="background:var(--p-low)"></span> Low
+            </button>
+            <button class="priority-opt" data-p="none" role="option">
+              <span class="p-dot" style="background:var(--p-none)"></span> None
+            </button>
+          </div>
+        </div>
+      </div>
+      <button class="add-btn" id="addSubmit" type="submit">Add</button>
+    </form>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-wrap" role="tablist" aria-label="Filter tasks">
+    <button class="filter-btn active" id="fAll" data-filter="all" role="tab">All</button>
+    <button class="filter-btn" id="fActive" data-filter="active" role="tab">Active</button>
+    <button class="filter-btn" id="fDone" data-filter="done" role="tab">Done</button>
+  </div>
+
+  <!-- Task list -->
+  <div class="task-list" id="taskList" role="list" aria-live="polite"></div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <span></span>
+    <button class="clear-done-btn" id="clearDoneBtn">Clear completed</button>
+  </div>
+
+</main>
+
+<!-- ─── Task Detail Modal ────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-label="Task detail">
+  <div class="modal">
+    <div class="modal-drag"></div>
+
+    <div class="modal-header">
+      <textarea class="modal-title-input" id="modalTitleInput" rows="2" aria-label="Task title"></textarea>
+      <button class="modal-close" id="modalCloseBtn" aria-label="Close">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Notes -->
+    <div class="modal-section">
+      <div class="modal-label" id="modalDescLabel">Notes</div>
+      <textarea class="modal-desc" id="modalDesc" rows="3"></textarea>
+    </div>
+
+    <!-- Meta -->
+    <div class="modal-section">
+      <div class="modal-meta-row">
+        <span class="meta-chip" id="modalCreated"></span>
+        <span class="meta-chip" id="modalCompleted" style="display:none"></span>
+        <span class="meta-chip" id="modalDuration" style="display:none"></span>
+      </div>
+    </div>
+
+    <!-- Priority -->
+    <div class="modal-section">
+      <div class="modal-label" id="pLabel">Priority</div>
+      <div class="priority-row">
+        <button class="p-btn" id="pBtn_high">High</button>
+        <button class="p-btn" id="pBtn_medium">Medium</button>
+        <button class="p-btn" id="pBtn_low">Low</button>
+        <button class="p-btn active-none" id="pBtn_none">None</button>
+      </div>
+    </div>
+
+    <!-- Sub-tasks -->
+    <div class="modal-section">
+      <div class="modal-label" id="subtaskLabel">Sub-tasks</div>
+      <div class="subtask-list" id="subtaskList"></div>
+      <div class="subtask-add-row">
+        <input class="subtask-add-input" id="subtaskAddInput" type="text"/>
+        <button class="subtask-add-btn" id="subtaskAddBtn">+</button>
+      </div>
+      <button class="ai-split-btn" id="aiSplitBtn" type="button">
+        <span class="ai-badge">AI</span> Split with AI
+      </button>
+      <div id="aiSuggestBox"></div>
+    </div>
+
+    <!-- Modal actions -->
+    <div class="modal-actions">
+      <button class="btn-danger" id="modalDeleteBtn">Delete task</button>
+      <button class="btn-ghost" id="modalCloseBtn2" onclick="document.getElementById('modalCloseBtn').click()">Cancel</button>
+      <button class="add-btn" id="modalSaveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── AI FAB ───────────────────────────────────────────────────────────────── -->
+<button class="ai-fab" id="aiFab" aria-label="AI Assistant" aria-haspopup="true">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2L9.5 9.5H2L8 13.5L5.5 21L12 17L18.5 21L16 13.5L22 9.5H14.5L12 2Z"/>
+  </svg>
+</button>
+
+<div class="ai-popover" id="aiPopover" role="dialog" aria-label="AI Assistant">
+  <div class="ai-popover-title">
+    <span class="ai-badge">AI</span>
+    <span id="aiPopTitle">AI Assistant</span>
+  </div>
+  <button class="ai-action-btn" id="aiSuggestBtn">
+    <span class="ai-action-icon">🎯</span>
+    <div class="ai-action-text">
+      <span class="ai-action-title" id="aiSuggestTitle">Suggest Next Task</span>
+      <span class="ai-action-desc" id="aiSuggestDesc">AI picks what to tackle next</span>
+    </div>
+  </button>
+  <button class="ai-action-btn" id="aiSummaryBtn">
+    <span class="ai-action-icon">📊</span>
+    <div class="ai-action-text">
+      <span class="ai-action-title" id="aiSummaryTitle">Daily Summary</span>
+      <span class="ai-action-desc" id="aiSummaryDesc">Overview of today's progress</span>
+    </div>
+  </button>
+  <div class="ai-response" id="aiResponse" style="display:none"></div>
+</div>
+
+<script src="/static/app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+</script>
+</body>
+</html>
