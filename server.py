@@ -63,7 +63,7 @@ def ai_suggest_next(todos):
         return {"result": "All tasks are complete — great work! Add new tasks to get a suggestion."}
     task_list = "\n".join(f"- [{t.get('priority','none')}] {t['text']} (created {t.get('createdAt',0)})" for t in open_tasks[:20])
     message = client.messages.create(
-        model="claude-opus-4-6",
+        model="claude-sonnet-4-20250514",
         max_tokens=256,
         messages=[{"role": "user", "content": f"Given these open tasks, which one should I tackle next and why? Be concise (2-3 sentences).\n\n{task_list}"}]
     )
@@ -78,7 +78,7 @@ def ai_daily_summary(todos):
     open_ = [t for t in todos if not t.get("done")]
     summary_input = f"Done today: {len(done)} tasks. Still open: {len(open_)} tasks.\nCompleted: {', '.join(t['text'] for t in done[:10])}\nOpen: {', '.join(t['text'] for t in open_[:10])}"
     message = client.messages.create(
-        model="claude-opus-4-6",
+        model="claude-sonnet-4-20250514",
         max_tokens=200,
         messages=[{"role": "user", "content": f"Give a brief, encouraging daily summary for this task list. Keep it to 2-3 sentences.\n\n{summary_input}"}]
     )
@@ -93,7 +93,7 @@ def ai_split_task(title, description):
     if description:
         prompt += f"\nDescription: {description}"
     message = client.messages.create(
-        model="claude-opus-4-6",
+        model="claude-sonnet-4-20250514",
         max_tokens=300,
         messages=[{"role": "user", "content": prompt}]
     )

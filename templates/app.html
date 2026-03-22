@@ -6,7 +6,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#F8F7F4">
+  <meta name="theme-color" content="#F8F7F4" id="themeColor">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/static/icon-192.png">
   <title>My Tasks</title>
@@ -16,41 +16,41 @@
 </head>
 <body>
 
-<!-- ─── Navbar ──────────────────────────────────────────────────────────────── -->
-<nav class="navbar" role="navigation">
+<!-- ─── Navbar ─────────────────────────────────────────────────────────────── -->
+<nav class="navbar">
   <div class="nav-brand">
-    <span class="nav-brand-dot"></span>
-    My Tasks
+    <span class="nav-dot"></span>
+    <span id="navBrand">My Tasks</span>
   </div>
   <div class="nav-actions">
-    <div class="lang-toggle" role="group" aria-label="Language">
-      <button class="lang-btn active" aria-label="English">EN</button>
-      <button class="lang-btn" aria-label="Hebrew">עב</button>
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="he">עב</button>
     </div>
-    <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">🌙</button>
     <div class="user-pill">
       {{AVATAR}}
       <span class="user-name">{{NAME}}</span>
     </div>
     <form method="post" action="/auth/logout" style="margin:0">
-      <button class="logout-btn-nav" id="logoutBtnNav" type="submit">Sign out</button>
+      <button class="nav-logout" id="logoutBtnNav" type="submit">Sign out</button>
     </form>
   </div>
 </nav>
 
-<!-- ─── Main ────────────────────────────────────────────────────────────────── -->
-<main class="main" role="main">
+<!-- ─── Main ───────────────────────────────────────────────────────────────── -->
+<main class="main">
 
   <!-- Hero -->
-  <div class="hero">
-    <h1 class="hero-title" id="hero-title">My Tasks</h1>
-    <p class="hero-sub" id="hero-date"></p>
-  </div>
+  <header class="hero">
+    <h1 class="hero-title" id="heroTitle">My Tasks</h1>
+    <p class="hero-sub" id="heroDate"></p>
+  </header>
 
   <!-- Progress -->
-  <div class="progress-card" role="progressbar" aria-label="Task completion">
+  <div class="progress-card">
     <div class="progress-row">
-      <span class="progress-label" id="statsText">0 tasks remaining</span>
+      <span class="progress-label" id="statsText"></span>
       <span class="progress-pct" id="progPct">0%</span>
     </div>
     <div class="progress-track">
@@ -59,147 +59,151 @@
   </div>
 
   <!-- Add form -->
-  <div class="add-wrap">
-    <form class="add-bar" id="addForm" role="search">
-      <input class="add-input" id="addInput" type="text" autocomplete="off" aria-label="New task"/>
-      <div class="add-options">
-        <div style="position:relative">
-          <button type="button" class="priority-pick" data-p="none" aria-label="Set priority" aria-haspopup="true">
-            <div class="priority-dot"></div>
-          </button>
-          <div class="priority-popover" id="priorityPopover" style="display:none" role="listbox">
-            <button class="priority-opt" data-p="high" role="option">
-              <span class="p-dot" style="background:var(--p-high)"></span> High
-            </button>
-            <button class="priority-opt" data-p="medium" role="option">
-              <span class="p-dot" style="background:var(--p-med)"></span> Medium
-            </button>
-            <button class="priority-opt" data-p="low" role="option">
-              <span class="p-dot" style="background:var(--p-low)"></span> Low
-            </button>
-            <button class="priority-opt" data-p="none" role="option">
-              <span class="p-dot" style="background:var(--p-none)"></span> None
-            </button>
-          </div>
-        </div>
-      </div>
-      <button class="add-btn" id="addSubmit" type="submit">Add</button>
-    </form>
+  <form class="add-bar" id="addForm" autocomplete="off">
+    <div class="priority-trigger" id="priorityTrigger" title="Set priority">
+      <span class="p-indicator" id="pIndicator"></span>
+    </div>
+    <input class="add-input" id="addInput" type="text" />
+    <button class="add-btn" id="addSubmit" type="submit">Add</button>
+  </form>
+  <!-- Priority dropdown -->
+  <div class="p-dropdown" id="pDropdown" style="display:none">
+    <button class="p-opt" data-p="none">   <span class="p-dot" style="background:var(--p-none)"></span> <span data-i18n="none">None</span></button>
+    <button class="p-opt" data-p="low">    <span class="p-dot" style="background:var(--p-low)"></span>  <span data-i18n="low">Low</span></button>
+    <button class="p-opt" data-p="medium"> <span class="p-dot" style="background:var(--p-med)"></span>  <span data-i18n="medium">Medium</span></button>
+    <button class="p-opt" data-p="high">   <span class="p-dot" style="background:var(--p-high)"></span> <span data-i18n="high">High</span></button>
   </div>
 
   <!-- Filters -->
-  <div class="filter-wrap" role="tablist" aria-label="Filter tasks">
-    <button class="filter-btn active" id="fAll" data-filter="all" role="tab">All</button>
-    <button class="filter-btn" id="fActive" data-filter="active" role="tab">Active</button>
-    <button class="filter-btn" id="fDone" data-filter="done" role="tab">Done</button>
+  <div class="filter-row">
+    <button class="filter-btn active" data-filter="all"    id="fAll">All</button>
+    <button class="filter-btn"        data-filter="active" id="fActive">Active</button>
+    <button class="filter-btn"        data-filter="done"   id="fDone">Done</button>
   </div>
 
   <!-- Task list -->
-  <div class="task-list" id="taskList" role="list" aria-live="polite"></div>
+  <div class="task-list" id="taskList"></div>
 
-  <!-- Stats -->
-  <div class="stats-bar">
-    <span></span>
-    <button class="clear-done-btn" id="clearDoneBtn">Clear completed</button>
+  <!-- Bottom stats -->
+  <div class="stats-row">
+    <span id="statsCount"></span>
+    <button class="link-btn" id="clearDoneBtn">Clear completed</button>
   </div>
 
 </main>
 
-<!-- ─── Task Detail Modal ────────────────────────────────────────────────────── -->
-<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-label="Task detail">
-  <div class="modal">
-    <div class="modal-drag"></div>
+<!-- ─── Task Detail Modal ──────────────────────────────────────────────────── -->
+<div class="overlay" id="overlay">
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true">
+    <div class="drawer-handle"></div>
 
-    <div class="modal-header">
-      <textarea class="modal-title-input" id="modalTitleInput" rows="2" aria-label="Task title"></textarea>
-      <button class="modal-close" id="modalCloseBtn" aria-label="Close">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
+    <!-- Title row -->
+    <div class="drawer-title-row">
+      <div class="drawer-priority-bar" id="drawerPriorityBar"></div>
+      <textarea class="drawer-title" id="drawerTitle" rows="2"></textarea>
+      <button class="icon-btn drawer-close" id="drawerClose" aria-label="Close">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
-    <!-- Notes -->
-    <div class="modal-section">
-      <div class="modal-label" id="modalDescLabel">Notes</div>
-      <textarea class="modal-desc" id="modalDesc" rows="3"></textarea>
-    </div>
-
-    <!-- Meta -->
-    <div class="modal-section">
-      <div class="modal-meta-row">
-        <span class="meta-chip" id="modalCreated"></span>
-        <span class="meta-chip" id="modalCompleted" style="display:none"></span>
-        <span class="meta-chip" id="modalDuration" style="display:none"></span>
-      </div>
+    <!-- Description -->
+    <div class="drawer-section">
+      <label class="drawer-label" id="descLabel">Notes</label>
+      <textarea class="drawer-desc" id="drawerDesc" rows="3"></textarea>
     </div>
 
     <!-- Priority -->
-    <div class="modal-section">
-      <div class="modal-label" id="pLabel">Priority</div>
-      <div class="priority-row">
-        <button class="p-btn" id="pBtn_high">High</button>
-        <button class="p-btn" id="pBtn_medium">Medium</button>
-        <button class="p-btn" id="pBtn_low">Low</button>
-        <button class="p-btn active-none" id="pBtn_none">None</button>
+    <div class="drawer-section">
+      <label class="drawer-label" id="priorityLabel">Priority</label>
+      <div class="priority-group" id="priorityGroup">
+        <button class="p-chip active-none" data-p="none"   id="dp_none">None</button>
+        <button class="p-chip" data-p="low"    id="dp_low">Low</button>
+        <button class="p-chip" data-p="medium" id="dp_medium">Medium</button>
+        <button class="p-chip" data-p="high"   id="dp_high">High</button>
       </div>
+    </div>
+
+    <!-- Time info -->
+    <div class="drawer-section">
+      <label class="drawer-label" id="timeLabel">Time</label>
+      <div class="time-info" id="timeInfo"></div>
     </div>
 
     <!-- Sub-tasks -->
-    <div class="modal-section">
-      <div class="modal-label" id="subtaskLabel">Sub-tasks</div>
-      <div class="subtask-list" id="subtaskList"></div>
-      <div class="subtask-add-row">
-        <input class="subtask-add-input" id="subtaskAddInput" type="text"/>
-        <button class="subtask-add-btn" id="subtaskAddBtn">+</button>
+    <div class="drawer-section">
+      <div class="subtask-header">
+        <label class="drawer-label" id="subtasksLabel">Sub-tasks</label>
+        <span class="subtask-count" id="subtaskCount"></span>
       </div>
+      <!-- Progress -->
+      <div class="sub-progress-wrap" id="subProgressWrap" style="display:none">
+        <div class="sub-progress-track">
+          <div class="sub-progress-fill" id="subProgressFill"></div>
+        </div>
+        <span class="sub-progress-label" id="subProgressLabel"></span>
+      </div>
+      <!-- List -->
+      <div class="subtask-list" id="subtaskList"></div>
+      <!-- Add subtask -->
+      <div class="subtask-add-row">
+        <input class="subtask-add-input" id="subtaskInput" type="text" />
+        <button class="subtask-add-btn" id="subtaskAddBtn" type="button">+</button>
+      </div>
+      <!-- AI Split -->
       <button class="ai-split-btn" id="aiSplitBtn" type="button">
-        <span class="ai-badge">AI</span> Split with AI
+        <span class="ai-badge">AI</span> <span id="aiSplitLabel">Split with AI</span>
       </button>
-      <div id="aiSuggestBox"></div>
+      <!-- AI Suggestions preview -->
+      <div class="ai-preview" id="aiPreview" style="display:none">
+        <div class="ai-preview-list" id="aiPreviewList"></div>
+        <div class="ai-preview-actions">
+          <button class="btn-apply" id="aiApplyBtn" type="button">Apply selected</button>
+          <button class="btn-cancel-ai" id="aiCancelBtn" type="button">Cancel</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Modal actions -->
-    <div class="modal-actions">
-      <button class="btn-danger" id="modalDeleteBtn">Delete task</button>
-      <button class="btn-ghost" id="modalCloseBtn2" onclick="document.getElementById('modalCloseBtn').click()">Cancel</button>
-      <button class="add-btn" id="modalSaveBtn">Save</button>
+    <!-- Actions -->
+    <div class="drawer-actions">
+      <button class="btn-delete" id="drawerDeleteBtn" type="button">Delete task</button>
+      <button class="btn-save" id="drawerSaveBtn" type="button">Save</button>
     </div>
+
   </div>
 </div>
 
-<!-- ─── AI FAB ───────────────────────────────────────────────────────────────── -->
-<button class="ai-fab" id="aiFab" aria-label="AI Assistant" aria-haspopup="true">
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 2L9.5 9.5H2L8 13.5L5.5 21L12 17L18.5 21L16 13.5L22 9.5H14.5L12 2Z"/>
-  </svg>
+<!-- ─── AI FAB ────────────────────────────────────────────────────────────── -->
+<button class="ai-fab" id="aiFab" aria-label="AI Assistant" aria-expanded="false">
+  <span class="ai-fab-icon">✨</span>
 </button>
 
-<div class="ai-popover" id="aiPopover" role="dialog" aria-label="AI Assistant">
-  <div class="ai-popover-title">
+<!-- AI Popover -->
+<div class="ai-pop" id="aiPop" aria-hidden="true">
+  <div class="ai-pop-header">
     <span class="ai-badge">AI</span>
     <span id="aiPopTitle">AI Assistant</span>
+    <button class="icon-btn ai-pop-close" id="aiPopClose">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
-  <button class="ai-action-btn" id="aiSuggestBtn">
-    <span class="ai-action-icon">🎯</span>
-    <div class="ai-action-text">
-      <span class="ai-action-title" id="aiSuggestTitle">Suggest Next Task</span>
-      <span class="ai-action-desc" id="aiSuggestDesc">AI picks what to tackle next</span>
+  <button class="ai-opt" id="aiSuggestBtn">
+    <span class="ai-opt-icon">🎯</span>
+    <div>
+      <div class="ai-opt-title" id="aiSuggestTitle">Suggest Next Task</div>
+      <div class="ai-opt-sub" id="aiSuggestSub">AI picks what to tackle next</div>
     </div>
   </button>
-  <button class="ai-action-btn" id="aiSummaryBtn">
-    <span class="ai-action-icon">📊</span>
-    <div class="ai-action-text">
-      <span class="ai-action-title" id="aiSummaryTitle">Daily Summary</span>
-      <span class="ai-action-desc" id="aiSummaryDesc">Overview of today's progress</span>
+  <button class="ai-opt" id="aiSummaryBtn">
+    <span class="ai-opt-icon">📊</span>
+    <div>
+      <div class="ai-opt-title" id="aiSummaryTitle">Daily Summary</div>
+      <div class="ai-opt-sub" id="aiSummarySub">Overview of today's progress</div>
     </div>
   </button>
-  <div class="ai-response" id="aiResponse" style="display:none"></div>
+  <div class="ai-result" id="aiResult" style="display:none"></div>
 </div>
 
 <script src="/static/app.js"></script>
-<script>
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
-</script>
+<script>if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});</script>
 </body>
 </html>
