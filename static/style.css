@@ -387,6 +387,22 @@ body{
 .add-btn:hover{opacity:0.88;box-shadow:0 6px 20px rgba(99,102,241,0.5)}
 .add-btn:active{transform:scale(0.95);box-shadow:0 2px 8px rgba(99,102,241,0.3)}
 
+/* Mic button */
+.mic-btn{
+  width:36px;height:36px;min-width:36px;border-radius:var(--radius-full);
+  border:none;background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-tertiary);flex-shrink:0;
+  transition:color var(--duration-fast),background var(--duration-fast);
+  -webkit-tap-highlight-color:transparent;
+}
+.mic-btn:hover{color:var(--accent);background:var(--accent-soft)}
+.mic-btn.mic-active{color:#EF4444;animation:micPulse 1s ease-in-out infinite}
+@keyframes micPulse{
+  0%,100%{background:rgba(239,68,68,0.08)}
+  50%{background:rgba(239,68,68,0.2)}
+}
+
 /* Priority dropdown */
 .p-dropdown{
   position:absolute;inset-block-start:calc(100% + 6px);inset-inline-start:0;

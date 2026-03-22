@@ -796,8 +796,6 @@ function getChartBaseOptions(extraPlugins = {}) {
 
 function renderActiveChart() {
   const chartType = state.activeChart;
-  const periodRow = document.getElementById('linePeriodRow');
-  if (periodRow) periodRow.style.display = chartType === 'line' ? '' : 'none';
 
   // Destroy old chart
   if (activeChartInstance) { activeChartInstance.destroy(); activeChartInstance = null; }
@@ -824,108 +822,111 @@ function renderActiveChart() {
       type: 'pie',
       data: {
         labels: [t('completed'), t('pending')],
-        datasets: [{ data: [done, notDone], backgroundColor: [CHART_COLORS.done, CHART_COLORS.notDone], borderWidth: 2, borderColor: 'transparent', hoverOffset: 6 }]
+        datasets: [{ data: [done, notDone], backgroundColor: [CHART_COLORS.done, CHART_COLORS.notDone], borderWidth: 2, borderColor: 'transparent', hoverOffset: 8 }]
       },
       options: getChartBaseOptions()
     });
   }
 
-  else if (chartType === 'doughnut') {
-    const done = todos.filter(t => t.done).length;
-    const notDone = todos.length - done;
-    activeChartInstance = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: [t('completed'), t('pending')],
-        datasets: [{ data: [done, notDone], backgroundColor: [CHART_COLORS.done, CHART_COLORS.notDone], borderWidth: 2, borderColor: 'transparent', hoverOffset: 6 }]
-      },
-      options: {
-        ...getChartBaseOptions(),
-        cutout: '60%',
-        plugins: {
-          ...getChartBaseOptions().plugins,
-          doughnutLabel: {
-            labels: [{ text: String(todos.length), font: { size: 28, weight: 'bold' } }]
-          }
-        }
-      }
-    });
-  }
-
-  else if (chartType === 'bar' || chartType === 'hbar') {
+  else if (chartType === 'bar') {
     const priorities = ['high', 'medium', 'low', 'none'];
     const labels = priorities.map(p => t('priority' + p.charAt(0).toUpperCase() + p.slice(1)));
-    const doneData = priorities.map(p => todos.filter(x => (x.priority || 'none') === p && x.done).length);
+    const doneData    = priorities.map(p => todos.filter(x => (x.priority || 'none') === p && x.done).length);
     const notDoneData = priorities.map(p => todos.filter(x => (x.priority || 'none') === p && !x.done).length);
+    const barColors = [CHART_COLORS.priorityHigh, CHART_COLORS.priorityMedium, CHART_COLORS.priorityLow, CHART_COLORS.priorityNone];
     activeChartInstance = new Chart(ctx, {
-      type: chartType === 'hbar' ? 'bar' : 'bar',
+      type: 'bar',
       data: {
         labels,
         datasets: [
-          { label: t('completed'), data: doneData, backgroundColor: CHART_COLORS.done + 'CC', borderRadius: 6 },
-          { label: t('pending'), data: notDoneData, backgroundColor: CHART_COLORS.notDone + 'CC', borderRadius: 6 }
+          { label: t('completed'),   data: doneData,    backgroundColor: barColors.map(c => c + 'CC'), borderRadius: 6 },
+          { label: t('pending'),     data: notDoneData, backgroundColor: barColors.map(c => c + '55'), borderRadius: 6 }
         ]
       },
       options: {
         ...getChartBaseOptions(),
-        indexAxis: chartType === 'hbar' ? 'y' : 'x',
         scales: {
-          x: { stacked: false, grid: { color: 'rgba(128,128,128,0.1)' }, ticks: { font: { family: "'DM Sans', sans-serif" } } },
-          y: { stacked: false, grid: { color: 'rgba(128,128,128,0.1)' }, beginAtZero: true, ticks: { font: { family: "'DM Sans', sans-serif" }, stepSize: 1 } }
-        }
-      }
-    });
-  }
-
-  else if (chartType === 'line') {
-    const days = state.linePeriod === '30' ? 30 : 7;
-    const now = Date.now();
-    const labels = [];
-    const data = [];
-    for (let i = days - 1; i >= 0; i--) {
-      const d = new Date(now - i * 86400000);
-      labels.push(d.toLocaleDateString(langLocale(), { month: 'short', day: 'numeric' }));
-      const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-      const dayEnd = dayStart + 86400000;
-      data.push(todos.filter(t => t.done && t.completedAt >= dayStart && t.completedAt < dayEnd).length);
-    }
-    activeChartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [{
-          label: t('completed'),
-          data,
-          borderColor: '#6366F1',
-          backgroundColor: 'rgba(99,102,241,0.12)',
-          borderWidth: 2.5,
-          pointRadius: 4,
-          pointBackgroundColor: '#6366F1',
-          tension: 0.4,
-          fill: true,
-        }]
-      },
-      options: {
-        ...getChartBaseOptions(),
-        scales: {
-          x: { grid: { color: 'rgba(128,128,128,0.1)' }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 }, maxRotation: 45 } },
+          x: { grid: { color: 'rgba(128,128,128,0.1)' }, ticks: { font: { family: "'DM Sans', sans-serif" } } },
           y: { beginAtZero: true, grid: { color: 'rgba(128,128,128,0.1)' }, ticks: { stepSize: 1, font: { family: "'DM Sans', sans-serif" } } }
         }
       }
     });
   }
+}
 
-  else if (chartType === 'polar') {
-    const priorities = ['high', 'medium', 'low', 'none'];
-    const labels = priorities.map(p => t('priority' + p.charAt(0).toUpperCase() + p.slice(1)));
-    const data = priorities.map(p => todos.filter(x => (x.priority || 'none') === p).length);
-    const bgColors = [CHART_COLORS.priorityHigh + 'BB', CHART_COLORS.priorityMedium + 'BB', CHART_COLORS.priorityLow + 'BB', CHART_COLORS.priorityNone + 'BB'];
-    activeChartInstance = new Chart(ctx, {
-      type: 'polarArea',
-      data: { labels, datasets: [{ data, backgroundColor: bgColors, borderWidth: 1, borderColor: 'transparent' }] },
-      options: getChartBaseOptions()
-    });
+// ─── Speech to Text ───────────────────────────────────────────────────────────
+// Uses the browser's built-in Web Speech API (powered by Google on Chrome/Android,
+// Siri on Safari) — no API key needed, supports all app languages.
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let isListening = false;
+
+// BCP-47 locale tags for speech recognition (same langs as UI)
+const SPEECH_LOCALE_MAP = {
+  en:'en-US', he:'he-IL', ar:'ar-SA', es:'es-ES',
+  fr:'fr-FR', de:'de-DE', ru:'ru-RU', pt:'pt-BR',
+  zh:'zh-CN', ja:'ja-JP',
+};
+
+function initSpeech() {
+  if (!SpeechRecognition) return;
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    isListening = true;
+    updateMicBtn(true);
+  };
+
+  recognition.onresult = e => {
+    const transcript = Array.from(e.results)
+      .map(r => r[0].transcript).join('');
+    const inp = document.getElementById('addInput');
+    if (inp) inp.value = transcript;
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    updateMicBtn(false);
+    // Auto-submit if there's text
+    const inp = document.getElementById('addInput');
+    if (inp && inp.value.trim()) {
+      inp.focus();
+    }
+  };
+
+  recognition.onerror = e => {
+    isListening = false;
+    updateMicBtn(false);
+    if (e.error !== 'no-speech' && e.error !== 'aborted') {
+      showToast('🎤 ' + e.error);
+    }
+  };
+}
+
+function updateMicBtn(listening) {
+  const btn = document.getElementById('micBtn');
+  if (!btn) return;
+  btn.classList.toggle('mic-active', listening);
+  btn.setAttribute('aria-label', listening ? 'Stop listening' : 'Voice input');
+}
+
+function toggleSpeech() {
+  if (!SpeechRecognition) {
+    showToast('🎤 Speech not supported in this browser');
+    return;
   }
+  if (!recognition) initSpeech();
+  if (isListening) {
+    recognition.stop();
+    return;
+  }
+  recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
+  const inp = document.getElementById('addInput');
+  if (inp) inp.value = '';
+  try { recognition.start(); } catch (_) { initSpeech(); recognition.start(); }
 }
 
 // ─── Add task ─────────────────────────────────────────────────────────────────
@@ -1259,10 +1260,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Theme button ──────────────────────────────────────────────────────────
   document.getElementById('themeBtn').addEventListener('click', toggleTheme);
 
+  // ── Mic button ────────────────────────────────────────────────────────────
+  const micBtn = document.getElementById('micBtn');
+  if (micBtn) {
+    if (!SpeechRecognition) micBtn.style.display = 'none'; // hide on unsupported browsers
+    else micBtn.addEventListener('click', toggleSpeech);
+  }
+
   // ── Add form ──────────────────────────────────────────────────────────────
   document.getElementById('addForm').addEventListener('submit', async e => {
     e.preventDefault();
     const inp = document.getElementById('addInput');
+    if (isListening && recognition) recognition.stop();
     await addTodo(inp.value);
     inp.value = '';
     inp.focus();

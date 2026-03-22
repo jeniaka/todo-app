@@ -138,6 +138,14 @@
         <span class="p-indicator" id="pIndicator"></span>
       </div>
       <input class="add-input" id="addInput" type="text" data-i18n-placeholder="addTaskPlaceholder"/>
+      <button class="mic-btn" id="micBtn" type="button" aria-label="Voice input" title="Speak to add task">
+        <svg id="micIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
       <button class="add-btn" id="addSubmit" type="submit" data-i18n="add">Add</button>
     </form>
     <div class="p-dropdown" id="pDropdown" style="display:none">
@@ -192,18 +200,8 @@
     <div class="chart-tabs-wrap">
       <div class="chart-tabs" id="chartTabs">
         <button class="chart-tab active" data-chart="pie" data-i18n="chartPie">Pie</button>
-        <button class="chart-tab" data-chart="doughnut" data-i18n="chartDoughnut">Doughnut</button>
         <button class="chart-tab" data-chart="bar" data-i18n="chartBar">By Priority</button>
-        <button class="chart-tab" data-chart="hbar" data-i18n="chartHBar">Horizontal</button>
-        <button class="chart-tab" data-chart="line" data-i18n="chartLine">Trend</button>
-        <button class="chart-tab" data-chart="polar" data-i18n="chartPolar">Polar</button>
       </div>
-    </div>
-
-    <!-- Line period toggle (only for line chart) -->
-    <div class="line-period-row" id="linePeriodRow" style="display:none">
-      <button class="period-btn active" data-period="7" data-i18n="last7">Last 7 days</button>
-      <button class="period-btn" data-period="30" data-i18n="last30">Last 30 days</button>
     </div>
 
     <!-- Chart canvas container -->
