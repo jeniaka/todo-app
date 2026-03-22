@@ -1288,6 +1288,18 @@ window.addEventListener('popstate', () => {
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
 
+  // ── DB health check ───────────────────────────────────────────────────────
+  try {
+    const h = await fetch('/api/health').then(r => r.json());
+    if (h.database !== 'mongodb') {
+      const banner = document.getElementById('dbBanner');
+      if (banner) banner.style.display = '';
+    }
+  } catch (_) {}
+  document.getElementById('dbBannerClose')?.addEventListener('click', () => {
+    document.getElementById('dbBanner').style.display = 'none';
+  });
+
   // Push initial history entry so popstate fires on first back press
   history.pushState({ app: true }, '');
 
