@@ -42,6 +42,10 @@ const TL = {
     ago:'ago',justNow:'just now',
     subtasks:'Sub-tasks',addSubtask:'Add a sub-task…',
     deleteTask:'Delete task',save:'Save',close:'Close',
+    notifyOnDone:'🔔 Notify when done',
+    notifEmail:'Email Notifications',notifEmailDesc:'Receive email updates',
+    notifEmailDailySummary:'Daily summary email',notifEmailTaskCompleted:'Task completed email',notifEmailWeeklyReport:'Weekly report email',
+    durFmt:(m,h,d)=>d>0?`${d}d ${h%24}h`:h>0?`${h}h ${m%60}m`:`${m}m`,
     deleteConfirm:'Delete this task?',
     logout:'Sign out',languages:'Languages',notifications:'Notifications',
     loginTitle:'My Tasks',loginSubtitle:'Simple, beautiful task management.',
@@ -75,6 +79,10 @@ const TL = {
     ago:'לפני',justNow:'עכשיו',
     subtasks:'תתי-משימות',addSubtask:'הוסף תת-משימה…',
     deleteTask:'מחק משימה',save:'שמור',close:'סגור',
+    notifyOnDone:'🔔 התראה בסיום',
+    notifEmail:'התראות אימייל',notifEmailDesc:'קבל עדכונים במייל',
+    notifEmailDailySummary:'סיכום יומי במייל',notifEmailTaskCompleted:'משימה הושלמה במייל',notifEmailWeeklyReport:'דוח שבועי במייל',
+    durFmt:(m,h,d)=>d>0?`${d} ימים`:h>0?(m%60>0?`${h} שעות ו-${m%60} דקות`:`${h} שעות`):`${m} דקות`,
     deleteConfirm:'למחוק את המשימה?',
     logout:'התנתק',languages:'שפות',notifications:'התראות',
     loginTitle:'המשימות שלי',loginSubtitle:'ניהול משימות פשוט ויפה.',
@@ -104,6 +112,10 @@ const TL = {
     ago:'منذ',justNow:'الآن',
     subtasks:'المهام الفرعية',addSubtask:'إضافة مهمة فرعية…',
     deleteTask:'حذف المهمة',save:'حفظ',close:'إغلاق',
+    notifyOnDone:'🔔 إشعار عند الإنجاز',
+    notifEmail:'إشعارات البريد',notifEmailDesc:'تلقي تحديثات بالبريد الإلكتروني',
+    notifEmailDailySummary:'ملخص يومي بالبريد',notifEmailTaskCompleted:'إتمام مهمة بالبريد',notifEmailWeeklyReport:'تقرير أسبوعي بالبريد',
+    durFmt:(m,h,d)=>d>0?`${d} أيام`:h>0?`${h} ساعات ${m%60} دقيقة`:`${m} دقيقة`,
     deleteConfirm:'هل تريد حذف هذه المهمة؟',
     logout:'تسجيل الخروج',languages:'اللغات',notifications:'الإشعارات',
     loginTitle:'مهامي',loginSubtitle:'إدارة المهام البسيطة والجميلة.',
@@ -133,6 +145,10 @@ const TL = {
     ago:'hace',justNow:'ahora mismo',
     subtasks:'Subtareas',addSubtask:'Agregar subtarea…',
     deleteTask:'Eliminar tarea',save:'Guardar',close:'Cerrar',
+    notifyOnDone:'🔔 Notificar al terminar',
+    notifEmail:'Notif. por email',notifEmailDesc:'Recibir actualizaciones por email',
+    notifEmailDailySummary:'Resumen diario por email',notifEmailTaskCompleted:'Tarea completada por email',notifEmailWeeklyReport:'Informe semanal por email',
+    durFmt:(m,h,d)=>d>0?`${d}d ${h%24}h`:h>0?`${h}h ${m%60}m`:`${m} min`,
     deleteConfirm:'¿Eliminar esta tarea?',
     logout:'Cerrar sesión',languages:'Idiomas',notifications:'Notificaciones',
     loginTitle:'Mis Tareas',loginSubtitle:'Gestión de tareas simple y elegante.',
@@ -162,6 +178,10 @@ const TL = {
     ago:'il y a',justNow:'à l\'instant',
     subtasks:'Sous-tâches',addSubtask:'Ajouter une sous-tâche…',
     deleteTask:'Supprimer la tâche',save:'Enregistrer',close:'Fermer',
+    notifyOnDone:'🔔 Notifier à la fin',
+    notifEmail:'Notif. par email',notifEmailDesc:'Recevoir des mises à jour par email',
+    notifEmailDailySummary:'Résumé quotidien par email',notifEmailTaskCompleted:'Tâche terminée par email',notifEmailWeeklyReport:'Rapport hebdo par email',
+    durFmt:(m,h,d)=>d>0?`${d}j ${h%24}h`:h>0?`${h}h ${m%60}min`:`${m} min`,
     deleteConfirm:'Supprimer cette tâche ?',
     logout:'Se déconnecter',languages:'Langues',notifications:'Notifications',
     loginTitle:'Mes Tâches',loginSubtitle:'Gestion de tâches simple et élégante.',
@@ -191,6 +211,10 @@ const TL = {
     ago:'vor',justNow:'gerade eben',
     subtasks:'Unteraufgaben',addSubtask:'Unteraufgabe hinzufügen…',
     deleteTask:'Aufgabe löschen',save:'Speichern',close:'Schließen',
+    notifyOnDone:'🔔 Benachrichtigen wenn fertig',
+    notifEmail:'E-Mail-Benachricht.',notifEmailDesc:'Updates per E-Mail erhalten',
+    notifEmailDailySummary:'Tägliche Zusammenfassung',notifEmailTaskCompleted:'Aufgabe abgeschlossen',notifEmailWeeklyReport:'Wochenbericht per E-Mail',
+    durFmt:(m,h,d)=>d>0?`${d}T ${h%24}Std`:h>0?`${h}Std ${m%60}Min`:`${m} Min`,
     deleteConfirm:'Diese Aufgabe löschen?',
     logout:'Abmelden',languages:'Sprachen',notifications:'Benachrichtigungen',
     loginTitle:'Meine Aufgaben',loginSubtitle:'Einfaches und elegantes Aufgabenmanagement.',
@@ -220,6 +244,10 @@ const TL = {
     ago:'назад',justNow:'только что',
     subtasks:'Подзадачи',addSubtask:'Добавить подзадачу…',
     deleteTask:'Удалить задачу',save:'Сохранить',close:'Закрыть',
+    notifyOnDone:'🔔 Уведомить при выполнении',
+    notifEmail:'Email-уведомления',notifEmailDesc:'Получать обновления на email',
+    notifEmailDailySummary:'Ежедневный отчёт на email',notifEmailTaskCompleted:'Задача выполнена — email',notifEmailWeeklyReport:'Еженедельный отчёт на email',
+    durFmt:(m,h,d)=>d>0?`${d} дн`:h>0?`${h} ч ${m%60} мин`:`${m} мин`,
     deleteConfirm:'Удалить эту задачу?',
     logout:'Выйти',languages:'Языки',notifications:'Уведомления',
     loginTitle:'Мои Задачи',loginSubtitle:'Простое и красивое управление задачами.',
@@ -249,6 +277,10 @@ const TL = {
     ago:'atrás',justNow:'agora mesmo',
     subtasks:'Subtarefas',addSubtask:'Adicionar subtarefa…',
     deleteTask:'Excluir tarefa',save:'Salvar',close:'Fechar',
+    notifyOnDone:'🔔 Notificar ao concluir',
+    notifEmail:'Notif. por email',notifEmailDesc:'Receber atualizações por email',
+    notifEmailDailySummary:'Resumo diário por email',notifEmailTaskCompleted:'Tarefa concluída por email',notifEmailWeeklyReport:'Relatório semanal por email',
+    durFmt:(m,h,d)=>d>0?`${d}d ${h%24}h`:h>0?`${h}h ${m%60}min`:`${m} min`,
     deleteConfirm:'Excluir esta tarefa?',
     logout:'Sair',languages:'Idiomas',notifications:'Notificações',
     loginTitle:'Minhas Tarefas',loginSubtitle:'Gestão de tarefas simples e elegante.',
@@ -278,6 +310,10 @@ const TL = {
     ago:'前',justNow:'刚刚',
     subtasks:'子任务',addSubtask:'添加子任务…',
     deleteTask:'删除任务',save:'保存',close:'关闭',
+    notifyOnDone:'🔔 完成时通知',
+    notifEmail:'邮件通知',notifEmailDesc:'通过邮件接收更新',
+    notifEmailDailySummary:'每日摘要邮件',notifEmailTaskCompleted:'任务完成邮件',notifEmailWeeklyReport:'每周报告邮件',
+    durFmt:(m,h,d)=>d>0?`${d}天`:h>0?`${h}小时${m%60}分`:`${m}分钟`,
     deleteConfirm:'删除此任务？',
     logout:'退出',languages:'语言',notifications:'通知',
     loginTitle:'我的任务',loginSubtitle:'简单、优雅的任务管理。',
@@ -307,6 +343,10 @@ const TL = {
     ago:'前',justNow:'たった今',
     subtasks:'サブタスク',addSubtask:'サブタスクを追加…',
     deleteTask:'タスクを削除',save:'保存',close:'閉じる',
+    notifyOnDone:'🔔 完了時に通知',
+    notifEmail:'メール通知',notifEmailDesc:'メールで更新を受け取る',
+    notifEmailDailySummary:'毎日のサマリーメール',notifEmailTaskCompleted:'タスク完了メール',notifEmailWeeklyReport:'週次レポートメール',
+    durFmt:(m,h,d)=>d>0?`${d}日`:h>0?`${h}時間${m%60}分`:`${m}分`,
     deleteConfirm:'このタスクを削除しますか？',
     logout:'ログアウト',languages:'言語',notifications:'通知',
     loginTitle:'マイタスク',loginSubtitle:'シンプルで美しいタスク管理。',
@@ -334,14 +374,11 @@ const t = key => {
 const DEFAULT_SETTINGS = {
   language: 'en',
   notifications: {
-    taskReminders: true,
     dailyDigest: false,
-    taskCompleted: true,
-    overdueTasks: true,
+    emailNotifications: false,
+    emailTypes: { dailySummary: true, taskCompleted: false, weeklyReport: false },
     weeklyReport: false,
     notificationSound: true,
-    badgeCount: true,
-    doNotDisturb: false,
   },
 };
 
@@ -363,9 +400,9 @@ function duration(from, to) {
   const diff = to - from;
   const mins = Math.floor(diff / 60000);
   const hrs  = Math.floor(diff / 3600000);
-  if (mins < 60) return `${mins}m`;
-  const remMins = mins % 60;
-  return remMins > 0 ? `${hrs}h ${remMins}m` : `${hrs}h`;
+  const days = Math.floor(diff / 86400000);
+  const fmt  = TL[state.lang]?.durFmt || TL.en.durFmt;
+  return fmt(mins, hrs, days);
 }
 
 // BCP-47 locale tags for each supported language code
@@ -458,13 +495,11 @@ function burst(x, y, count = 12) {
 
 // ─── Toast notification ───────────────────────────────────────────────────────
 let toastTimer = null;
-function showToast(msg) {
-  const dnd = state.settings?.notifications?.doNotDisturb;
-  if (dnd) return;
+function showToast(msg, type = '') {
   const el = document.getElementById('toast');
   if (!el) return;
   el.textContent = msg;
-  el.classList.add('show');
+  el.className = 'toast show' + (type ? ' toast-' + type : '');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
@@ -472,7 +507,6 @@ function showToast(msg) {
 // ─── Notification sound ───────────────────────────────────────────────────────
 function playNotifSound() {
   if (!state.settings?.notifications?.notificationSound) return;
-  if (state.settings?.notifications?.doNotDisturb) return;
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = ctx.createOscillator();
@@ -680,8 +714,8 @@ async function toggleTodo(id, checkEl) {
       const rect = checkEl.getBoundingClientRect();
       burst(rect.left + rect.width / 2, rect.top + rect.height / 2);
     }
-    if (state.settings?.notifications?.taskCompleted) {
-      showToast(`✓ ${t('taskDone')}`);
+    if (todo.notifyOnDone) {
+      showToast(`✓ ${t('taskDone')}`, 'success');
       playNotifSound();
     }
   }
@@ -912,6 +946,11 @@ function updateMicBtn(listening) {
   btn.classList.toggle('mic-active', listening);
   btn.setAttribute('aria-label', listening ? 'Stop listening' : 'Voice input');
 }
+function updateSubMicBtn(listening) {
+  const btn = document.getElementById('subMicBtn');
+  if (!btn) return;
+  btn.classList.toggle('mic-active', listening);
+}
 
 function toggleSpeech() {
   if (!SpeechRecognition) {
@@ -932,10 +971,14 @@ function toggleSpeech() {
 // ─── Add task ─────────────────────────────────────────────────────────────────
 async function addTodo(text) {
   if (!text.trim()) return;
+  const notifyCheck = document.getElementById('notifyDoneCheck');
+  const notifyOnDone = notifyCheck ? notifyCheck.checked : false;
   const todo = migrateTodo({
     id: Date.now(), text: text.trim(), done: false,
     priority: state.newPriority, createdAt: Date.now(),
+    notifyOnDone,
   });
+  if (notifyCheck) notifyCheck.checked = false;
   state.todos.unshift(todo);
   resetPriorityPicker();
   render();
@@ -1137,29 +1180,41 @@ function renderLangList() {
 
 // ─── Notification settings ────────────────────────────────────────────────────
 const NOTIF_ITEMS = [
-  { key: 'taskReminders',     nameKey: 'notifTaskReminders',     descKey: 'notifTaskRemindersDesc' },
-  { key: 'dailyDigest',       nameKey: 'notifDailyDigest',       descKey: 'notifDailyDigestDesc' },
-  { key: 'taskCompleted',     nameKey: 'notifTaskCompleted',     descKey: 'notifTaskCompletedDesc' },
-  { key: 'overdueTasks',      nameKey: 'notifOverdueTasks',      descKey: 'notifOverdueTasksDesc' },
-  { key: 'weeklyReport',      nameKey: 'notifWeeklyReport',      descKey: 'notifWeeklyReportDesc' },
-  { key: 'notificationSound', nameKey: 'notifSound',             descKey: 'notifSoundDesc' },
-  { key: 'badgeCount',        nameKey: 'notifBadge',             descKey: 'notifBadgeDesc' },
-  { key: 'doNotDisturb',      nameKey: 'doNotDisturb',           descKey: 'doNotDisturbDesc' },
+  { key: 'dailyDigest',       nameKey: 'notifDailyDigest',   descKey: 'notifDailyDigestDesc' },
+  { key: 'emailNotifications',nameKey: 'notifEmail',         descKey: 'notifEmailDesc', hasSubmenu: true },
+  { key: 'weeklyReport',      nameKey: 'notifWeeklyReport',  descKey: 'notifWeeklyReportDesc' },
+  { key: 'notificationSound', nameKey: 'notifSound',         descKey: 'notifSoundDesc' },
+];
+
+const EMAIL_SUBTYPES = [
+  { key: 'dailySummary',   nameKey: 'notifEmailDailySummary' },
+  { key: 'taskCompleted',  nameKey: 'notifEmailTaskCompleted' },
+  { key: 'weeklyReport',   nameKey: 'notifEmailWeeklyReport' },
 ];
 
 function renderNotifList() {
   const list = document.getElementById('notifList');
   if (!list || !state.settings) return;
   const notifs = state.settings.notifications;
+  if (!notifs.emailTypes) notifs.emailTypes = { dailySummary: true, taskCompleted: false, weeklyReport: false };
 
   list.innerHTML = NOTIF_ITEMS.map(item => `
-    <div class="notif-item">
+    <div class="notif-item" data-notif-wrap="${item.key}">
       <div class="notif-text">
         <div class="notif-name">${t(item.nameKey)}</div>
         <div class="notif-desc">${t(item.descKey)}</div>
       </div>
       <button class="toggle-switch${notifs[item.key] ? ' on' : ''}" data-notif="${item.key}" aria-label="${t(item.nameKey)}" aria-pressed="${notifs[item.key]}"></button>
-    </div>`).join('');
+    </div>
+    ${item.hasSubmenu ? `
+    <div class="email-subtypes${notifs[item.key] ? '' : ' hidden'}" id="emailSubtypes">
+      ${EMAIL_SUBTYPES.map(sub => `
+        <label class="email-subtype-row">
+          <input type="checkbox" class="email-subtype-cb" data-emailtype="${sub.key}"${notifs.emailTypes[sub.key] ? ' checked' : ''}>
+          <span>${t(sub.nameKey)}</span>
+        </label>`).join('')}
+    </div>` : ''}
+  `).join('');
 
   list.querySelectorAll('.toggle-switch').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -1168,15 +1223,19 @@ function renderNotifList() {
       state.settings.notifications[key] = newVal;
       btn.classList.toggle('on', newVal);
       btn.setAttribute('aria-pressed', String(newVal));
-
-      // Side effects
-      if (key === 'taskReminders' && newVal) {
-        if ('Notification' in window && Notification.permission === 'default') {
-          await Notification.requestPermission();
-        }
+      // Show/hide email sub-types
+      if (key === 'emailNotifications') {
+        const sub = document.getElementById('emailSubtypes');
+        if (sub) sub.classList.toggle('hidden', !newVal);
       }
-      if (key === 'badgeCount') updateBadge();
       localStorage.setItem('notif_' + key, String(newVal));
+      await apiSaveSettings();
+    });
+  });
+
+  list.querySelectorAll('.email-subtype-cb').forEach(cb => {
+    cb.addEventListener('change', async () => {
+      state.settings.notifications.emailTypes[cb.dataset.emailtype] = cb.checked;
       await apiSaveSettings();
     });
   });
@@ -1185,7 +1244,6 @@ function renderNotifList() {
 // ─── On-load notification checks ─────────────────────────────────────────────
 function checkDailyDigest() {
   if (!state.settings?.notifications?.dailyDigest) return;
-  if (state.settings?.notifications?.doNotDisturb) return;
   const today = new Date().toDateString();
   const last  = localStorage.getItem('dailyDigestShown');
   if (last === today) return;
@@ -1388,6 +1446,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('subtaskInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); addSubtask(); }
   });
+
+  // Subtask mic
+  const subMicBtn = document.getElementById('subMicBtn');
+  if (subMicBtn) {
+    if (!SpeechRecognition) subMicBtn.style.display = 'none';
+    else subMicBtn.addEventListener('click', () => {
+      if (!recognition) initSpeech();
+      // Override onresult to target subtask input
+      recognition.onresult = e => {
+        const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+        const inp = document.getElementById('subtaskInput');
+        if (inp) inp.value = transcript;
+      };
+      recognition.onend = () => {
+        isListening = false;
+        updateMicBtn(false);
+        updateSubMicBtn(false);
+      };
+      if (isListening) { recognition.stop(); return; }
+      recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
+      document.getElementById('subtaskInput').value = '';
+      try { recognition.start(); } catch (_) { initSpeech(); recognition.start(); }
+      isListening = true;
+      updateSubMicBtn(true);
+    });
+  }
 
   document.getElementById('subtaskList').addEventListener('click', async e => {
     const todo = state.todos.find(x => x.id === state.activeDrawer);

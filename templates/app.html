@@ -148,6 +148,10 @@
       </button>
       <button class="add-btn" id="addSubmit" type="submit" data-i18n="add">Add</button>
     </form>
+    <label class="notify-done-row" id="notifyDoneRow">
+      <input type="checkbox" id="notifyDoneCheck" class="notify-done-cb">
+      <span data-i18n="notifyOnDone">🔔 Notify when done</span>
+    </label>
     <div class="p-dropdown" id="pDropdown" style="display:none">
       <button class="p-opt" data-p="none"><span class="p-dot" style="background:var(--priority-none)"></span> <span data-i18n="priorityNone">None</span></button>
       <button class="p-opt" data-p="low"><span class="p-dot" style="background:var(--priority-low)"></span> <span data-i18n="priorityLow">Low</span></button>
@@ -269,6 +273,13 @@
       <div class="subtask-list" id="subtaskList"></div>
       <div class="subtask-add-row">
         <input class="subtask-add-input" id="subtaskInput" type="text" data-i18n-placeholder="addSubtask"/>
+        <button class="mic-btn" id="subMicBtn" type="button" aria-label="Voice input">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
         <button class="subtask-add-btn" id="subtaskAddBtn" type="button">+</button>
       </div>
     </div>
