@@ -30,12 +30,32 @@
     <span class="nav-dot"></span>
     <span class="nav-title" data-i18n="appTitle">My Tasks</span>
   </div>
-  <div class="nav-right">
+  <div class="nav-right" id="navRight" style="position:relative">
     <button class="icon-btn chart-btn" id="chartBtn" title="Analytics" aria-label="Analytics">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
       </svg>
     </button>
+
+    <!-- Groups button -->
+    <button class="icon-btn" id="groupsBtn" title="Groups" aria-label="Groups">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    </button>
+
+    <!-- Notifications bell -->
+    <button class="icon-btn" id="notifBellBtn" title="Notifications" aria-label="Notifications" style="position:relative">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="notif-badge" id="notifBadge" style="display:none"></span>
+    </button>
+
     <button class="icon-btn theme-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
       <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -118,6 +138,7 @@
 <div class="toast" id="toast" aria-live="polite"></div>
 
 <!-- ─── Main ────────────────────────────────────────────────────────────────── -->
+<div id="mainContent">
 <main class="main">
 
   <!-- Hero (compact) -->
@@ -184,6 +205,73 @@
   </div>
 
 </main>
+</div><!-- end #mainContent -->
+
+<!-- ─── Groups List Page ──────────────────────────────────────────────────── -->
+<div id="groupsPage" style="display:none" class="groups-page">
+  <div class="main" style="max-width:var(--max-w);margin-inline:auto;padding-inline:20px">
+    <div class="groups-header">
+      <button class="icon-btn" id="groupsBackBtn" aria-label="Back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h2 class="groups-title" data-i18n="myGroups">My Groups</h2>
+      <button class="add-btn" id="newGroupBtn" data-i18n="newGroup">+ New Group</button>
+    </div>
+    <div id="groupsList"></div>
+  </div>
+</div>
+
+<!-- ─── Group Board Page ──────────────────────────────────────────────────── -->
+<div id="groupBoardPage" style="display:none" class="group-board-page">
+  <div class="main" style="max-width:var(--max-w);margin-inline:auto;padding-inline:20px">
+    <!-- Board header -->
+    <div class="gb-header">
+      <button class="icon-btn" id="gbBackBtn" aria-label="Back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h2 class="gb-name" id="gbName">Group</h2>
+      <div class="gb-member-avatars" id="gbMembers"></div>
+      <button class="icon-btn" id="gbInviteBtn" title="Invite" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      </button>
+      <button class="icon-btn" id="gbSettingsBtn" title="Members" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 1.63 14.06 10 10 0 1 1-15.4-12.72"/></svg>
+      </button>
+      <button class="icon-btn gt-del" id="gbDeleteBtn" title="Delete group" style="color:var(--priority-high)">🗑️</button>
+    </div>
+
+    <!-- Add task bar -->
+    <form class="add-wrap" id="gbAddForm" autocomplete="off">
+      <div class="add-bar">
+        <input class="add-input" id="gbTaskInput" type="text" placeholder="Add a task...">
+        <select class="gb-select" id="gbAssignSelect"></select>
+        <select class="gb-select" id="gbPrioritySelect">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+        <button class="add-btn" type="submit">Add</button>
+      </div>
+    </form>
+
+    <!-- Filter/sort row -->
+    <div class="filter-progress-row" style="margin-block:12px 8px">
+      <div class="filter-row">
+        <button class="filter-btn active" id="gbFilterAll" data-i18n="allTasks">All</button>
+        <button class="filter-btn" id="gbFilterMine" data-i18n="myTasksFilter">Mine</button>
+        <button class="filter-btn" id="gbFilterUnassigned" data-i18n="filterUnassigned">Unassigned</button>
+      </div>
+      <select class="gb-select" id="gbSortSelect">
+        <option value="newest">Newest</option>
+        <option value="priority">Priority</option>
+        <option value="assignee">Assignee</option>
+      </select>
+    </div>
+
+    <!-- Task list -->
+    <div id="gbTaskList" class="gb-task-list"></div>
+  </div>
+</div>
 
 <!-- ─── Footer ──────────────────────────────────────────────────────────────── -->
 <footer class="site-footer">

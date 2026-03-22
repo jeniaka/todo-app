@@ -1007,3 +1007,216 @@ body{
 /* chart-btn in navbar */
 .chart-btn{border:none;background:transparent}
 .chart-btn:hover{background:var(--bg-secondary)}
+
+/* ─── Confirmation/Create modal ──────────────────────────────────────────── */
+.confirm-overlay{
+  position:fixed;inset:0;z-index:700;
+  background:var(--bg-overlay);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;transition:opacity var(--duration-normal) var(--ease-out);
+}
+.confirm-overlay.open{opacity:1}
+.confirm-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-xl);padding:32px 28px;
+  max-width:360px;width:100%;box-shadow:var(--shadow-xl);
+  transform:scale(0.94) translateY(8px);
+  transition:transform var(--duration-normal) var(--ease-spring);
+  text-align:center;
+}
+.confirm-overlay.open .confirm-card{transform:none}
+.modal-wide{max-width:440px;text-align:start}
+.confirm-icon{font-size:32px;margin-block-end:12px}
+.confirm-title{font-size:17px;font-weight:700;color:var(--text-primary);margin-block-end:10px}
+.confirm-msg{font-size:14px;color:var(--text-secondary);margin-block-end:24px;line-height:1.6}
+.confirm-actions{display:flex;gap:10px;justify-content:flex-end;margin-block-start:20px}
+.confirm-cancel{
+  padding:9px 18px;border-radius:var(--radius-md);border:1.5px solid var(--border-strong);
+  background:transparent;color:var(--text-secondary);font-size:14px;font-weight:600;
+  font-family:var(--font-body);cursor:pointer;min-height:38px;
+  transition:all var(--duration-fast);
+}
+.confirm-cancel:hover{background:var(--bg-secondary);color:var(--text-primary)}
+.confirm-ok{
+  padding:9px 22px;border-radius:var(--radius-md);border:none;
+  background:#EF4444;color:#fff;font-size:14px;font-weight:600;
+  font-family:var(--font-body);cursor:pointer;min-height:38px;
+  transition:opacity var(--duration-fast),transform var(--duration-fast);
+}
+.confirm-ok:hover{opacity:0.88}
+.confirm-ok:active{transform:scale(0.96)}
+
+.modal-input{
+  width:100%;padding:10px 14px;border-radius:var(--radius-md);
+  border:1.5px solid var(--border-strong);background:var(--bg-secondary);
+  font-family:var(--font-body);font-size:14px;color:var(--text-primary);
+  outline:none;margin-block-end:12px;
+  transition:border-color var(--duration-fast);
+}
+.modal-input:focus{border-color:var(--accent)}
+
+/* Color picker */
+.color-picker-row{display:flex;gap:8px;flex-wrap:wrap;margin-block-end:16px}
+.color-dot{
+  width:28px;height:28px;border-radius:50%;border:2.5px solid transparent;
+  cursor:pointer;transition:transform var(--duration-fast),border-color var(--duration-fast);
+  flex-shrink:0;
+}
+.color-dot:hover{transform:scale(1.15)}
+.color-dot.active{border-color:var(--text-primary);transform:scale(1.2)}
+
+/* ─── Groups List Page ────────────────────────────────────────────────────── */
+.groups-page{padding-block-start:calc(var(--nav-h) + 20px)}
+.groups-header{
+  display:flex;align-items:center;gap:12px;margin-block-end:20px;
+}
+.groups-title{
+  flex:1;font-family:var(--font-heading);font-size:1.5rem;font-weight:400;
+  background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.group-card{
+  display:flex;background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);margin-block-end:10px;overflow:hidden;
+  cursor:pointer;box-shadow:var(--shadow-sm);
+  transition:box-shadow var(--duration-normal),transform var(--duration-normal);
+}
+.group-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.group-card-stripe{width:5px;background:var(--g-color,#6366F1);flex-shrink:0}
+.group-card-body{flex:1;padding:14px 16px}
+.group-card-top{display:flex;align-items:center;gap:10px;margin-block-end:4px}
+.group-card-name{font-size:15px;font-weight:700;color:var(--text-primary)}
+.group-card-desc{font-size:13px;color:var(--text-secondary);margin-block-end:8px}
+.group-card-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.group-card-stats{font-size:12px;color:var(--text-tertiary)}
+
+/* Member avatars */
+.gm-avatars{display:flex;flex-wrap:nowrap}
+.gm-avatar{
+  width:26px;height:26px;border-radius:50%;object-fit:cover;
+  border:2px solid var(--bg-card);margin-inline-end:-6px;flex-shrink:0;
+}
+.gm-avatar.sm{width:20px;height:20px}
+.gm-avatar-fb{
+  background:var(--gradient);display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:#fff;
+}
+.gm-avatar-more{background:var(--bg-secondary);color:var(--text-secondary);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* Role badges */
+.role-badge{
+  padding:2px 9px;border-radius:var(--radius-full);font-size:11px;font-weight:700;
+}
+.role-admin{background:rgba(139,92,246,0.15);color:#7C3AED}
+.role-manager{background:rgba(59,130,246,0.15);color:#2563EB}
+.role-member{background:var(--bg-secondary);color:var(--text-secondary)}
+.pending-badge{
+  padding:2px 8px;border-radius:var(--radius-full);font-size:11px;font-weight:600;
+  background:rgba(245,158,11,0.15);color:#D97706;
+}
+
+/* ─── Group Board Page ────────────────────────────────────────────────────── */
+.group-board-page{padding-block-start:calc(var(--nav-h) + 20px)}
+.gb-header{
+  display:flex;align-items:center;gap:10px;margin-block-end:20px;flex-wrap:wrap;
+}
+.gb-name{font-size:1.3rem;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gb-member-avatars{display:flex}
+
+.gb-task-list{display:flex;flex-direction:column;gap:6px;margin-block-start:8px}
+.group-task-row{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-md);padding:10px 14px;
+  transition:box-shadow var(--duration-fast),border-color var(--duration-fast);
+}
+.group-task-row:hover{box-shadow:var(--shadow-sm);border-color:var(--border-strong)}
+.group-task-row.gt-done{opacity:0.5}
+.group-task-row.gt-done .gt-title{text-decoration:line-through;color:var(--text-tertiary)}
+.gt-title{flex:1;font-size:14px;font-weight:500;color:var(--text-primary);word-break:break-word}
+.gt-assignee{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary);white-space:nowrap;min-width:80px}
+.gt-unassigned{color:var(--text-tertiary);font-style:italic}
+.gt-priority{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.gt-del{
+  width:24px;height:24px;border:none;background:transparent;cursor:pointer;
+  color:var(--text-tertiary);font-size:13px;flex-shrink:0;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  transition:color var(--duration-fast),background var(--duration-fast);
+}
+.gt-del:hover{color:var(--priority-high);background:rgba(239,68,68,0.1)}
+
+.gb-select{
+  padding:6px 10px;border-radius:var(--radius-md);border:1.5px solid var(--border-strong);
+  background:var(--bg-secondary);font-family:var(--font-body);font-size:13px;
+  color:var(--text-primary);outline:none;cursor:pointer;max-width:140px;
+  transition:border-color var(--duration-fast);
+}
+.gb-select:focus{border-color:var(--accent)}
+
+/* ─── Members modal ───────────────────────────────────────────────────────── */
+.members-modal{text-align:start}
+.member-row{
+  display:flex;align-items:center;gap:10px;padding:10px 0;
+  border-block-end:1px solid var(--border);
+}
+.member-row:last-child{border-block-end:none}
+.member-info{flex:1;min-width:0}
+.member-name{font-size:13px;font-weight:600;color:var(--text-primary)}
+.member-email{font-size:11px;color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.role-select{
+  padding:4px 8px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);
+  background:var(--bg-secondary);font-family:var(--font-body);font-size:12px;
+  color:var(--text-primary);cursor:pointer;outline:none;
+}
+.leave-btn{
+  padding:5px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);
+  background:transparent;color:var(--text-secondary);font-size:12px;font-weight:600;
+  font-family:var(--font-body);cursor:pointer;transition:all var(--duration-fast);white-space:nowrap;
+}
+.leave-btn:hover{background:rgba(239,68,68,0.1);color:var(--priority-high);border-color:var(--priority-high)}
+
+/* ─── Invite link box ─────────────────────────────────────────────────────── */
+.invite-link-box{
+  background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-md);
+  padding:10px 14px;font-size:12px;color:var(--text-secondary);word-break:break-all;
+  margin-block-end:12px;font-family:monospace;
+}
+
+/* ─── Notification bell badge ─────────────────────────────────────────────── */
+.notif-badge{
+  position:absolute;top:2px;inset-inline-end:2px;
+  width:16px;height:16px;border-radius:50%;
+  background:#EF4444;color:#fff;font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--bg-primary);
+}
+
+/* ─── Notification dropdown ───────────────────────────────────────────────── */
+.notif-dropdown{
+  position:absolute;inset-block-start:calc(100% + 10px);inset-inline-end:0;
+  width:320px;z-index:500;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-xl);
+  overflow:hidden;animation:fadeUp var(--duration-normal) var(--ease-out);
+}
+.notif-dropdown-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px 10px;border-block-end:1px solid var(--border);
+  font-size:14px;font-weight:700;color:var(--text-primary);
+}
+.notif-dropdown-list{max-height:340px;overflow-y:auto}
+.notif-drop-item{
+  padding:11px 14px;border-block-end:1px solid var(--border);
+  cursor:pointer;transition:background var(--duration-fast);
+}
+.notif-drop-item:last-child{border-block-end:none}
+.notif-drop-item:hover{background:var(--accent-soft)}
+.notif-drop-item.unread{background:rgba(99,102,241,0.05)}
+.notif-drop-text{font-size:13px;color:var(--text-primary);line-height:1.4;margin-block-end:3px}
+.notif-drop-time{font-size:11px;color:var(--text-tertiary)}
+.notif-empty{padding:24px;text-align:center;font-size:13px;color:var(--text-tertiary)}
+.link-btn{
+  background:none;border:none;color:var(--accent);font-size:12px;font-weight:600;
+  font-family:var(--font-body);cursor:pointer;padding:0;
+}
+.link-btn:hover{text-decoration:underline}

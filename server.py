@@ -7,6 +7,7 @@ import secrets
 import mimetypes
 import urllib.request
 import urllib.parse
+import uuid as _uuid
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from http.cookies import SimpleCookie
 from urllib.parse import urlparse, parse_qs
@@ -93,6 +94,44 @@ def save_settings(user_id, data):
         return
     with open(os.path.join(DATA_DIR, f"{user_id}_settings.json"), "w") as f:
         json.dump(data, f, indent=2)
+
+# ─── Groups helpers ───────────────────────────────────────────────────────────
+def new_id():
+    return str(_uuid.uuid4())
+
+def load_groups_for_user(user_id):
+    """Return all groups where user is an active member."""
+    if db is None: return []
+    return list(db["groups"].find({"members": {"$elemMatch": {"userId": user_id, "status": "active"}}}))
+
+def load_group(group_id):
+    if db is None: return None
+    return db["groups"].find_one({"_id": group_id})
+
+def save_group(group):
+    if db is None: return
+    db["groups"].replace_one({"_id": group["_id"]}, group, upsert=True)
+
+def get_member_role(group, user_id):
+    for m in group.get("members", []):
+        if m.get("userId") == user_id and m.get("status") == "active":
+            return m.get("role")
+    return None
+
+def create_notification(user_id, notif_type, group_id, group_name, task_text=None, from_user=None):
+    if db is None: return
+    if not user_id: return
+    db["notifications"].insert_one({
+        "_id": new_id(),
+        "userId": user_id,
+        "type": notif_type,
+        "groupId": group_id,
+        "groupName": group_name,
+        "taskText": task_text,
+        "fromUser": from_user,
+        "createdAt": int(__import__("time").time() * 1000),
+        "read": False,
+    })
 
 # ─── Anthropic AI ─────────────────────────────────────────────────────────────
 def ai_suggest_next(todos):
@@ -332,7 +371,30 @@ class Handler(BaseHTTPRequestHandler):
                     "email":   user_info.get("email", ""),
                     "picture": user_info.get("picture", ""),
                 }
-                return self.redirect("/", {"Set-Cookie": self.session_cookie(user)})
+                # Check for pending invite cookie
+                cookies = SimpleCookie(self.headers.get("Cookie",""))
+                invite_token = cookies["pending_invite"].value if "pending_invite" in cookies else None
+                if invite_token and db is not None:
+                    g = db["groups"].find_one({"members.inviteToken": invite_token})
+                    if g:
+                        for m in g["members"]:
+                            if m.get("inviteToken") == invite_token and m.get("status") == "pending":
+                                m["userId"] = user["id"]
+                                m["name"] = user.get("name","")
+                                m["picture"] = user.get("picture","")
+                                m["status"] = "active"
+                                m["joinedAt"] = int(__import__("time").time() * 1000)
+                                m.pop("inviteToken", None)
+                                break
+                        save_group(g)
+                # Send response manually to support clearing invite cookie
+                self.send_response(302)
+                self.send_header("Location", "/")
+                self.send_header("Set-Cookie", self.session_cookie(user))
+                if invite_token:
+                    self.send_header("Set-Cookie", "pending_invite=; Path=/; Max-Age=0")
+                self.end_headers()
+                return
             except Exception as e:
                 print(f"OAuth error: {e}")
                 return self.redirect("/login")
@@ -343,6 +405,79 @@ class Handler(BaseHTTPRequestHandler):
             if DB_STATUS == "local_files":
                 health["warning"] = "Data will be lost on deploy. Set MONGODB_URI to use MongoDB."
             return self.ok("application/json", json.dumps(health).encode())
+
+        # Groups
+        if path == "/api/groups":
+            user = self.get_session()
+            if not user: return self.ok("application/json", b'{"error":"unauthorized"}')
+            groups = load_groups_for_user(user["id"])
+            result = []
+            for g in groups:
+                result.append({
+                    "_id": g["_id"], "name": g["name"],
+                    "description": g.get("description",""),
+                    "color": g.get("color","#3B82F6"),
+                    "createdBy": g.get("createdBy"),
+                    "members": g.get("members",[]),
+                    "taskCount": len(g.get("tasks",[])),
+                    "doneCount": sum(1 for t in g.get("tasks",[]) if t.get("done")),
+                })
+            return self.ok("application/json", json.dumps(result).encode())
+
+        if path.startswith("/api/groups/"):
+            parts = path.split("/")
+            # /api/groups/{id}
+            if len(parts) == 4:
+                group_id = parts[3]
+                user = self.get_session()
+                if not user: return self.ok("application/json", b'{"error":"unauthorized"}')
+                g = load_group(group_id)
+                if not g: return self.ok("application/json", b'{"error":"not found"}')
+                role = get_member_role(g, user["id"])
+                if not role: return self.ok("application/json", b'{"error":"forbidden"}')
+                out = dict(g); out["_id"] = g["_id"]; out["myRole"] = role
+                return self.ok("application/json", json.dumps(out).encode())
+
+        # Notifications
+        if path == "/api/notifications":
+            user = self.get_session()
+            if not user: return self.ok("application/json", b'{"error":"unauthorized"}')
+            if db is None: return self.ok("application/json", b'[]')
+            notifs = list(db["notifications"].find({"userId": user["id"]}).sort("createdAt", -1).limit(50))
+            for n in notifs:
+                n.pop("_id_obj", None)
+                n["_id"] = n.get("_id","")
+            return self.ok("application/json", json.dumps(notifs).encode())
+
+        # Invite token handler
+        if path.startswith("/invite/"):
+            token = path[8:]
+            user = self.get_session()
+            if db is None:
+                return self.ok("text/html; charset=utf-8", b"<p>Database not available</p>")
+            g = db["groups"].find_one({"members.inviteToken": token})
+            if not g:
+                return self.ok("text/html; charset=utf-8", b"<p>Invalid or expired invite link.</p>")
+            if not user:
+                # Store token in cookie, redirect to login
+                self.send_response(302)
+                self.send_header("Location", "/login")
+                self.send_header("Set-Cookie", f"pending_invite={token}; Path=/; Max-Age=600")
+                self.end_headers()
+                return
+            # Join the group
+            for m in g["members"]:
+                if m.get("inviteToken") == token and m.get("status") == "pending":
+                    m["userId"] = user["id"]
+                    m["name"] = user.get("name","")
+                    m["picture"] = user.get("picture","")
+                    m["status"] = "active"
+                    m["joinedAt"] = int(__import__("time").time() * 1000)
+                    m.pop("inviteToken", None)
+                    break
+            save_group(g)
+            create_notification(g["createdBy"], "member_joined", g["_id"], g["name"], from_user=user.get("name",""))
+            return self.redirect("/")
 
         if path == "/api/settings":
             user = self.get_session()
@@ -407,6 +542,244 @@ class Handler(BaseHTTPRequestHandler):
                 return self.ok("application/json", json.dumps(result).encode())
             except Exception as e:
                 return self.ok("application/json", json.dumps({"error": str(e)}).encode())
+
+        # Groups POST
+        if path == "/api/groups":
+            if not user: return self.ok("application/json", b'{"error":"unauthorized"}')
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length))
+            group = {
+                "_id": new_id(),
+                "name": body.get("name","").strip(),
+                "description": body.get("description","").strip(),
+                "color": body.get("color","#3B82F6"),
+                "createdBy": user["id"],
+                "createdAt": int(__import__("time").time() * 1000),
+                "members": [{
+                    "userId": user["id"],
+                    "email": user.get("email",""),
+                    "name": user.get("name",""),
+                    "picture": user.get("picture",""),
+                    "role": "admin",
+                    "status": "active",
+                    "joinedAt": int(__import__("time").time() * 1000),
+                }],
+                "tasks": [],
+            }
+            if db is not None:
+                db["groups"].insert_one(group)
+            return self.ok("application/json", json.dumps({"_id": group["_id"]}).encode())
+
+        if path.startswith("/api/groups/"):
+            parts = path.split("/")
+            if not user: return self.ok("application/json", b'{"error":"unauthorized"}')
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length)) if length else {}
+
+            # POST /api/groups/{id}/tasks
+            if len(parts) == 5 and parts[4] == "tasks":
+                group_id = parts[3]
+                g = load_group(group_id)
+                if not g: return self.ok("application/json", b'{"error":"not found"}')
+                role = get_member_role(g, user["id"])
+                if not role: return self.ok("application/json", b'{"error":"forbidden"}')
+                assigned_to = body.get("assignedTo", user["id"])
+                if role == "member": assigned_to = user["id"]
+                task = {
+                    "id": new_id(),
+                    "text": body.get("text","").strip(),
+                    "description": "",
+                    "done": False,
+                    "priority": body.get("priority","low"),
+                    "createdAt": int(__import__("time").time() * 1000),
+                    "completedAt": None,
+                    "createdBy": user["id"],
+                    "assignedTo": assigned_to,
+                    "subtasks": [],
+                }
+                g["tasks"].insert(0, task)
+                save_group(g)
+                if assigned_to and assigned_to != user["id"]:
+                    create_notification(assigned_to, "task_assigned", group_id, g["name"],
+                        task_text=task["text"], from_user=user.get("name",""))
+                return self.ok("application/json", json.dumps(task).encode())
+
+            # POST /api/groups/{id}/invite
+            if len(parts) == 5 and parts[4] == "invite":
+                group_id = parts[3]
+                g = load_group(group_id)
+                if not g: return self.ok("application/json", b'{"error":"not found"}')
+                role = get_member_role(g, user["id"])
+                if role != "admin": return self.ok("application/json", b'{"error":"forbidden"}')
+                email = body.get("email","").strip().lower()
+                invite_role = body.get("role","member")
+                token = new_id()
+                for m in g["members"]:
+                    if m.get("email","").lower() == email:
+                        return self.ok("application/json", b'{"error":"already invited"}')
+                g["members"].append({
+                    "userId": None,
+                    "email": email,
+                    "name": email.split("@")[0],
+                    "picture": None,
+                    "role": invite_role,
+                    "status": "pending",
+                    "joinedAt": None,
+                    "inviteToken": token,
+                })
+                save_group(g)
+                host = self.headers.get("Host","")
+                is_local = host.startswith("localhost") or host.startswith("127.")
+                scheme = "http" if is_local else "https"
+                invite_url = f"{scheme}://{host}/invite/{token}"
+                smtp_user = os.environ.get("SMTP_USER","")
+                smtp_pass = os.environ.get("SMTP_PASS","")
+                if smtp_user and smtp_pass:
+                    try:
+                        import smtplib
+                        from email.mime.text import MIMEText
+                        from email.mime.multipart import MIMEMultipart
+                        msg = MIMEMultipart("alternative")
+                        msg["Subject"] = f'{user.get("name","")} invited you to join "{g["name"]}" on MyTasks'
+                        msg["From"] = f"MyTasks <{smtp_user}>"
+                        msg["To"] = email
+                        html_body = f"""<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:40px 24px;">
+                          <h1 style="color:#6366F1">MyTasks</h1>
+                          <div style="background:#F8F7F4;border-radius:16px;padding:32px;text-align:center;">
+                            <h2>{g["name"]}</h2>
+                            <p>{user.get("name","")} wants you to join their group</p>
+                            <a href="{invite_url}" style="display:inline-block;background:#6366F1;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:600">Join Group</a>
+                          </div></div>"""
+                        msg.attach(MIMEText(html_body, "html"))
+                        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as srv:
+                            srv.login(smtp_user, smtp_pass)
+                            srv.send_message(msg)
+                    except Exception as e:
+                        print(f"SMTP error: {e}")
+                return self.ok("application/json", json.dumps({"token": token, "inviteUrl": invite_url}).encode())
+
+        # POST /api/notifications/read
+        if path == "/api/notifications/read":
+            if not user or db is None: return self.ok("application/json", b'{"ok":true}')
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length)) if length else {}
+            if body.get("all"):
+                db["notifications"].update_many({"userId": user["id"]}, {"$set": {"read": True}})
+            elif body.get("ids"):
+                db["notifications"].update_many({"_id": {"$in": body["ids"]}}, {"$set": {"read": True}})
+            return self.ok("application/json", b'{"ok":true}')
+
+        self.send_response(404); self.end_headers()
+
+    def do_PUT(self):
+        path = urlparse(self.path).path
+        parts = path.split("/")
+        user = self.get_session()
+        if not user:
+            self.ok("application/json", b'{"error":"unauthorized"}'); return
+        length = int(self.headers.get("Content-Length", 0))
+        body = json.loads(self.rfile.read(length)) if length else {}
+
+        # PUT /api/groups/{id}
+        if len(parts) == 4 and parts[1]=="api" and parts[2]=="groups":
+            g = load_group(parts[3])
+            if not g: return self.ok("application/json", b'{"error":"not found"}')
+            if get_member_role(g, user["id"]) != "admin":
+                return self.ok("application/json", b'{"error":"forbidden"}')
+            if "name" in body: g["name"] = body["name"]
+            if "description" in body: g["description"] = body["description"]
+            if "color" in body: g["color"] = body["color"]
+            save_group(g)
+            return self.ok("application/json", b'{"ok":true}')
+
+        # PUT /api/groups/{id}/tasks/{taskId}
+        if len(parts) == 6 and parts[1]=="api" and parts[2]=="groups" and parts[4]=="tasks":
+            g = load_group(parts[3])
+            if not g: return self.ok("application/json", b'{"error":"not found"}')
+            role = get_member_role(g, user["id"])
+            if not role: return self.ok("application/json", b'{"error":"forbidden"}')
+            for t in g["tasks"]:
+                if t["id"] == parts[5]:
+                    if "text" in body: t["text"] = body["text"]
+                    if "description" in body: t["description"] = body["description"]
+                    if "priority" in body: t["priority"] = body["priority"]
+                    if "subtasks" in body: t["subtasks"] = body["subtasks"]
+                    if "done" in body:
+                        t["done"] = body["done"]
+                        t["completedAt"] = int(__import__("time").time()*1000) if body["done"] else None
+                        if body["done"]:
+                            for m in g["members"]:
+                                if m.get("status")=="active" and m.get("userId") != user["id"]:
+                                    create_notification(m["userId"],"task_completed",g["_id"],g["name"],
+                                        task_text=t["text"],from_user=user.get("name",""))
+                    if "assignedTo" in body and role in ("admin","manager"):
+                        old = t.get("assignedTo")
+                        t["assignedTo"] = body["assignedTo"]
+                        if body["assignedTo"] and body["assignedTo"] != user["id"] and body["assignedTo"] != old:
+                            create_notification(body["assignedTo"],"task_assigned",g["_id"],g["name"],
+                                task_text=t["text"],from_user=user.get("name",""))
+                    break
+            save_group(g)
+            return self.ok("application/json", b'{"ok":true}')
+
+        # PUT /api/groups/{id}/members/{userId}
+        if len(parts) == 6 and parts[1]=="api" and parts[2]=="groups" and parts[4]=="members":
+            g = load_group(parts[3])
+            if not g: return self.ok("application/json", b'{"error":"not found"}')
+            if get_member_role(g, user["id"]) != "admin":
+                return self.ok("application/json", b'{"error":"forbidden"}')
+            target_id = parts[5]
+            for m in g["members"]:
+                if m.get("userId") == target_id:
+                    m["role"] = body.get("role", m["role"])
+                    break
+            save_group(g)
+            return self.ok("application/json", b'{"ok":true}')
+
+        self.send_response(404); self.end_headers()
+
+    def do_DELETE(self):
+        path = urlparse(self.path).path
+        parts = path.split("/")
+        user = self.get_session()
+        if not user:
+            self.ok("application/json", b'{"error":"unauthorized"}'); return
+
+        # DELETE /api/groups/{id}
+        if len(parts) == 4 and parts[1]=="api" and parts[2]=="groups":
+            g = load_group(parts[3])
+            if not g: return self.ok("application/json", b'{"error":"not found"}')
+            if get_member_role(g, user["id"]) != "admin":
+                return self.ok("application/json", b'{"error":"forbidden"}')
+            if db is not None: db["groups"].delete_one({"_id": parts[3]})
+            return self.ok("application/json", b'{"ok":true}')
+
+        # DELETE /api/groups/{id}/tasks/{taskId}
+        if len(parts) == 6 and parts[1]=="api" and parts[2]=="groups" and parts[4]=="tasks":
+            g = load_group(parts[3])
+            if not g: return self.ok("application/json", b'{"error":"not found"}')
+            role = get_member_role(g, user["id"])
+            if not role: return self.ok("application/json", b'{"error":"forbidden"}')
+            task = next((t for t in g["tasks"] if t["id"]==parts[5]), None)
+            if task:
+                if role in ("admin","manager") or task.get("createdBy")==user["id"]:
+                    g["tasks"] = [t for t in g["tasks"] if t["id"]!=parts[5]]
+            save_group(g)
+            return self.ok("application/json", b'{"ok":true}')
+
+        # DELETE /api/groups/{id}/members/{userId}
+        if len(parts) == 6 and parts[1]=="api" and parts[2]=="groups" and parts[4]=="members":
+            g = load_group(parts[3])
+            if not g: return self.ok("application/json", b'{"error":"not found"}')
+            role = get_member_role(g, user["id"])
+            target_id = parts[5]
+            if target_id != user["id"] and role != "admin":
+                return self.ok("application/json", b'{"error":"forbidden"}')
+            g["members"] = [m for m in g["members"] if m.get("userId") != target_id]
+            for t in g["tasks"]:
+                if t.get("assignedTo") == target_id: t["assignedTo"] = None
+            save_group(g)
+            return self.ok("application/json", b'{"ok":true}')
 
         self.send_response(404); self.end_headers()
 

@@ -11,6 +11,12 @@ const state = {
   chartView: false,
   activeChart: 'pie',
   linePeriod: '7',
+  groupsView: false,
+  activeGroup: null,
+  groupFilter: 'all',
+  groupSort: 'newest',
+  notifications: [],
+  unreadCount: 0,
 };
 
 // ─── Translations ─────────────────────────────────────────────────────────────
@@ -64,6 +70,28 @@ const TL = {
     chartBar:'By Priority',chartHBar:'Horizontal',chartLine:'Trend',chartPolar:'Polar',
     last7:'Last 7 days',last30:'Last 30 days',backToTasks:'← Tasks',
     noData:'No data yet',
+    groups:'Groups',myGroups:'My Groups',newGroup:'New Group',createGroup:'Create Group',
+    groupName:'Group Name',groupDescription:'Description',groupColor:'Color',
+    inviteMember:'Invite Member',inviteByEmail:'Invite by email',sendInvitation:'Send Invitation',
+    copyInviteLink:'Copy Invite Link',linkCopied:'Link copied!',pendingInvite:'Pending',
+    members:'Members',member:'Member',manager:'Manager',admin:'Admin',
+    removeMember:'Remove Member',leaveGroup:'Leave Group',deleteGroup:'Delete Group',
+    assignTo:'Assign to',assignedTo:'Assigned to',unassigned:'Unassigned',
+    createdBy:'Created by',allTasks:'All Tasks',myTasksFilter:'My Tasks',filterUnassigned:'Unassigned',
+    confirmLogout:'Are you sure you want to log out?',
+    confirmDeleteTask:'Are you sure you want to delete this task?',
+    confirmRemoveMember:'Remove {name} from this group?',
+    confirmLeaveGroup:'Leave "{group}"?',
+    confirmDeleteGroup:'Delete "{group}"? All tasks will be lost.',
+    yes:'Yes',no:'No',cancel:'Cancel',
+    noGroupsYet:'No groups yet — create one to collaborate with friends!',
+    markAllRead:'Mark all as read',joinGroup:'Join Group',inviteAccepted:'You\'ve joined the group!',
+    roleChanged:'Role updated',memberRemoved:'Member removed',taskAssigned:'Task assigned',
+    noNotifications:'No notifications yet',
+    notifTaskAssigned:'{name} assigned you "{task}" in {group}',
+    notifTaskCompleted:'{name} completed "{task}" in {group}',
+    notifGroupInvite:'{name} invited you to join "{group}"',
+    notifMemberJoined:'{name} joined "{group}"',
   },
   he: {
     appTitle:'המשימות שלי',add:'הוסף',filterAll:'הכל',filterActive:'פעיל',filterDone:'הושלם',
@@ -97,6 +125,28 @@ const TL = {
     doNotDisturb:'אל תפריע',doNotDisturbDesc:'השתק את כל ההתראות',
     taskDone:'הושלם',
     charts:'ניתוח',totalTasks:'סה״כ משימות',completed:'הושלמו',pending:'ממתינות',avgTime:'זמן ממוצע',chartPie:'עוגה',chartDoughnut:'דונאט',chartBar:'לפי עדיפות',chartHBar:'אופקי',chartLine:'מגמה',chartPolar:'פולרי',last7:'7 ימים אחרונים',last30:'30 ימים אחרונים',backToTasks:'← משימות',noData:'אין נתונים עדיין',
+    groups:'קבוצות',myGroups:'הקבוצות שלי',newGroup:'קבוצה חדשה',createGroup:'צור קבוצה',
+    groupName:'שם הקבוצה',groupDescription:'תיאור',groupColor:'צבע',
+    inviteMember:'הזמן חבר',inviteByEmail:'הזמן באמצעות אימייל',sendInvitation:'שלח הזמנה',
+    copyInviteLink:'העתק קישור הזמנה',linkCopied:'הקישור הועתק!',pendingInvite:'ממתין',
+    members:'חברים',member:'חבר',manager:'מנהל',admin:'מנהל מערכת',
+    removeMember:'הסר חבר',leaveGroup:'עזוב קבוצה',deleteGroup:'מחק קבוצה',
+    assignTo:'הקצה ל',assignedTo:'מוקצה ל',unassigned:'לא מוקצה',
+    createdBy:'נוצר על ידי',allTasks:'כל המשימות',myTasksFilter:'המשימות שלי',filterUnassigned:'לא מוקצה',
+    confirmLogout:'האם אתה בטוח שברצונך להתנתק?',
+    confirmDeleteTask:'האם אתה בטוח שברצונך למחוק משימה זו?',
+    confirmRemoveMember:'להסיר את {name} מהקבוצה?',
+    confirmLeaveGroup:'לעזוב את "{group}"?',
+    confirmDeleteGroup:'למחוק את "{group}"? כל המשימות יאבדו.',
+    yes:'כן',no:'לא',cancel:'ביטול',
+    noGroupsYet:'אין קבוצות עדיין — צור אחת כדי לשתף פעולה עם חברים!',
+    markAllRead:'סמן הכל כנקרא',joinGroup:'הצטרף לקבוצה',inviteAccepted:'הצטרפת לקבוצה!',
+    roleChanged:'התפקיד עודכן',memberRemoved:'החבר הוסר',taskAssigned:'המשימה הוקצתה',
+    noNotifications:'אין התראות עדיין',
+    notifTaskAssigned:'{name} הקצה לך "{task}" ב{group}',
+    notifTaskCompleted:'{name} השלים "{task}" ב{group}',
+    notifGroupInvite:'{name} הזמין אותך להצטרף ל"{group}"',
+    notifMemberJoined:'{name} הצטרף ל"{group}"',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -130,6 +180,28 @@ const TL = {
     doNotDisturb:'عدم الإزعاج',doNotDisturbDesc:'كتم جميع الإشعارات',
     taskDone:'تم',
     charts:'تحليلات',totalTasks:'إجمالي المهام',completed:'مكتملة',pending:'معلقة',avgTime:'متوسط الوقت',chartPie:'دائري',chartDoughnut:'دونات',chartBar:'حسب الأولوية',chartHBar:'أفقي',chartLine:'الاتجاه',chartPolar:'قطبي',last7:'آخر 7 أيام',last30:'آخر 30 يومًا',backToTasks:'← المهام',noData:'لا توجد بيانات بعد',
+    groups:'المجموعات',myGroups:'مجموعاتي',newGroup:'مجموعة جديدة',createGroup:'إنشاء مجموعة',
+    groupName:'اسم المجموعة',groupDescription:'الوصف',groupColor:'اللون',
+    inviteMember:'دعوة عضو',inviteByEmail:'الدعوة بالبريد الإلكتروني',sendInvitation:'إرسال الدعوة',
+    copyInviteLink:'نسخ رابط الدعوة',linkCopied:'تم نسخ الرابط!',pendingInvite:'قيد الانتظار',
+    members:'الأعضاء',member:'عضو',manager:'مدير',admin:'مسؤول',
+    removeMember:'إزالة عضو',leaveGroup:'مغادرة المجموعة',deleteGroup:'حذف المجموعة',
+    assignTo:'تعيين إلى',assignedTo:'معين إلى',unassigned:'غير معين',
+    createdBy:'أنشأه',allTasks:'جميع المهام',myTasksFilter:'مهامي',filterUnassigned:'غير معين',
+    confirmLogout:'هل أنت متأكد من تسجيل الخروج؟',
+    confirmDeleteTask:'هل أنت متأكد من حذف هذه المهمة؟',
+    confirmRemoveMember:'إزالة {name} من المجموعة؟',
+    confirmLeaveGroup:'مغادرة "{group}"؟',
+    confirmDeleteGroup:'حذف "{group}"؟ ستُفقد جميع المهام.',
+    yes:'نعم',no:'لا',cancel:'إلغاء',
+    noGroupsYet:'لا توجد مجموعات بعد — أنشئ واحدة للتعاون مع الأصدقاء!',
+    markAllRead:'تحديد الكل كمقروء',joinGroup:'الانضمام للمجموعة',inviteAccepted:'انضممت إلى المجموعة!',
+    roleChanged:'تم تحديث الدور',memberRemoved:'تمت إزالة العضو',taskAssigned:'تم تعيين المهمة',
+    noNotifications:'لا توجد إشعارات بعد',
+    notifTaskAssigned:'{name} عيّن لك "{task}" في {group}',
+    notifTaskCompleted:'{name} أكمل "{task}" في {group}',
+    notifGroupInvite:'{name} دعاك للانضمام إلى "{group}"',
+    notifMemberJoined:'{name} انضم إلى "{group}"',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -163,6 +235,28 @@ const TL = {
     doNotDisturb:'No molestar',doNotDisturbDesc:'Silenciar todas las notificaciones',
     taskDone:'Hecho',
     charts:'Análisis',totalTasks:'Total',completed:'Completadas',pending:'Pendientes',avgTime:'Tiempo medio',chartPie:'Tarta',chartDoughnut:'Dona',chartBar:'Por prioridad',chartHBar:'Horizontal',chartLine:'Tendencia',chartPolar:'Polar',last7:'Últimos 7 días',last30:'Últimos 30 días',backToTasks:'← Tareas',noData:'Sin datos aún',
+    groups:'Grupos',myGroups:'Mis Grupos',newGroup:'Nuevo Grupo',createGroup:'Crear Grupo',
+    groupName:'Nombre del grupo',groupDescription:'Descripción',groupColor:'Color',
+    inviteMember:'Invitar miembro',inviteByEmail:'Invitar por correo',sendInvitation:'Enviar invitación',
+    copyInviteLink:'Copiar enlace',linkCopied:'¡Enlace copiado!',pendingInvite:'Pendiente',
+    members:'Miembros',member:'Miembro',manager:'Gerente',admin:'Administrador',
+    removeMember:'Eliminar miembro',leaveGroup:'Salir del grupo',deleteGroup:'Eliminar grupo',
+    assignTo:'Asignar a',assignedTo:'Asignado a',unassigned:'Sin asignar',
+    createdBy:'Creado por',allTasks:'Todas las tareas',myTasksFilter:'Mis tareas',filterUnassigned:'Sin asignar',
+    confirmLogout:'¿Estás seguro de que quieres cerrar sesión?',
+    confirmDeleteTask:'¿Estás seguro de que quieres eliminar esta tarea?',
+    confirmRemoveMember:'¿Eliminar a {name} de este grupo?',
+    confirmLeaveGroup:'¿Salir de "{group}"?',
+    confirmDeleteGroup:'¿Eliminar "{group}"? Se perderán todas las tareas.',
+    yes:'Sí',no:'No',cancel:'Cancelar',
+    noGroupsYet:'Aún no hay grupos — ¡crea uno para colaborar con amigos!',
+    markAllRead:'Marcar todo como leído',joinGroup:'Unirse al grupo',inviteAccepted:'¡Te has unido al grupo!',
+    roleChanged:'Rol actualizado',memberRemoved:'Miembro eliminado',taskAssigned:'Tarea asignada',
+    noNotifications:'No hay notificaciones aún',
+    notifTaskAssigned:'{name} te asignó "{task}" en {group}',
+    notifTaskCompleted:'{name} completó "{task}" en {group}',
+    notifGroupInvite:'{name} te invitó a unirte a "{group}"',
+    notifMemberJoined:'{name} se unió a "{group}"',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -196,6 +290,28 @@ const TL = {
     doNotDisturb:'Ne pas déranger',doNotDisturbDesc:'Silencer toutes les notifications',
     taskDone:'Fait',
     charts:'Analyses',totalTasks:'Total',completed:'Terminées',pending:'En attente',avgTime:'Temps moyen',chartPie:'Camembert',chartDoughnut:'Donut',chartBar:'Par priorité',chartHBar:'Horizontal',chartLine:'Tendance',chartPolar:'Polaire',last7:'7 derniers jours',last30:'30 derniers jours',backToTasks:'← Tâches',noData:'Aucune donnée',
+    groups:'Groupes',myGroups:'Mes Groupes',newGroup:'Nouveau Groupe',createGroup:'Créer un groupe',
+    groupName:'Nom du groupe',groupDescription:'Description',groupColor:'Couleur',
+    inviteMember:'Inviter un membre',inviteByEmail:'Inviter par email',sendInvitation:'Envoyer l\'invitation',
+    copyInviteLink:'Copier le lien',linkCopied:'Lien copié !',pendingInvite:'En attente',
+    members:'Membres',member:'Membre',manager:'Gestionnaire',admin:'Administrateur',
+    removeMember:'Retirer le membre',leaveGroup:'Quitter le groupe',deleteGroup:'Supprimer le groupe',
+    assignTo:'Assigner à',assignedTo:'Assigné à',unassigned:'Non assigné',
+    createdBy:'Créé par',allTasks:'Toutes les tâches',myTasksFilter:'Mes tâches',filterUnassigned:'Non assigné',
+    confirmLogout:'Êtes-vous sûr de vouloir vous déconnecter ?',
+    confirmDeleteTask:'Êtes-vous sûr de vouloir supprimer cette tâche ?',
+    confirmRemoveMember:'Retirer {name} de ce groupe ?',
+    confirmLeaveGroup:'Quitter "{group}" ?',
+    confirmDeleteGroup:'Supprimer "{group}" ? Toutes les tâches seront perdues.',
+    yes:'Oui',no:'Non',cancel:'Annuler',
+    noGroupsYet:'Aucun groupe encore — créez-en un pour collaborer avec des amis !',
+    markAllRead:'Tout marquer comme lu',joinGroup:'Rejoindre le groupe',inviteAccepted:'Vous avez rejoint le groupe !',
+    roleChanged:'Rôle mis à jour',memberRemoved:'Membre retiré',taskAssigned:'Tâche assignée',
+    noNotifications:'Aucune notification pour l\'instant',
+    notifTaskAssigned:'{name} vous a assigné "{task}" dans {group}',
+    notifTaskCompleted:'{name} a terminé "{task}" dans {group}',
+    notifGroupInvite:'{name} vous a invité à rejoindre "{group}"',
+    notifMemberJoined:'{name} a rejoint "{group}"',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -229,6 +345,28 @@ const TL = {
     doNotDisturb:'Nicht stören',doNotDisturbDesc:'Alle Benachrichtigungen stummschalten',
     taskDone:'Erledigt',
     charts:'Analysen',totalTasks:'Gesamt',completed:'Abgeschlossen',pending:'Ausstehend',avgTime:'Durchschn. Zeit',chartPie:'Kuchendiagramm',chartDoughnut:'Donut',chartBar:'Nach Priorität',chartHBar:'Horizontal',chartLine:'Verlauf',chartPolar:'Polar',last7:'Letzte 7 Tage',last30:'Letzte 30 Tage',backToTasks:'← Aufgaben',noData:'Keine Daten',
+    groups:'Gruppen',myGroups:'Meine Gruppen',newGroup:'Neue Gruppe',createGroup:'Gruppe erstellen',
+    groupName:'Gruppenname',groupDescription:'Beschreibung',groupColor:'Farbe',
+    inviteMember:'Mitglied einladen',inviteByEmail:'Per E-Mail einladen',sendInvitation:'Einladung senden',
+    copyInviteLink:'Einladungslink kopieren',linkCopied:'Link kopiert!',pendingInvite:'Ausstehend',
+    members:'Mitglieder',member:'Mitglied',manager:'Manager',admin:'Administrator',
+    removeMember:'Mitglied entfernen',leaveGroup:'Gruppe verlassen',deleteGroup:'Gruppe löschen',
+    assignTo:'Zuweisen an',assignedTo:'Zugewiesen an',unassigned:'Nicht zugewiesen',
+    createdBy:'Erstellt von',allTasks:'Alle Aufgaben',myTasksFilter:'Meine Aufgaben',filterUnassigned:'Nicht zugewiesen',
+    confirmLogout:'Möchten Sie sich wirklich abmelden?',
+    confirmDeleteTask:'Möchten Sie diese Aufgabe wirklich löschen?',
+    confirmRemoveMember:'{name} aus dieser Gruppe entfernen?',
+    confirmLeaveGroup:'"{group}" verlassen?',
+    confirmDeleteGroup:'"{group}" löschen? Alle Aufgaben gehen verloren.',
+    yes:'Ja',no:'Nein',cancel:'Abbrechen',
+    noGroupsYet:'Noch keine Gruppen — erstellen Sie eine, um mit Freunden zusammenzuarbeiten!',
+    markAllRead:'Alle als gelesen markieren',joinGroup:'Gruppe beitreten',inviteAccepted:'Sie sind der Gruppe beigetreten!',
+    roleChanged:'Rolle aktualisiert',memberRemoved:'Mitglied entfernt',taskAssigned:'Aufgabe zugewiesen',
+    noNotifications:'Noch keine Benachrichtigungen',
+    notifTaskAssigned:'{name} hat Ihnen "{task}" in {group} zugewiesen',
+    notifTaskCompleted:'{name} hat "{task}" in {group} abgeschlossen',
+    notifGroupInvite:'{name} hat Sie eingeladen, "{group}" beizutreten',
+    notifMemberJoined:'{name} ist "{group}" beigetreten',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -262,6 +400,28 @@ const TL = {
     doNotDisturb:'Не беспокоить',doNotDisturbDesc:'Отключить все уведомления',
     taskDone:'Готово',
     charts:'Аналитика',totalTasks:'Всего',completed:'Выполнено',pending:'В ожидании',avgTime:'Среднее время',chartPie:'Круговая',chartDoughnut:'Пончик',chartBar:'По приоритету',chartHBar:'Горизонт.',chartLine:'Тренд',chartPolar:'Полярная',last7:'Последние 7 дней',last30:'Последние 30 дней',backToTasks:'← Задачи',noData:'Нет данных',
+    groups:'Группы',myGroups:'Мои группы',newGroup:'Новая группа',createGroup:'Создать группу',
+    groupName:'Название группы',groupDescription:'Описание',groupColor:'Цвет',
+    inviteMember:'Пригласить участника',inviteByEmail:'Пригласить по email',sendInvitation:'Отправить приглашение',
+    copyInviteLink:'Скопировать ссылку',linkCopied:'Ссылка скопирована!',pendingInvite:'Ожидает',
+    members:'Участники',member:'Участник',manager:'Менеджер',admin:'Администратор',
+    removeMember:'Удалить участника',leaveGroup:'Покинуть группу',deleteGroup:'Удалить группу',
+    assignTo:'Назначить',assignedTo:'Назначено',unassigned:'Не назначено',
+    createdBy:'Создано',allTasks:'Все задачи',myTasksFilter:'Мои задачи',filterUnassigned:'Без исполнителя',
+    confirmLogout:'Вы уверены, что хотите выйти?',
+    confirmDeleteTask:'Вы уверены, что хотите удалить эту задачу?',
+    confirmRemoveMember:'Удалить {name} из группы?',
+    confirmLeaveGroup:'Покинуть "{group}"?',
+    confirmDeleteGroup:'Удалить "{group}"? Все задачи будут потеряны.',
+    yes:'Да',no:'Нет',cancel:'Отмена',
+    noGroupsYet:'Пока нет групп — создайте одну для совместной работы!',
+    markAllRead:'Отметить все прочитанными',joinGroup:'Присоединиться к группе',inviteAccepted:'Вы присоединились к группе!',
+    roleChanged:'Роль обновлена',memberRemoved:'Участник удалён',taskAssigned:'Задача назначена',
+    noNotifications:'Нет уведомлений',
+    notifTaskAssigned:'{name} назначил вам "{task}" в {group}',
+    notifTaskCompleted:'{name} выполнил "{task}" в {group}',
+    notifGroupInvite:'{name} пригласил вас в "{group}"',
+    notifMemberJoined:'{name} присоединился к "{group}"',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -295,6 +455,28 @@ const TL = {
     doNotDisturb:'Não perturbe',doNotDisturbDesc:'Silenciar todas as notificações',
     taskDone:'Feito',
     charts:'Análises',totalTasks:'Total',completed:'Concluídas',pending:'Pendentes',avgTime:'Tempo médio',chartPie:'Pizza',chartDoughnut:'Donuts',chartBar:'Por prioridade',chartHBar:'Horizontal',chartLine:'Tendência',chartPolar:'Polar',last7:'Últimos 7 dias',last30:'Últimos 30 dias',backToTasks:'← Tarefas',noData:'Sem dados',
+    groups:'Grupos',myGroups:'Meus Grupos',newGroup:'Novo Grupo',createGroup:'Criar Grupo',
+    groupName:'Nome do grupo',groupDescription:'Descrição',groupColor:'Cor',
+    inviteMember:'Convidar membro',inviteByEmail:'Convidar por email',sendInvitation:'Enviar convite',
+    copyInviteLink:'Copiar link',linkCopied:'Link copiado!',pendingInvite:'Pendente',
+    members:'Membros',member:'Membro',manager:'Gerente',admin:'Administrador',
+    removeMember:'Remover membro',leaveGroup:'Sair do grupo',deleteGroup:'Excluir grupo',
+    assignTo:'Atribuir a',assignedTo:'Atribuído a',unassigned:'Sem atribuição',
+    createdBy:'Criado por',allTasks:'Todas as tarefas',myTasksFilter:'Minhas tarefas',filterUnassigned:'Sem atribuição',
+    confirmLogout:'Tem certeza que deseja sair?',
+    confirmDeleteTask:'Tem certeza que deseja excluir esta tarefa?',
+    confirmRemoveMember:'Remover {name} deste grupo?',
+    confirmLeaveGroup:'Sair de "{group}"?',
+    confirmDeleteGroup:'Excluir "{group}"? Todas as tarefas serão perdidas.',
+    yes:'Sim',no:'Não',cancel:'Cancelar',
+    noGroupsYet:'Nenhum grupo ainda — crie um para colaborar com amigos!',
+    markAllRead:'Marcar tudo como lido',joinGroup:'Entrar no grupo',inviteAccepted:'Você entrou no grupo!',
+    roleChanged:'Função atualizada',memberRemoved:'Membro removido',taskAssigned:'Tarefa atribuída',
+    noNotifications:'Sem notificações ainda',
+    notifTaskAssigned:'{name} atribuiu "{task}" a você em {group}',
+    notifTaskCompleted:'{name} concluiu "{task}" em {group}',
+    notifGroupInvite:'{name} convidou você para entrar em "{group}"',
+    notifMemberJoined:'{name} entrou em "{group}"',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -328,6 +510,28 @@ const TL = {
     doNotDisturb:'勿扰模式',doNotDisturbDesc:'静音所有通知',
     taskDone:'完成',
     charts:'统计',totalTasks:'总任务',completed:'已完成',pending:'待完成',avgTime:'平均时间',chartPie:'饼图',chartDoughnut:'环形图',chartBar:'按优先级',chartHBar:'横向柱图',chartLine:'趋势',chartPolar:'极坐标',last7:'最近7天',last30:'最近30天',backToTasks:'← 任务',noData:'暂无数据',
+    groups:'群组',myGroups:'我的群组',newGroup:'新建群组',createGroup:'创建群组',
+    groupName:'群组名称',groupDescription:'描述',groupColor:'颜色',
+    inviteMember:'邀请成员',inviteByEmail:'通过邮件邀请',sendInvitation:'发送邀请',
+    copyInviteLink:'复制邀请链接',linkCopied:'链接已复制！',pendingInvite:'待处理',
+    members:'成员',member:'成员',manager:'管理员',admin:'超级管理员',
+    removeMember:'移除成员',leaveGroup:'退出群组',deleteGroup:'删除群组',
+    assignTo:'分配给',assignedTo:'已分配给',unassigned:'未分配',
+    createdBy:'创建者',allTasks:'所有任务',myTasksFilter:'我的任务',filterUnassigned:'未分配',
+    confirmLogout:'确定要退出登录吗？',
+    confirmDeleteTask:'确定要删除此任务吗？',
+    confirmRemoveMember:'从此群组移除 {name}？',
+    confirmLeaveGroup:'退出"{group}"？',
+    confirmDeleteGroup:'删除"{group}"？所有任务将丢失。',
+    yes:'是',no:'否',cancel:'取消',
+    noGroupsYet:'还没有群组 — 创建一个与朋友协作吧！',
+    markAllRead:'全部标为已读',joinGroup:'加入群组',inviteAccepted:'您已加入群组！',
+    roleChanged:'角色已更新',memberRemoved:'成员已移除',taskAssigned:'任务已分配',
+    noNotifications:'暂无通知',
+    notifTaskAssigned:'{name} 在 {group} 中将"{task}"分配给您',
+    notifTaskCompleted:'{name} 在 {group} 中完成了"{task}"',
+    notifGroupInvite:'{name} 邀请您加入"{group}"',
+    notifMemberJoined:'{name} 加入了"{group}"',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -361,6 +565,28 @@ const TL = {
     doNotDisturb:'おやすみモード',doNotDisturbDesc:'すべての通知をミュート',
     taskDone:'完了',
     charts:'分析',totalTasks:'合計',completed:'完了',pending:'未完了',avgTime:'平均時間',chartPie:'円グラフ',chartDoughnut:'ドーナツ',chartBar:'優先度別',chartHBar:'横棒グラフ',chartLine:'トレンド',chartPolar:'極座標',last7:'過去7日間',last30:'過去30日間',backToTasks:'← タスク',noData:'データなし',
+    groups:'グループ',myGroups:'マイグループ',newGroup:'新しいグループ',createGroup:'グループを作成',
+    groupName:'グループ名',groupDescription:'説明',groupColor:'カラー',
+    inviteMember:'メンバーを招待',inviteByEmail:'メールで招待',sendInvitation:'招待を送る',
+    copyInviteLink:'招待リンクをコピー',linkCopied:'リンクをコピーしました！',pendingInvite:'保留中',
+    members:'メンバー',member:'メンバー',manager:'マネージャー',admin:'管理者',
+    removeMember:'メンバーを削除',leaveGroup:'グループを退出',deleteGroup:'グループを削除',
+    assignTo:'担当者',assignedTo:'担当者',unassigned:'未割当',
+    createdBy:'作成者',allTasks:'すべてのタスク',myTasksFilter:'自分のタスク',filterUnassigned:'未割当',
+    confirmLogout:'本当にログアウトしますか？',
+    confirmDeleteTask:'このタスクを削除してもよいですか？',
+    confirmRemoveMember:'{name} をこのグループから削除しますか？',
+    confirmLeaveGroup:'"{group}" を退出しますか？',
+    confirmDeleteGroup:'"{group}" を削除しますか？すべてのタスクが失われます。',
+    yes:'はい',no:'いいえ',cancel:'キャンセル',
+    noGroupsYet:'まだグループがありません — 友達と協力するために作成しましょう！',
+    markAllRead:'すべて既読にする',joinGroup:'グループに参加',inviteAccepted:'グループに参加しました！',
+    roleChanged:'役割が更新されました',memberRemoved:'メンバーが削除されました',taskAssigned:'タスクが割り当てられました',
+    noNotifications:'通知はまだありません',
+    notifTaskAssigned:'{name} が {group} で "{task}" をあなたに割り当てました',
+    notifTaskCompleted:'{name} が {group} で "{task}" を完了しました',
+    notifGroupInvite:'{name} があなたを "{group}" に招待しました',
+    notifMemberJoined:'{name} が "{group}" に参加しました',
   },
 };
 
@@ -449,6 +675,552 @@ async function apiSaveSettings() {
       body: JSON.stringify(state.settings),
     });
   } catch {}
+}
+
+// ─── Confirmation dialog ──────────────────────────────────────────────────────
+function confirmAction({ title, message, confirmText = 'Confirm', confirmColor = '#EF4444', onConfirm }) {
+  document.getElementById('confirmModal')?.remove();
+  const el = document.createElement('div');
+  el.id = 'confirmModal';
+  el.className = 'confirm-overlay';
+  el.innerHTML = `
+    <div class="confirm-card">
+      <div class="confirm-icon">⚠️</div>
+      <div class="confirm-title">${title}</div>
+      <div class="confirm-msg">${message}</div>
+      <div class="confirm-actions">
+        <button class="confirm-cancel" id="confirmCancel">${TL[state.lang]?.cancel || 'Cancel'}</button>
+        <button class="confirm-ok" id="confirmOk" style="background:${confirmColor}">${confirmText}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('open'));
+  const close = () => { el.classList.remove('open'); setTimeout(() => el.remove(), 200); };
+  el.querySelector('#confirmCancel').onclick = close;
+  el.querySelector('#confirmOk').onclick = () => { close(); onConfirm(); };
+  el.addEventListener('click', e => { if (e.target === el) close(); });
+  document.addEventListener('keydown', function esc(e) {
+    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); }
+  });
+}
+
+// ─── Groups API ───────────────────────────────────────────────────────────────
+async function apiLoadGroups() {
+  const r = await fetch('/api/groups');
+  if (!r.ok) return [];
+  return r.json();
+}
+
+async function apiCreateGroup(data) {
+  const r = await fetch('/api/groups', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+  return r.json();
+}
+
+async function apiLoadGroup(id) {
+  const r = await fetch(`/api/groups/${id}`);
+  return r.json();
+}
+
+async function apiUpdateGroup(id, data) {
+  await fetch(`/api/groups/${id}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+}
+
+async function apiDeleteGroup(id) {
+  await fetch(`/api/groups/${id}`, { method: 'DELETE' });
+}
+
+async function apiAddGroupTask(groupId, data) {
+  const r = await fetch(`/api/groups/${groupId}/tasks`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+  return r.json();
+}
+
+async function apiUpdateGroupTask(groupId, taskId, data) {
+  await fetch(`/api/groups/${groupId}/tasks/${taskId}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+}
+
+async function apiDeleteGroupTask(groupId, taskId) {
+  await fetch(`/api/groups/${groupId}/tasks/${taskId}`, { method: 'DELETE' });
+}
+
+async function apiInviteMember(groupId, email, role) {
+  const r = await fetch(`/api/groups/${groupId}/invite`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({email, role})
+  });
+  return r.json();
+}
+
+async function apiChangeMemberRole(groupId, userId, role) {
+  await fetch(`/api/groups/${groupId}/members/${userId}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({role})
+  });
+}
+
+async function apiRemoveMember(groupId, userId) {
+  await fetch(`/api/groups/${groupId}/members/${userId}`, { method: 'DELETE' });
+}
+
+async function apiLoadNotifications() {
+  const r = await fetch('/api/notifications');
+  if (!r.ok) return [];
+  return r.json();
+}
+
+async function apiMarkNotifsRead(all = false, ids = []) {
+  await fetch('/api/notifications/read', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(all ? {all:true} : {ids})
+  });
+}
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+async function loadNotifications() {
+  state.notifications = await apiLoadNotifications();
+  state.unreadCount = state.notifications.filter(n => !n.read).length;
+  updateNotifBell();
+  updateTabTitle();
+}
+
+function updateNotifBell() {
+  const badge = document.getElementById('notifBadge');
+  if (badge) {
+    badge.textContent = state.unreadCount || '';
+    badge.style.display = state.unreadCount ? '' : 'none';
+  }
+}
+
+function updateTabTitle() {
+  document.title = state.unreadCount > 0 ? `(${state.unreadCount}) My Tasks` : 'My Tasks';
+}
+
+function timeAgo(ts) {
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s<60) return 'just now';
+  if (s<3600) return Math.floor(s/60)+'m ago';
+  if (s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+
+function formatNotifText(n, tl) {
+  const tpl = (key, vars) => {
+    let s = tl[key] || key;
+    Object.entries(vars).forEach(([k,v]) => s = s.replace(`{${k}}`, v||''));
+    return s;
+  };
+  switch(n.type) {
+    case 'task_assigned': return tpl('notifTaskAssigned', {name:n.fromUser||'',task:n.taskText||'',group:n.groupName||''});
+    case 'task_completed': return tpl('notifTaskCompleted', {name:n.fromUser||'',task:n.taskText||'',group:n.groupName||''});
+    case 'group_invite': return tpl('notifGroupInvite', {name:n.fromUser||'',group:n.groupName||''});
+    case 'member_joined': return tpl('notifMemberJoined', {name:n.fromUser||'',group:n.groupName||''});
+    default: return n.type;
+  }
+}
+
+function renderNotifDropdown() {
+  const tl = TL[state.lang] || TL.en;
+  document.getElementById('notifDropdown')?.remove();
+  const el = document.createElement('div');
+  el.id = 'notifDropdown';
+  el.className = 'notif-dropdown';
+  const notifs = state.notifications.slice(0,20);
+  el.innerHTML = `
+    <div class="notif-dropdown-header">
+      <span>${tl.notifications||'Notifications'}</span>
+      ${notifs.length ? `<button id="markAllReadBtn" class="link-btn">${tl.markAllRead||'Mark all as read'}</button>` : ''}
+    </div>
+    <div class="notif-dropdown-list">
+      ${notifs.length ? notifs.map(n => `
+        <div class="notif-drop-item${n.read?'':' unread'}" data-nid="${n._id}">
+          <div class="notif-drop-text">${formatNotifText(n, tl)}</div>
+          <div class="notif-drop-time">${timeAgo(n.createdAt)}</div>
+        </div>`).join('') : `<div class="notif-empty">${tl.noNotifications||'No notifications yet'}</div>`}
+    </div>`;
+  document.getElementById('navRight')?.appendChild(el);
+  document.getElementById('markAllReadBtn')?.addEventListener('click', async () => {
+    await apiMarkNotifsRead(true);
+    await loadNotifications();
+    el.remove();
+  });
+  setTimeout(() => {
+    document.addEventListener('click', function closeDD(e) {
+      if (!el.contains(e.target) && e.target.id !== 'notifBellBtn') {
+        el.remove(); document.removeEventListener('click', closeDD);
+      }
+    });
+  }, 0);
+}
+
+// ─── Groups page ──────────────────────────────────────────────────────────────
+async function showGroupsPage() {
+  state.groupsView = true;
+  state.activeGroup = null;
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('groupBoardPage').style.display = 'none';
+  document.getElementById('groupsPage').style.display = '';
+  const groups = await apiLoadGroups();
+  renderGroupsList(groups);
+}
+
+function renderGroupsList(groups) {
+  const container = document.getElementById('groupsList');
+  const tl = TL[state.lang] || TL.en;
+  if (!groups.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">${tl.noGroupsYet||'No groups yet'}</div></div>`;
+    return;
+  }
+  container.innerHTML = groups.map(g => {
+    const myMember = g.members?.find(m => m.userId === window.__USER__?.id);
+    const role = myMember?.role || 'member';
+    const activeMembers = g.members?.filter(m => m.status==='active') || [];
+    const pending = g.members?.filter(m => m.status==='pending') || [];
+    const avatars = activeMembers.slice(0,5).map(m =>
+      m.picture ? `<img class="gm-avatar" src="${m.picture}" title="${m.name}">` :
+      `<div class="gm-avatar gm-avatar-fb" title="${m.name}">${(m.name||'?')[0].toUpperCase()}</div>`
+    ).join('') + (activeMembers.length > 5 ? `<div class="gm-avatar gm-avatar-more">+${activeMembers.length-5}</div>` : '');
+    return `<div class="group-card" data-gid="${g._id}" style="--g-color:${g.color}">
+      <div class="group-card-stripe"></div>
+      <div class="group-card-body">
+        <div class="group-card-top">
+          <span class="group-card-name">${g.name}</span>
+          <span class="role-badge role-${role}">${tl[role] || role}</span>
+        </div>
+        ${g.description ? `<div class="group-card-desc">${g.description}</div>` : ''}
+        <div class="group-card-meta">
+          <div class="gm-avatars">${avatars}</div>
+          <span class="group-card-stats">${g.taskCount} tasks · ${g.doneCount} done</span>
+          ${pending.length ? `<span class="pending-badge">${pending.length} pending</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  container.querySelectorAll('.group-card').forEach(card => {
+    card.addEventListener('click', () => openGroupBoard(card.dataset.gid));
+  });
+}
+
+function showCreateGroupModal() {
+  const tl = TL[state.lang] || TL.en;
+  const colors = ['#3B82F6','#8B5CF6','#EC4899','#EF4444','#F59E0B','#10B981','#6366F1','#14B8A6'];
+  document.getElementById('createGroupModal')?.remove();
+  const el = document.createElement('div');
+  el.id = 'createGroupModal';
+  el.className = 'confirm-overlay';
+  el.innerHTML = `
+    <div class="confirm-card modal-wide">
+      <div class="confirm-title">${tl.createGroup||'Create Group'}</div>
+      <input class="modal-input" id="cgName" placeholder="${tl.groupName||'Group Name'}" maxlength="60">
+      <input class="modal-input" id="cgDesc" placeholder="${tl.groupDescription||'Description'}" maxlength="200">
+      <div class="color-picker-row" id="cgColors">
+        ${colors.map((c,i) => `<button class="color-dot${i===0?' active':''}" data-color="${c}" style="background:${c}"></button>`).join('')}
+      </div>
+      <div class="confirm-actions">
+        <button class="confirm-cancel" id="cgCancel">${tl.cancel||'Cancel'}</button>
+        <button class="confirm-ok" id="cgCreate">${tl.createGroup||'Create Group'}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('open'));
+  let selectedColor = colors[0];
+  el.querySelectorAll('.color-dot').forEach(b => b.addEventListener('click', () => {
+    el.querySelectorAll('.color-dot').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    selectedColor = b.dataset.color;
+  }));
+  const close = () => { el.classList.remove('open'); setTimeout(() => el.remove(), 200); };
+  el.querySelector('#cgCancel').onclick = close;
+  el.querySelector('#cgCreate').onclick = async () => {
+    const name = el.querySelector('#cgName').value.trim();
+    if (!name) { el.querySelector('#cgName').focus(); return; }
+    const result = await apiCreateGroup({ name, description: el.querySelector('#cgDesc').value.trim(), color: selectedColor });
+    close();
+    if (result._id) openGroupBoard(result._id);
+  };
+  el.addEventListener('click', e => { if (e.target === el) close(); });
+}
+
+// ─── Group board ──────────────────────────────────────────────────────────────
+async function openGroupBoard(groupId) {
+  const g = await apiLoadGroup(groupId);
+  state.activeGroup = g;
+  state.groupFilter = 'all';
+  state.groupSort = 'newest';
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('groupsPage').style.display = 'none';
+  document.getElementById('groupBoardPage').style.display = '';
+  renderGroupBoard();
+}
+
+function renderGroupBoard() {
+  const g = state.activeGroup;
+  const tl = TL[state.lang] || TL.en;
+  const myRole = g.myRole;
+  const userId = window.__USER__?.id;
+
+  document.getElementById('gbName').textContent = g.name;
+  document.getElementById('gbName').style.color = g.color;
+
+  const activeMembers = g.members.filter(m => m.status==='active');
+  document.getElementById('gbMembers').innerHTML = activeMembers.slice(0,6).map(m =>
+    m.picture ? `<img class="gm-avatar" src="${m.picture}" title="${m.name}">` :
+    `<div class="gm-avatar gm-avatar-fb" title="${m.name}">${(m.name||'?')[0].toUpperCase()}</div>`
+  ).join('');
+
+  document.getElementById('gbInviteBtn').style.display = myRole==='admin' ? '' : 'none';
+  document.getElementById('gbSettingsBtn').style.display = myRole==='admin' ? '' : 'none';
+
+  const assignOpts = myRole==='admin'||myRole==='manager'
+    ? activeMembers.map(m => `<option value="${m.userId}"${m.userId===userId?' selected':''}>${m.name}</option>`).join('')
+    : `<option value="${userId}">${window.__USER__?.name}</option>`;
+  document.getElementById('gbAssignSelect').innerHTML = `<option value="">${tl.unassigned||'Unassigned'}</option>${assignOpts}`;
+  if (myRole === 'member') document.getElementById('gbAssignSelect').disabled = true;
+
+  updateGbFilterBtns();
+  renderGroupTaskList();
+}
+
+function getFilteredGroupTasks() {
+  const g = state.activeGroup;
+  const userId = window.__USER__?.id;
+  let tasks = [...(g.tasks || [])];
+  if (state.groupFilter === 'mine') tasks = tasks.filter(tk => tk.assignedTo === userId);
+  if (state.groupFilter === 'unassigned') tasks = tasks.filter(tk => !tk.assignedTo);
+  if (state.groupSort === 'priority') {
+    const pOrd = {high:0,medium:1,low:2};
+    tasks.sort((a,b) => (pOrd[a.priority]??3) - (pOrd[b.priority]??3));
+  } else if (state.groupSort === 'assignee') {
+    tasks.sort((a,b) => (a.assignedTo||'').localeCompare(b.assignedTo||''));
+  } else {
+    tasks.sort((a,b) => b.createdAt - a.createdAt);
+  }
+  return tasks;
+}
+
+function renderGroupTaskList() {
+  const g = state.activeGroup;
+  const tl = TL[state.lang] || TL.en;
+  const userId = window.__USER__?.id;
+  const myRole = g.myRole;
+  const tasks = getFilteredGroupTasks();
+  const members = g.members.filter(m=>m.status==='active');
+  const getMember = id => members.find(m=>m.userId===id);
+
+  document.getElementById('gbTaskList').innerHTML = tasks.length ? tasks.map(task => {
+    const assignee = getMember(task.assignedTo);
+    const pColors = {high:'#EF4444',medium:'#F59E0B',low:'#6366F1',none:'#D1D5DB'};
+    const canDelete = myRole==='admin'||myRole==='manager'||task.createdBy===userId;
+    return `<div class="group-task-row${task.done?' gt-done':''}" data-tid="${task.id}">
+      <button class="task-cb${task.done?' ticked':''}" data-gtcheck="${task.id}" aria-label="Toggle done">
+        ${task.done?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 12 4 10"/></svg>`:''}
+      </button>
+      <span class="gt-title">${task.text}</span>
+      <span class="gt-assignee">
+        ${assignee ? (assignee.picture ? `<img class="gm-avatar sm" src="${assignee.picture}">` : `<div class="gm-avatar gm-avatar-fb sm">${(assignee.name||'?')[0]}</div>`) + `<span>${assignee.name}</span>` : `<span class="gt-unassigned">${tl.unassigned||'Unassigned'}</span>`}
+      </span>
+      <span class="gt-priority" style="background:${pColors[task.priority]||pColors.none}"></span>
+      ${canDelete ? `<button class="gt-del" data-gtdel="${task.id}" aria-label="Delete">✕</button>` : ''}
+    </div>`;
+  }).join('') : `<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">No tasks yet</div></div>`;
+
+  document.getElementById('gbTaskList').querySelectorAll('[data-gtcheck]').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      const task = g.tasks.find(tk => tk.id === btn.dataset.gtcheck);
+      if (!task) return;
+      if (myRole === 'member' && task.assignedTo !== userId) return;
+      task.done = !task.done;
+      task.completedAt = task.done ? Date.now() : null;
+      renderGroupTaskList();
+      await apiUpdateGroupTask(g._id, task.id, {done: task.done});
+    });
+  });
+
+  document.getElementById('gbTaskList').querySelectorAll('[data-gtdel]').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      const taskId = btn.dataset.gtdel;
+      const task = g.tasks.find(tk => tk.id === taskId);
+      confirmAction({
+        title: tl.confirmDeleteTask || 'Delete Task',
+        message: `"${task?.text}"`,
+        confirmText: tl.yes || 'Yes',
+        onConfirm: async () => {
+          g.tasks = g.tasks.filter(tk => tk.id !== taskId);
+          renderGroupTaskList();
+          await apiDeleteGroupTask(g._id, taskId);
+        }
+      });
+    });
+  });
+}
+
+function updateGbFilterBtns() {
+  ['All','Mine','Unassigned'].forEach(f => {
+    document.getElementById('gbFilter'+f)?.classList.toggle('active', state.groupFilter===f.toLowerCase());
+  });
+}
+
+function showInviteModal() {
+  const g = state.activeGroup;
+  const tl = TL[state.lang] || TL.en;
+  document.getElementById('inviteModal')?.remove();
+  const el = document.createElement('div');
+  el.id = 'inviteModal';
+  el.className = 'confirm-overlay';
+  el.innerHTML = `
+    <div class="confirm-card modal-wide">
+      <div class="confirm-title">${tl.inviteMember||'Invite Member'}</div>
+      <input class="modal-input" id="invEmail" type="email" placeholder="${tl.inviteByEmail||'Invite by email'}">
+      <select class="modal-input" id="invRole">
+        <option value="member">${tl.member||'Member'}</option>
+        <option value="manager">${tl.manager||'Manager'}</option>
+      </select>
+      <div id="invLinkRow" style="display:none">
+        <div class="invite-link-box" id="invLinkBox"></div>
+        <div class="confirm-actions">
+          <button class="confirm-cancel" id="invCopyBtn">${tl.copyInviteLink||'Copy Invite Link'}</button>
+          <button class="confirm-ok" id="invEmailBtn">📧 ${tl.sendInvitation||'Send Invitation'}</button>
+        </div>
+      </div>
+      <div class="confirm-actions" id="invActions">
+        <button class="confirm-cancel" id="invCancel">${tl.cancel||'Cancel'}</button>
+        <button class="confirm-ok" id="invSend">${tl.sendInvitation||'Send Invitation'}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('open'));
+  const close = () => { el.classList.remove('open'); setTimeout(() => el.remove(), 200); };
+  el.querySelector('#invCancel').onclick = close;
+  el.querySelector('#invSend').onclick = async () => {
+    const email = el.querySelector('#invEmail').value.trim();
+    if (!email) return;
+    const role = el.querySelector('#invRole').value;
+    const res = await apiInviteMember(g._id, email, role);
+    if (res.inviteUrl) {
+      el.querySelector('#invLinkBox').textContent = res.inviteUrl;
+      el.querySelector('#invLinkRow').style.display = '';
+      el.querySelector('#invActions').style.display = 'none';
+      el.querySelector('#invCopyBtn').onclick = () => {
+        navigator.clipboard?.writeText(res.inviteUrl);
+        showToast(tl.linkCopied||'Link copied!', 'success');
+      };
+      el.querySelector('#invEmailBtn').onclick = () => {
+        const subject = encodeURIComponent(`Join my group on MyTasks!`);
+        const body = encodeURIComponent(`Hi! I'm inviting you to join our group "${g.name}" on MyTasks.\n\nClick here to join: ${res.inviteUrl}`);
+        window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+      };
+      const updated = await apiLoadGroup(g._id);
+      state.activeGroup = updated;
+    }
+  };
+  el.addEventListener('click', e => { if (e.target === el) close(); });
+}
+
+function showMembersPanel() {
+  let g = state.activeGroup;
+  const tl = TL[state.lang] || TL.en;
+  const userId = window.__USER__?.id;
+  const myRole = g.myRole;
+  document.getElementById('membersModal')?.remove();
+  const el = document.createElement('div');
+  el.id = 'membersModal';
+  el.className = 'confirm-overlay';
+  el.innerHTML = `
+    <div class="confirm-card modal-wide members-modal">
+      <div class="confirm-title">${tl.members||'Members'}</div>
+      <div id="membersList"></div>
+      <div class="confirm-actions">
+        <button class="confirm-ok" id="membersClose">${tl.cancel||'Cancel'}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('open'));
+  const close = () => { el.classList.remove('open'); setTimeout(() => el.remove(), 200); };
+  el.querySelector('#membersClose').onclick = close;
+  el.addEventListener('click', e => { if (e.target === el) close(); });
+
+  const renderList = () => {
+    el.querySelector('#membersList').innerHTML = g.members.map(m => {
+      const isMe = m.userId === userId;
+      const isPending = m.status === 'pending';
+      const avatar = m.picture ? `<img class="gm-avatar" src="${m.picture}">` : `<div class="gm-avatar gm-avatar-fb">${(m.name||'?')[0].toUpperCase()}</div>`;
+      const roleSelect = myRole==='admin' && !isMe && !isPending
+        ? `<select class="role-select" data-uid="${m.userId}">
+            <option value="member"${m.role==='member'?' selected':''}>${tl.member||'Member'}</option>
+            <option value="manager"${m.role==='manager'?' selected':''}>${tl.manager||'Manager'}</option>
+            <option value="admin"${m.role==='admin'?' selected':''}>${tl.admin||'Admin'}</option>
+           </select>`
+        : `<span class="role-badge role-${m.role}">${tl[m.role]||m.role}</span>`;
+      const actions = myRole==='admin' && !isMe
+        ? `<button class="gt-del" data-rmuid="${m.userId||m.email}" data-rmname="${m.name}" title="${tl.removeMember||'Remove'}">🗑️</button>`
+        : (isMe && myRole!=='admin' ? `<button class="leave-btn" data-leaveuid="${m.userId}">${tl.leaveGroup||'Leave'}</button>` : '');
+      return `<div class="member-row">
+        ${avatar}
+        <div class="member-info">
+          <div class="member-name">${m.name}</div>
+          <div class="member-email">${m.email}</div>
+        </div>
+        ${isPending ? `<span class="pending-badge">${tl.pendingInvite||'Pending'}</span>` : ''}
+        ${roleSelect}
+        ${actions}
+      </div>`;
+    }).join('');
+
+    el.querySelectorAll('.role-select').forEach(sel => {
+      sel.addEventListener('change', async () => {
+        await apiChangeMemberRole(g._id, sel.dataset.uid, sel.value);
+        const updated = await apiLoadGroup(g._id);
+        state.activeGroup = updated; g = updated;
+        showToast(tl.roleChanged||'Role updated', 'success');
+      });
+    });
+
+    el.querySelectorAll('[data-rmuid]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        confirmAction({
+          title: tl.removeMember||'Remove Member',
+          message: (tl.confirmRemoveMember||'Remove {name}?').replace('{name}', btn.dataset.rmname),
+          confirmText: tl.yes||'Yes',
+          onConfirm: async () => {
+            await apiRemoveMember(g._id, btn.dataset.rmuid);
+            const updated = await apiLoadGroup(g._id);
+            state.activeGroup = updated; g = updated;
+            renderList();
+            renderGroupBoard();
+            showToast(tl.memberRemoved||'Member removed', 'success');
+          }
+        });
+      });
+    });
+
+    el.querySelectorAll('[data-leaveuid]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        confirmAction({
+          title: tl.leaveGroup||'Leave Group',
+          message: (tl.confirmLeaveGroup||'Leave "{group}"?').replace('{group}', g.name),
+          confirmText: tl.yes||'Yes',
+          onConfirm: async () => {
+            await apiRemoveMember(g._id, btn.dataset.leaveuid);
+            close();
+            showGroupsPage();
+          }
+        });
+      });
+    });
+  };
+  renderList();
 }
 
 // ─── Data migration ───────────────────────────────────────────────────────────
@@ -1438,13 +2210,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeDrawer();
   });
 
-  document.getElementById('drawerDeleteBtn').addEventListener('click', async () => {
-    if (!confirm(t('deleteConfirm'))) return;
-    const id = state.activeDrawer;
-    closeDrawer();
-    state.todos = state.todos.filter(x => x.id !== id);
-    render();
-    await apiSave();
+  document.getElementById('drawerDeleteBtn').addEventListener('click', () => {
+    const tl = TL[state.lang] || TL.en;
+    confirmAction({
+      title: tl.deleteTask || 'Delete Task',
+      message: tl.confirmDeleteTask || 'Are you sure you want to delete this task?',
+      confirmText: tl.yes || 'Yes',
+      onConfirm: async () => {
+        const id = state.activeDrawer;
+        closeDrawer();
+        state.todos = state.todos.filter(x => x.id !== id);
+        render();
+        await apiSave();
+      }
+    });
   });
 
   // Subtask add
@@ -1578,6 +2357,82 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.period-btn').forEach(b => b.classList.toggle('active', b.dataset.period === state.linePeriod));
     renderActiveChart();
   });
+
+  // ── Groups ────────────────────────────────────────────────────────────────
+  document.getElementById('groupsBtn').addEventListener('click', showGroupsPage);
+
+  document.getElementById('gbBackBtn').addEventListener('click', showGroupsPage);
+  document.getElementById('groupsBackBtn').addEventListener('click', () => {
+    state.groupsView = false;
+    document.getElementById('groupsPage').style.display = 'none';
+    document.getElementById('mainContent').style.display = '';
+  });
+
+  document.getElementById('newGroupBtn').addEventListener('click', showCreateGroupModal);
+
+  document.getElementById('gbAddForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const input = document.getElementById('gbTaskInput');
+    const text = input.value.trim();
+    if (!text) return;
+    const assignTo = document.getElementById('gbAssignSelect').value || null;
+    const priority = document.getElementById('gbPrioritySelect').value || 'low';
+    const task = await apiAddGroupTask(state.activeGroup._id, {text, assignedTo: assignTo, priority});
+    if (task && task.id) {
+      state.activeGroup.tasks.unshift(task);
+      input.value = '';
+      renderGroupTaskList();
+    }
+  });
+
+  document.getElementById('gbFilterAll').addEventListener('click', () => { state.groupFilter='all'; renderGroupTaskList(); updateGbFilterBtns(); });
+  document.getElementById('gbFilterMine').addEventListener('click', () => { state.groupFilter='mine'; renderGroupTaskList(); updateGbFilterBtns(); });
+  document.getElementById('gbFilterUnassigned').addEventListener('click', () => { state.groupFilter='unassigned'; renderGroupTaskList(); updateGbFilterBtns(); });
+  document.getElementById('gbSortSelect').addEventListener('change', e => { state.groupSort=e.target.value; renderGroupTaskList(); });
+
+  document.getElementById('gbInviteBtn').addEventListener('click', showInviteModal);
+  document.getElementById('gbSettingsBtn').addEventListener('click', showMembersPanel);
+
+  document.getElementById('gbDeleteBtn').addEventListener('click', () => {
+    const g = state.activeGroup;
+    const tl = TL[state.lang]||TL.en;
+    confirmAction({
+      title: tl.deleteGroup||'Delete Group',
+      message: (tl.confirmDeleteGroup||'Delete "{group}"? All tasks will be lost.').replace('{group}',g.name),
+      confirmText: tl.yes||'Yes',
+      onConfirm: async () => {
+        await apiDeleteGroup(g._id);
+        showGroupsPage();
+      }
+    });
+  });
+
+  // ── Notifications bell ────────────────────────────────────────────────────
+  document.getElementById('notifBellBtn').addEventListener('click', async e => {
+    e.stopPropagation();
+    if (document.getElementById('notifDropdown')) {
+      document.getElementById('notifDropdown').remove(); return;
+    }
+    await loadNotifications();
+    renderNotifDropdown();
+  });
+
+  // ── Logout confirmation ───────────────────────────────────────────────────
+  document.querySelector('form[action="/auth/logout"]')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const tl = TL[state.lang]||TL.en;
+    confirmAction({
+      title: tl.logout||'Sign Out',
+      message: tl.confirmLogout||'Are you sure you want to log out?',
+      confirmText: tl.yes||'Yes',
+      confirmColor: '#6366F1',
+      onConfirm: () => e.target.submit()
+    });
+  });
+
+  // Load notifications on start and poll
+  loadNotifications();
+  setInterval(loadNotifications, 30000);
 
   // Mark body as ready (prevents language flash)
   document.body.classList.add('lang-ready');
