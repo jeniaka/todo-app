@@ -931,7 +931,27 @@ function checkWeeklyReport() {
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
+// ─── Android / browser back button ───────────────────────────────────────────
+// Push a state on load so there is always something to "pop" back to.
+// When the user presses back, we intercept and close drawer/menu instead of
+// navigating away (which would land on /login and effectively log them out).
+history.replaceState({ app: true }, '');
+
+window.addEventListener('popstate', () => {
+  if (state.activeDrawer !== null) {
+    closeDrawer();
+  } else if (menuOpen) {
+    closeMenu();
+  }
+  // Always re-push so the next back press is also caught.
+  history.pushState({ app: true }, '');
+});
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+
+  // Push initial history entry so popstate fires on first back press
+  history.pushState({ app: true }, '');
 
   // Theme
   const savedTheme = localStorage.getItem('theme');
