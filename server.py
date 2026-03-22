@@ -1,7 +1,35 @@
 import json
 import os
+import mimetypes
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse
+
+STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+
+MANIFEST = json.dumps({
+    "name": "My Tasks",
+    "short_name": "Tasks",
+    "description": "A vibrant to-do app with Hebrew support",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0015",
+    "theme_color": "#0a0015",
+    "orientation": "portrait",
+    "icons": [
+        {"src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+        {"src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+    ]
+}).encode()
+
+SERVICE_WORKER = b"""
+const CACHE = 'todo-v1';
+const ASSETS = ['/'];
+self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))));
+self.addEventListener('fetch', e => {
+  if (e.request.url.includes('/api/')) return;
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+});
+"""
 
 PORT = int(os.environ.get("PORT", 8090))
 MONGODB_URI = os.environ.get("MONGODB_URI", "")
@@ -47,6 +75,8 @@ HTML = """<!DOCTYPE html>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0a0015">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
   <title>My Tasks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -620,6 +650,11 @@ HTML = """<!DOCTYPE html>
   }
 
   load();
+
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 </script>
 </body>
 </html>
@@ -632,20 +667,32 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = urlparse(self.path).path
+
         if path == "/api/todos":
             data = json.dumps(load_todos()).encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Content-Length", len(data))
-            self.end_headers()
-            self.wfile.write(data)
+            self._respond(200, "application/json", data)
+        elif path == "/manifest.json":
+            self._respond(200, "application/manifest+json", MANIFEST)
+        elif path == "/sw.js":
+            self._respond(200, "application/javascript", SERVICE_WORKER)
+        elif path.startswith("/static/"):
+            filename = os.path.basename(path)
+            filepath = os.path.join(STATIC_DIR, filename)
+            if os.path.exists(filepath):
+                mime = mimetypes.guess_type(filepath)[0] or "application/octet-stream"
+                with open(filepath, "rb") as f:
+                    self._respond(200, mime, f.read())
+            else:
+                self._respond(404, "text/plain", b"Not found")
         else:
-            body = HTML.encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", len(body))
-            self.end_headers()
-            self.wfile.write(body)
+            self._respond(200, "text/html; charset=utf-8", HTML.encode())
+
+    def _respond(self, code, content_type, body):
+        self.send_response(code)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", len(body))
+        self.end_headers()
+        self.wfile.write(body)
 
     def do_POST(self):
         path = urlparse(self.path).path
