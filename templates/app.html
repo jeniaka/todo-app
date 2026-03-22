@@ -211,8 +211,10 @@
 <div id="groupsPage" style="display:none" class="groups-page">
   <div class="main" style="max-width:var(--max-w);margin-inline:auto;padding-inline:20px">
     <div class="groups-header">
-      <button class="icon-btn" id="groupsBackBtn" aria-label="Back">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <button class="icon-btn" id="groupsBackBtn" aria-label="Back to My Tasks" title="My Tasks">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
       </button>
       <h2 class="groups-title" data-i18n="myGroups">My Groups</h2>
       <button class="add-btn" id="newGroupBtn" data-i18n="newGroup">+ New Group</button>
@@ -226,8 +228,15 @@
   <div class="main" style="max-width:var(--max-w);margin-inline:auto;padding-inline:20px">
     <!-- Board header -->
     <div class="gb-header">
-      <button class="icon-btn" id="gbBackBtn" aria-label="Back">
+      <!-- Back to Groups list -->
+      <button class="icon-btn" id="gbBackBtn" aria-label="Back to Groups">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <!-- Personal tasks -->
+      <button class="icon-btn" id="gbPersonalBtn" aria-label="My Tasks" title="My Tasks">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
       </button>
       <h2 class="gb-name" id="gbName">Group</h2>
       <div class="gb-member-avatars" id="gbMembers"></div>
@@ -240,17 +249,32 @@
       <button class="icon-btn gt-del" id="gbDeleteBtn" title="Delete group" style="color:var(--priority-high)">🗑️</button>
     </div>
 
-    <!-- Add task bar -->
+    <!-- Add task bar (matches personal task form style) -->
     <form class="add-wrap" id="gbAddForm" autocomplete="off">
-      <div class="add-bar">
-        <input class="add-input" id="gbTaskInput" type="text" placeholder="Add a task...">
-        <select class="gb-select" id="gbAssignSelect"></select>
-        <select class="gb-select" id="gbPrioritySelect">
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-        <button class="add-btn" type="submit">Add</button>
+      <div class="add-bar" id="gbAddBar">
+        <input class="add-input" id="gbTaskInput" type="text" data-i18n-placeholder="addTaskPlaceholder">
+        <button class="mic-btn" id="gbMicBtn" type="button" aria-label="Voice input" title="Speak to add task">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Slides open on input focus -->
+      <div class="add-dropdown" id="gbAddDropdown">
+        <div class="add-p-row">
+          <button class="add-p-btn active" data-gbp="low"    type="button" data-i18n="priorityLow">Low</button>
+          <button class="add-p-btn"        data-gbp="medium" type="button" data-i18n="priorityMedium">Medium</button>
+          <button class="add-p-btn"        data-gbp="high"   type="button" data-i18n="priorityHigh">High</button>
+        </div>
+        <div style="padding:0 12px 6px">
+          <select class="gb-select" id="gbAssignSelect" style="width:100%"></select>
+        </div>
+        <div class="add-dropdown-footer">
+          <button class="add-btn" id="gbAddSubmit" type="submit" data-i18n="add">Add</button>
+        </div>
       </div>
     </form>
 

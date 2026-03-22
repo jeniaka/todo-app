@@ -15,6 +15,7 @@ const state = {
   activeGroup: null,
   groupFilter: 'all',
   groupSort: 'newest',
+  gbNewPriority: 'low',
   notifications: [],
   unreadCount: 0,
 };
@@ -97,6 +98,9 @@ const TL = {
     invitationCreated:'Invitation created',
     invitationShareLink:'Share this link with your friend:',
     copyLink:'Copy Link',copied:'Copied!',done:'Done',
+    sortNewest:'Newest',sortPriority:'Priority',sortAssignee:'Assignee',
+    personalTasks:'My Tasks',
+    groupTaskNotes:'Notes',groupTaskDetails:'Task Details',
   },
   he: {
     appTitle:'המשימות שלי',add:'הוסף',filterAll:'הכל',filterActive:'פעיל',filterDone:'הושלם',
@@ -157,6 +161,8 @@ const TL = {
     invitationCreated:'ההזמנה נוצרה',
     invitationShareLink:'שתף את הקישור הזה עם חברך:',
     copyLink:'העתק קישור',copied:'הועתק!',done:'סיום',
+    sortNewest:'חדש ביותר',sortPriority:'עדיפות',sortAssignee:'מוקצה',
+    personalTasks:'המשימות שלי',groupTaskNotes:'הערות',groupTaskDetails:'פרטי המשימה',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -217,6 +223,8 @@ const TL = {
     invitationCreated:'تم إنشاء الدعوة',
     invitationShareLink:'شارك هذا الرابط مع صديقك:',
     copyLink:'نسخ الرابط',copied:'تم النسخ!',done:'تم',
+    sortNewest:'الأحدث',sortPriority:'الأولوية',sortAssignee:'المعين',
+    personalTasks:'مهامي',groupTaskNotes:'ملاحظات',groupTaskDetails:'تفاصيل المهمة',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -277,6 +285,8 @@ const TL = {
     invitationCreated:'Invitación creada',
     invitationShareLink:'Comparte este enlace con tu amigo:',
     copyLink:'Copiar enlace',copied:'¡Copiado!',done:'Listo',
+    sortNewest:'Más reciente',sortPriority:'Prioridad',sortAssignee:'Asignado',
+    personalTasks:'Mis Tareas',groupTaskNotes:'Notas',groupTaskDetails:'Detalles de tarea',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -337,6 +347,8 @@ const TL = {
     invitationCreated:'Invitation créée',
     invitationShareLink:'Partagez ce lien avec votre ami :',
     copyLink:'Copier le lien',copied:'Copié !',done:'Terminé',
+    sortNewest:'Plus récent',sortPriority:'Priorité',sortAssignee:'Assigné',
+    personalTasks:'Mes Tâches',groupTaskNotes:'Notes',groupTaskDetails:'Détails de la tâche',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -397,6 +409,8 @@ const TL = {
     invitationCreated:'Einladung erstellt',
     invitationShareLink:'Teilen Sie diesen Link mit Ihrem Freund:',
     copyLink:'Link kopieren',copied:'Kopiert!',done:'Fertig',
+    sortNewest:'Neueste',sortPriority:'Priorität',sortAssignee:'Zugewiesen',
+    personalTasks:'Meine Aufgaben',groupTaskNotes:'Notizen',groupTaskDetails:'Aufgabendetails',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -457,6 +471,8 @@ const TL = {
     invitationCreated:'Приглашение создано',
     invitationShareLink:'Поделитесь этой ссылкой с другом:',
     copyLink:'Скопировать ссылку',copied:'Скопировано!',done:'Готово',
+    sortNewest:'Новейшие',sortPriority:'Приоритет',sortAssignee:'Исполнитель',
+    personalTasks:'Мои задачи',groupTaskNotes:'Заметки',groupTaskDetails:'Детали задачи',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -517,6 +533,8 @@ const TL = {
     invitationCreated:'Convite criado',
     invitationShareLink:'Compartilhe este link com seu amigo:',
     copyLink:'Copiar link',copied:'Copiado!',done:'Pronto',
+    sortNewest:'Mais recente',sortPriority:'Prioridade',sortAssignee:'Responsável',
+    personalTasks:'Minhas Tarefas',groupTaskNotes:'Notas',groupTaskDetails:'Detalhes da tarefa',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -577,6 +595,8 @@ const TL = {
     invitationCreated:'邀请已创建',
     invitationShareLink:'将此链接分享给您的朋友：',
     copyLink:'复制链接',copied:'已复制！',done:'完成',
+    sortNewest:'最新',sortPriority:'优先级',sortAssignee:'负责人',
+    personalTasks:'我的任务',groupTaskNotes:'备注',groupTaskDetails:'任务详情',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -637,6 +657,8 @@ const TL = {
     invitationCreated:'招待を作成しました',
     invitationShareLink:'このリンクを友達に共有してください：',
     copyLink:'リンクをコピー',copied:'コピーしました！',done:'完了',
+    sortNewest:'新しい順',sortPriority:'優先度',sortAssignee:'担当者',
+    personalTasks:'マイタスク',groupTaskNotes:'メモ',groupTaskDetails:'タスク詳細',
   },
 };
 
@@ -1037,6 +1059,29 @@ function renderGroupBoard() {
   document.getElementById('gbAssignSelect').innerHTML = `<option value="">${tl.unassigned||'Unassigned'}</option>${assignOpts}`;
   if (myRole === 'member') document.getElementById('gbAssignSelect').disabled = true;
 
+  // Update input placeholder and priority pill labels with current language
+  const gbInput = document.getElementById('gbTaskInput');
+  if (gbInput) gbInput.placeholder = tl.addTaskPlaceholder || 'What needs to be done?';
+  document.querySelectorAll('[data-gbp]').forEach(btn => {
+    const p = btn.dataset.gbp;
+    if (p === 'low') btn.textContent = tl.priorityLow || 'Low';
+    else if (p === 'medium') btn.textContent = tl.priorityMedium || 'Medium';
+    else if (p === 'high') btn.textContent = tl.priorityHigh || 'High';
+  });
+  const gbAddSubmit = document.getElementById('gbAddSubmit');
+  if (gbAddSubmit) gbAddSubmit.textContent = tl.add || 'Add';
+
+  // Update filter/sort buttons
+  document.getElementById('gbFilterAll').textContent = tl.allTasks || 'All';
+  document.getElementById('gbFilterMine').textContent = tl.myTasksFilter || 'Mine';
+  document.getElementById('gbFilterUnassigned').textContent = tl.filterUnassigned || 'Unassigned';
+  const gbSortSelect = document.getElementById('gbSortSelect');
+  if (gbSortSelect) {
+    gbSortSelect.options[0].text = tl.sortNewest || 'Newest';
+    gbSortSelect.options[1].text = tl.sortPriority || 'Priority';
+    gbSortSelect.options[2].text = tl.sortAssignee || 'Assignee';
+  }
+
   updateGbFilterBtns();
   renderGroupTaskList();
 }
@@ -1071,18 +1116,21 @@ function renderGroupTaskList() {
     const assignee = getMember(task.assignedTo);
     const pColors = {high:'#EF4444',medium:'#F59E0B',low:'#6366F1',none:'#D1D5DB'};
     const canDelete = myRole==='admin'||myRole==='manager'||task.createdBy===userId;
-    return `<div class="group-task-row${task.done?' gt-done':''}" data-tid="${task.id}">
+    const subs = task.subtasks || [];
+    const subsDone = subs.filter(s=>s.done).length;
+    const subBar = subs.length ? `<span class="gt-sub-count">${subsDone}/${subs.length}</span>` : '';
+    return `<div class="group-task-row${task.done?' gt-done':''}" data-tid="${task.id}" style="cursor:pointer">
       <button class="task-cb${task.done?' ticked':''}" data-gtcheck="${task.id}" aria-label="Toggle done">
         ${task.done?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 12 4 10"/></svg>`:''}
       </button>
-      <span class="gt-title">${task.text}</span>
+      <span class="gt-title">${esc(task.text)}${subBar}</span>
       <span class="gt-assignee">
         ${assignee ? (assignee.picture ? `<img class="gm-avatar sm" src="${assignee.picture}">` : `<div class="gm-avatar gm-avatar-fb sm">${(assignee.name||'?')[0]}</div>`) + `<span>${assignee.name}</span>` : `<span class="gt-unassigned">${tl.unassigned||'Unassigned'}</span>`}
       </span>
       <span class="gt-priority" style="background:${pColors[task.priority]||pColors.none}"></span>
       ${canDelete ? `<button class="gt-del" data-gtdel="${task.id}" aria-label="Delete">✕</button>` : ''}
     </div>`;
-  }).join('') : `<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">No tasks yet</div></div>`;
+  }).join('') : `<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">${tl.noTasks||'No tasks yet'}</div></div>`;
 
   document.getElementById('gbTaskList').querySelectorAll('[data-gtcheck]').forEach(btn => {
     btn.addEventListener('click', async e => {
@@ -1114,12 +1162,186 @@ function renderGroupTaskList() {
       });
     });
   });
+
+  // Click on task row opens detail modal
+  document.getElementById('gbTaskList').querySelectorAll('.group-task-row').forEach(row => {
+    row.addEventListener('click', e => {
+      if (e.target.closest('[data-gtcheck]') || e.target.closest('[data-gtdel]')) return;
+      const task = g.tasks.find(tk => tk.id === row.dataset.tid);
+      if (task) showGroupTaskDetail(task);
+    });
+  });
 }
 
 function updateGbFilterBtns() {
   ['All','Mine','Unassigned'].forEach(f => {
     document.getElementById('gbFilter'+f)?.classList.toggle('active', state.groupFilter===f.toLowerCase());
   });
+}
+
+// ─── Group task detail modal (with subtasks, notes, priority) ─────────────────
+function showGroupTaskDetail(task) {
+  const g = state.activeGroup;
+  const tl = TL[state.lang] || TL.en;
+  const myRole = g.myRole;
+  const userId = window.__USER__?.id;
+  const canEdit = myRole==='admin'||myRole==='manager'||task.createdBy===userId||task.assignedTo===userId;
+  const members = g.members.filter(m=>m.status==='active');
+  document.getElementById('gtDetailModal')?.remove();
+
+  function renderSubtasks() {
+    const subs = task.subtasks || [];
+    return subs.map((s,i) => `
+      <div class="subtask-item">
+        <button class="subtask-cb${s.done?' st-done':''}" data-gtsub="${i}" aria-label="Toggle">
+          ${s.done?`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 12 4 10"/></svg>`:''}
+        </button>
+        <span class="subtask-text${s.done?' st-done-text':''}">${esc(s.text)}</span>
+        <button class="subtask-del-btn" data-gtsubdel="${i}" aria-label="Delete">✕</button>
+      </div>`).join('');
+  }
+
+  const el = document.createElement('div');
+  el.id = 'gtDetailModal';
+  el.className = 'confirm-overlay open';
+  el.innerHTML = `
+    <div class="confirm-card modal-wide" style="max-height:85vh;overflow-y:auto">
+      <div class="confirm-title" style="margin-bottom:12px">${tl.groupTaskDetails||'Task Details'}</div>
+      <textarea class="modal-input" id="gtdTitle" rows="2" style="resize:none;font-weight:600"${!canEdit?' readonly':''}>${esc(task.text)}</textarea>
+      <textarea class="modal-input" id="gtdNotes" rows="3" placeholder="${tl.groupTaskNotes||'Notes…'}"${!canEdit?' readonly':''}>${esc(task.description||'')}</textarea>
+      <div style="margin:8px 0">
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:6px">${tl.priority||'Priority'}</label>
+        <div class="add-p-row" id="gtdPriority">
+          <button class="add-p-btn${task.priority==='low'?' active':''}" data-gtdp="low" type="button">${tl.priorityLow||'Low'}</button>
+          <button class="add-p-btn${task.priority==='medium'?' active':''}" data-gtdp="medium" type="button">${tl.priorityMedium||'Medium'}</button>
+          <button class="add-p-btn${task.priority==='high'?' active':''}" data-gtdp="high" type="button">${tl.priorityHigh||'High'}</button>
+        </div>
+      </div>
+      <div style="margin:8px 0">
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:6px">${tl.assignedTo||'Assigned to'}</label>
+        <select class="gb-select" id="gtdAssign" style="width:100%"${myRole==='member'?' disabled':''}>
+          <option value="">${tl.unassigned||'Unassigned'}</option>
+          ${members.map(m=>`<option value="${m.userId}"${m.userId===task.assignedTo?' selected':''}>${m.name}</option>`).join('')}
+        </select>
+      </div>
+      <div style="margin:12px 0 6px">
+        <div class="subtask-header">
+          <label style="font-size:12px;color:var(--text-secondary)">${tl.subtasks||'Sub-tasks'}</label>
+        </div>
+        <div class="subtask-list" id="gtdSubList">${renderSubtasks()}</div>
+        <div class="subtask-add-row" style="margin-top:8px">
+          <input class="subtask-add-input" id="gtdSubInput" type="text" placeholder="${tl.addSubtask||'Add a sub-task…'}">
+          <button class="mic-btn" id="gtdSubMic" type="button" aria-label="Voice input">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
+          <button class="subtask-add-btn" id="gtdSubAddBtn" type="button">+</button>
+        </div>
+      </div>
+      <div class="confirm-actions">
+        <button class="confirm-cancel" id="gtdCancel">${tl.cancel||'Cancel'}</button>
+        <button class="confirm-ok" id="gtdSave">${tl.save||'Save'}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+
+  let localPriority = task.priority || 'low';
+  let localSubtasks = JSON.parse(JSON.stringify(task.subtasks || []));
+
+  function refreshSubList() {
+    el.querySelector('#gtdSubList').innerHTML = renderSubtasksLocal();
+    wireSubEvents();
+  }
+
+  function renderSubtasksLocal() {
+    return localSubtasks.map((s,i) => `
+      <div class="subtask-item">
+        <button class="subtask-cb${s.done?' st-done':''}" data-gtsub="${i}" aria-label="Toggle">
+          ${s.done?`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 12 4 10"/></svg>`:''}
+        </button>
+        <span class="subtask-text${s.done?' st-done-text':''}">${esc(s.text)}</span>
+        <button class="subtask-del-btn" data-gtsubdel="${i}" aria-label="Delete">✕</button>
+      </div>`).join('');
+  }
+
+  function wireSubEvents() {
+    el.querySelectorAll('[data-gtsub]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.dataset.gtsub);
+        localSubtasks[i].done = !localSubtasks[i].done;
+        refreshSubList();
+      });
+    });
+    el.querySelectorAll('[data-gtsubdel]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        localSubtasks.splice(parseInt(btn.dataset.gtsubdel), 1);
+        refreshSubList();
+      });
+    });
+  }
+
+  wireSubEvents();
+
+  // Priority pills
+  el.querySelectorAll('[data-gtdp]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!canEdit) return;
+      localPriority = btn.dataset.gtdp;
+      el.querySelectorAll('[data-gtdp]').forEach(b => b.classList.toggle('active', b.dataset.gtdp === localPriority));
+    });
+  });
+
+  // Add subtask
+  function addSubLocal() {
+    const inp = el.querySelector('#gtdSubInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    localSubtasks.push({text, done: false});
+    inp.value = '';
+    refreshSubList();
+  }
+  el.querySelector('#gtdSubAddBtn').addEventListener('click', addSubLocal);
+  el.querySelector('#gtdSubInput').addEventListener('keydown', e2 => { if (e2.key === 'Enter') { e2.preventDefault(); addSubLocal(); } });
+
+  // Subtask mic
+  const gtdSubMic = el.querySelector('#gtdSubMic');
+  if (SpeechRecognition && gtdSubMic) {
+    gtdSubMic.addEventListener('click', () => {
+      if (!recognition) initSpeech();
+      recognition.onresult = e2 => {
+        el.querySelector('#gtdSubInput').value = Array.from(e2.results).map(r=>r[0].transcript).join('');
+      };
+      recognition.onend = () => { isListening = false; gtdSubMic.classList.remove('mic-active'); };
+      if (isListening) { recognition.stop(); return; }
+      recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
+      try { recognition.start(); } catch(_) { initSpeech(); recognition.start(); }
+      isListening = true; gtdSubMic.classList.add('mic-active');
+    });
+  } else if (gtdSubMic) {
+    gtdSubMic.style.display = 'none';
+  }
+
+  const close = () => { el.classList.remove('open'); setTimeout(() => el.remove(), 200); };
+  el.querySelector('#gtdCancel').addEventListener('click', close);
+
+  el.querySelector('#gtdSave').addEventListener('click', async () => {
+    if (!canEdit) { close(); return; }
+    const newText = el.querySelector('#gtdTitle').value.trim();
+    const newNotes = el.querySelector('#gtdNotes').value.trim();
+    const newAssign = el.querySelector('#gtdAssign').value || null;
+    if (!newText) { el.querySelector('#gtdTitle').focus(); return; }
+    const updates = {text: newText, description: newNotes, priority: localPriority, assignedTo: newAssign, subtasks: localSubtasks};
+    // Update local state
+    Object.assign(task, updates);
+    close();
+    renderGroupTaskList();
+    await apiUpdateGroupTask(g._id, task.id, updates);
+  });
+
+  el.addEventListener('click', e2 => { if (e2.target === el) close(); });
 }
 
 function showInviteModal() {
@@ -1403,6 +1625,13 @@ function applyLanguage(code) {
   if (state.activeDrawer !== null) renderDrawer(state.activeDrawer);
   // Re-render task list (relative times change language)
   render();
+  // Re-render groups pages if active
+  if (state.activeGroup && document.getElementById('groupBoardPage').style.display !== 'none') {
+    renderGroupBoard();
+  } else if (state.groupsView && document.getElementById('groupsPage').style.display !== 'none') {
+    // Re-fetch and re-render groups list with new language
+    apiLoadGroups().then(groups => renderGroupsList(groups));
+  }
   // Update language list checkmarks
   renderLangList();
 }
@@ -1847,7 +2076,8 @@ function resetPriorityPicker() {
 // ─── Filter ───────────────────────────────────────────────────────────────────
 function setFilter(f) {
   state.filter = f;
-  document.querySelectorAll('.filter-btn').forEach(b =>
+  // Only update personal task filter buttons (skip group board filter buttons which lack data-filter)
+  document.querySelectorAll('.filter-btn[data-filter]').forEach(b =>
     b.classList.toggle('active', b.dataset.filter === f)
   );
   render();
@@ -2215,7 +2445,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ── Filters ───────────────────────────────────────────────────────────────
-  document.querySelectorAll('.filter-btn').forEach(b =>
+  document.querySelectorAll('.filter-btn[data-filter]').forEach(b =>
     b.addEventListener('click', () => setFilter(b.dataset.filter))
   );
 
@@ -2429,26 +2659,104 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('groupsBtn').addEventListener('click', showGroupsPage);
 
   document.getElementById('gbBackBtn').addEventListener('click', showGroupsPage);
+
+  // "Personal tasks" button — goes back to mainContent from groups list
   document.getElementById('groupsBackBtn').addEventListener('click', () => {
     state.groupsView = false;
     document.getElementById('groupsPage').style.display = 'none';
     document.getElementById('mainContent').style.display = '';
   });
 
+  // "Personal tasks" button — goes back to mainContent from group board
+  document.getElementById('gbPersonalBtn').addEventListener('click', () => {
+    state.groupsView = false;
+    state.activeGroup = null;
+    document.getElementById('groupBoardPage').style.display = 'none';
+    document.getElementById('mainContent').style.display = '';
+  });
+
   document.getElementById('newGroupBtn').addEventListener('click', showCreateGroupModal);
 
+  // ── Group add form (matches personal task form) ──────────────────────────
+  const gbInput = document.getElementById('gbTaskInput');
+  const gbDropdown = document.getElementById('gbAddDropdown');
+
+  // Open dropdown on focus
+  gbInput.addEventListener('focus', () => gbDropdown.classList.add('open'));
+  gbInput.addEventListener('blur', () => {
+    setTimeout(() => {
+      if (!document.getElementById('gbAddForm').contains(document.activeElement))
+        gbDropdown.classList.remove('open');
+    }, 180);
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#gbAddForm')) gbDropdown.classList.remove('open');
+  });
+
+  // Priority pill selection for group add form
+  document.querySelectorAll('[data-gbp]').forEach(btn => {
+    btn.addEventListener('mousedown', e => e.preventDefault());
+    btn.addEventListener('click', () => {
+      state.gbNewPriority = btn.dataset.gbp;
+      document.querySelectorAll('[data-gbp]').forEach(b =>
+        b.classList.toggle('active', b.dataset.gbp === btn.dataset.gbp)
+      );
+    });
+  });
+
+  // Mic button for group add input
+  const gbMicBtn = document.getElementById('gbMicBtn');
+  if (gbMicBtn) {
+    if (!SpeechRecognition) gbMicBtn.style.display = 'none';
+    else gbMicBtn.addEventListener('click', () => {
+      if (!recognition) initSpeech();
+      const origEnd = recognition.onend;
+      recognition.onend = e2 => {
+        isListening = false;
+        gbMicBtn.classList.remove('mic-active');
+      };
+      recognition.onresult = e2 => {
+        const transcript = Array.from(e2.results).map(r => r[0].transcript).join('');
+        gbInput.value = transcript;
+        gbDropdown.classList.add('open');
+      };
+      if (isListening) { recognition.stop(); return; }
+      recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
+      gbInput.value = '';
+      try { recognition.start(); } catch (_) { initSpeech(); recognition.start(); }
+      isListening = true;
+      gbMicBtn.classList.add('mic-active');
+    });
+  }
+
+  // Submit handler — fixed and robust
   document.getElementById('gbAddForm').addEventListener('submit', async e => {
     e.preventDefault();
+    if (!state.activeGroup) return;
     const input = document.getElementById('gbTaskInput');
     const text = input.value.trim();
-    if (!text) return;
+    if (!text) { input.focus(); return; }
     const assignTo = document.getElementById('gbAssignSelect').value || null;
-    const priority = document.getElementById('gbPrioritySelect').value || 'low';
-    const task = await apiAddGroupTask(state.activeGroup._id, {text, assignedTo: assignTo, priority});
-    if (task && task.id) {
-      state.activeGroup.tasks.unshift(task);
-      input.value = '';
-      renderGroupTaskList();
+    const priority = state.gbNewPriority || 'low';
+    const submitBtn = document.getElementById('gbAddSubmit');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '…'; }
+    try {
+      const task = await apiAddGroupTask(state.activeGroup._id, {text, assignedTo: assignTo, priority});
+      if (task && task.id) {
+        state.activeGroup.tasks.unshift(task);
+        input.value = '';
+        gbDropdown.classList.remove('open');
+        // Reset priority pill to low
+        state.gbNewPriority = 'low';
+        document.querySelectorAll('[data-gbp]').forEach(b => b.classList.toggle('active', b.dataset.gbp === 'low'));
+        renderGroupTaskList();
+      } else {
+        showToast((TL[state.lang]||TL.en).confirmDeleteTask ? '⚠️ Could not add task' : '⚠️ Could not add task', 'error');
+      }
+    } catch (err) {
+      showToast('⚠️ Network error — please try again', 'error');
+    } finally {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = (TL[state.lang]||TL.en).add || 'Add'; }
     }
   });
 
