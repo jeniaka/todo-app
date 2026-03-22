@@ -229,7 +229,7 @@ LOGIN_HTML = """<!DOCTYPE html>
 def build_app_html(user: dict) -> str:
     name = user.get("name", "")
     picture = user.get("picture", "")
-    avatar = f'<img src="{picture}" referrerpolicy="no-referrer" style="width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,0.2)">' if picture else f'<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#007AFF,#BF5AF2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem">{name[:1].upper()}</div>'
+    avatar = f'<img src="{picture}" referrerpolicy="no-referrer" style="width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,0.25);flex-shrink:0">' if picture else f'<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#007AFF,#BF5AF2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0">{name[:1].upper()}</div>'
 
     return f"""<!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -239,173 +239,545 @@ def build_app_html(user: dict) -> str:
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0a0015">
+  <meta name="theme-color" content="#08000f">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/static/icon-192.png">
   <title>My Tasks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
     :root {{
-      --accent: #007AFF; --accent2: #BF5AF2; --accent3: #FF375F; --green: #30D158;
-      --card-bg: rgba(255,255,255,0.10); --card-border: rgba(255,255,255,0.18);
-      --text-sub: rgba(255,255,255,0.55); --text-muted: rgba(255,255,255,0.30);
-      --blur: blur(28px);
-      --safe-top: env(safe-area-inset-top,0px); --safe-bottom: env(safe-area-inset-bottom,0px);
+      --accent: #7B5CFA;
+      --accent2: #E040FB;
+      --accent3: #FF375F;
+      --green: #00E096;
+      --card-bg: rgba(255,255,255,0.07);
+      --card-border: rgba(255,255,255,0.12);
+      --text: #F0EEFF;
+      --text-sub: rgba(240,238,255,0.5);
+      --text-muted: rgba(240,238,255,0.25);
+      --blur: blur(24px);
+      --radius: 20px;
+      --safe-top: env(safe-area-inset-top,0px);
+      --safe-bottom: env(safe-area-inset-bottom,0px);
     }}
-    html {{ height: 100%; }}
+    html {{ height:100%; }}
     body {{
-      font-family: 'Heebo', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100dvh; display: flex; justify-content: center;
-      background: #0a0015; overflow-x: hidden;
-      padding: calc(40px + var(--safe-top)) 16px calc(40px + var(--safe-bottom));
+      font-family: 'Heebo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100dvh;
+      background: #08000f;
+      color: var(--text);
+      overflow-x: hidden;
+      padding-bottom: calc(32px + var(--safe-bottom));
     }}
-    body::before {{
-      content: ''; position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(120,40,200,0.55) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,122,255,0.45) 0%, transparent 55%),
-        radial-gradient(ellipse 70% 60% at 60% 80%, rgba(255,55,95,0.35) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(48,209,88,0.25) 0%, transparent 50%);
-      z-index: 0; animation: bgShift 12s ease-in-out infinite alternate;
+
+    /* ── Animated background ── */
+    .bg {{
+      position: fixed; inset: 0; z-index: 0; overflow: hidden;
     }}
-    @keyframes bgShift {{ to {{ filter: hue-rotate(25deg) brightness(1.1); }} }}
-    .app {{ position: relative; z-index: 1; width: 100%; max-width: 580px; }}
-    .header {{ display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 12px; }}
+    .bg-orb {{
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.55;
+      animation: drift 18s ease-in-out infinite alternate;
+    }}
+    .bg-orb:nth-child(1) {{ width:60vw; height:60vw; top:-15%; left:-15%; background: radial-gradient(circle, #5B2FD4, transparent 70%); animation-delay:0s; }}
+    .bg-orb:nth-child(2) {{ width:50vw; height:50vw; top:10%; right:-10%; background: radial-gradient(circle, #1565C0, transparent 70%); animation-delay:-6s; }}
+    .bg-orb:nth-child(3) {{ width:45vw; height:45vw; bottom:-10%; left:20%; background: radial-gradient(circle, #AD1457, transparent 70%); animation-delay:-12s; }}
+    @keyframes drift {{ 0% {{ transform: translate(0,0) scale(1); }} 100% {{ transform: translate(4%, 6%) scale(1.08); }} }}
+
+    /* ── Top navigation bar ── */
+    .navbar {{
+      position: sticky; top: 0; z-index: 100;
+      padding: calc(12px + var(--safe-top)) 20px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(8,0,15,0.6);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+    }}
+    .nav-left {{ display: flex; align-items: center; gap: 10px; }}
+    .nav-right {{ display: flex; align-items: center; gap: 8px; }}
+    .user-pill {{
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 99px; padding: 4px 14px 4px 4px;
+    }}
+    .user-name {{
+      font-size: 0.82rem; font-weight: 600; color: var(--text);
+      max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }}
+    .lang-toggle {{
+      display: flex; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 99px; padding: 3px; gap: 2px;
+    }}
+    .lang-toggle button {{
+      padding: 5px 13px; border-radius: 99px; border: none;
+      background: transparent; color: var(--text-sub);
+      font-size: 0.78rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+      -webkit-tap-highlight-color: transparent;
+    }}
+    .lang-toggle button.active {{
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; box-shadow: 0 2px 10px rgba(123,92,250,0.45);
+    }}
+    .logout-btn {{
+      background: none; border: none; color: var(--text-sub);
+      font-size: 0.78rem; font-family: inherit; font-weight: 500;
+      cursor: pointer; padding: 7px 12px; border-radius: 99px;
+      transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+      border: 1px solid transparent;
+    }}
+    .logout-btn:hover {{ color: var(--accent3); border-color: rgba(255,55,95,0.3); background: rgba(255,55,95,0.08); }}
+
+    /* ── Main content ── */
+    .main {{
+      position: relative; z-index: 1;
+      max-width: 600px; margin: 0 auto;
+      padding: 0 16px;
+    }}
+
+    /* ── Hero section (always centered) ── */
+    .hero {{
+      text-align: center;
+      padding: 36px 0 28px;
+    }}
+    .hero-icon {{ font-size: 2.6rem; margin-bottom: 12px; display: block; }}
     h1 {{
-      font-size: clamp(1.8rem,6vw,2.6rem); font-weight: 800; letter-spacing: -1.5px; line-height: 1;
-      background: linear-gradient(135deg,#fff 0%,rgba(255,255,255,0.7) 100%);
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+      background: linear-gradient(135deg, #fff 30%, rgba(180,150,255,0.85) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 8px;
     }}
-    .subtitle {{ color: var(--text-sub); font-size: clamp(0.75rem,2.5vw,0.88rem); font-weight: 400; margin-top: 6px; }}
-    .header-right {{ display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-top: 4px; }}
-    .user-info {{ display: flex; align-items: center; gap: 8px; background: var(--card-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--card-border); border-radius: 20px; padding: 4px 12px 4px 4px; }}
-    .user-name {{ color: rgba(255,255,255,0.8); font-size: 0.8rem; font-weight: 600; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }}
-    .lang-toggle {{ display: flex; align-items: center; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 4px; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); gap: 2px; }}
-    .lang-toggle button {{ padding: 7px 14px; border-radius: 16px; border: none; background: transparent; color: var(--text-sub); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1); font-family: inherit; -webkit-tap-highlight-color: transparent; }}
-    .lang-toggle button.active {{ background: rgba(255,255,255,0.18); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }}
-    .logout-btn {{ background: none; border: none; color: var(--text-sub); font-size: 0.78rem; font-family: inherit; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: color 0.2s, background 0.2s; white-space: nowrap; -webkit-tap-highlight-color: transparent; }}
-    .logout-btn:hover {{ color: var(--accent3); background: rgba(255,55,95,0.10); }}
-    .progress-wrap {{ background: rgba(255,255,255,0.08); border-radius: 99px; height: 5px; margin-bottom: 24px; overflow: hidden; }}
-    .progress-bar {{ height: 100%; border-radius: 99px; background: linear-gradient(90deg,var(--accent),var(--accent2)); transition: width 0.5s cubic-bezier(0.34,1.1,0.64,1); box-shadow: 0 0 10px rgba(0,122,255,0.6); }}
-    .add-form {{ display: flex; gap: 10px; margin-bottom: 18px; }}
-    .add-form input {{ flex: 1; min-width: 0; padding: 15px 18px; border-radius: 16px; border: 1.5px solid var(--card-border); background: var(--card-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); color: #fff; font-size: 16px; font-family: inherit; outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; }}
+    .subtitle {{
+      color: var(--text-sub); font-size: 0.88rem; font-weight: 400;
+    }}
+
+    /* ── Progress ── */
+    .progress-section {{
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }}
+    .progress-labels {{
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; font-size: 0.8rem; color: var(--text-sub); font-weight: 500;
+    }}
+    .progress-pct {{ font-size: 1.1rem; font-weight: 800; color: var(--text); }}
+    .progress-track {{
+      height: 6px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden;
+    }}
+    .progress-fill {{
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.6s cubic-bezier(0.34,1.1,0.64,1);
+      box-shadow: 0 0 12px rgba(123,92,250,0.6);
+    }}
+
+    /* ── Add form ── */
+    .add-form {{
+      display: flex; gap: 10px; margin-bottom: 16px;
+    }}
+    .add-form input {{
+      flex: 1; min-width: 0;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--card-border);
+      background: var(--card-bg);
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+      color: var(--text); font-size: 16px; font-family: inherit;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }}
     .add-form input::placeholder {{ color: var(--text-muted); }}
-    .add-form input:focus {{ border-color: rgba(0,122,255,0.7); box-shadow: 0 0 0 3px rgba(0,122,255,0.18); }}
-    .add-form button {{ padding: 15px 20px; border-radius: 16px; border: none; background: linear-gradient(135deg,#007AFF,#5E5CE6); color: #fff; font-size: 0.95rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 20px rgba(0,122,255,0.45); white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }}
+    .add-form input:focus {{
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(123,92,250,0.2);
+    }}
+    .add-form button {{
+      padding: 16px 22px; border-radius: var(--radius); border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-size: 0.95rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(123,92,250,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+    }}
     .add-form button:active {{ transform: scale(0.96); }}
-    @media (hover:hover) {{ .add-form button:hover {{ transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 28px rgba(0,122,255,0.55); }} }}
-    .filters {{ display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }}
-    .filters::-webkit-scrollbar {{ display: none; }}
-    .filters button {{ padding: 9px 18px; border-radius: 20px; border: 1.5px solid var(--card-border); background: var(--card-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); color: var(--text-sub); font-size: 0.82rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.3,0.64,1); white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }}
-    .filters button.active {{ background: linear-gradient(135deg,rgba(0,122,255,0.75),rgba(94,92,230,0.75)); border-color: rgba(0,122,255,0.5); color: #fff; box-shadow: 0 4px 16px rgba(0,122,255,0.35); }}
-    .todo-list {{ display: flex; flex-direction: column; gap: 10px; }}
-    .todo-item {{ display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--card-bg); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border-radius: 18px; border: 1.5px solid var(--card-border); transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s; animation: slideIn 0.3s cubic-bezier(0.34,1.4,0.64,1); -webkit-tap-highlight-color: transparent; }}
-    @keyframes slideIn {{ from {{ opacity:0; transform:translateY(12px) scale(0.97); }} to {{ opacity:1; transform:none; }} }}
-    @media (hover:hover) {{ .todo-item:hover {{ transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.28); }} }}
-    .todo-item.done {{ opacity: 0.38; }}
+    @media (hover:hover) {{ .add-form button:hover {{ transform: translateY(-2px); box-shadow: 0 8px 28px rgba(123,92,250,0.55); }} }}
+
+    /* ── Segmented filter ── */
+    .filters-wrap {{
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius); padding: 5px;
+      display: flex; gap: 4px; margin-bottom: 16px;
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+    }}
+    .filters-wrap button {{
+      flex: 1; padding: 9px 8px; border-radius: 14px; border: none;
+      background: transparent; color: var(--text-sub);
+      font-size: 0.82rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.22s cubic-bezier(0.34,1.3,0.64,1);
+      -webkit-tap-highlight-color: transparent;
+    }}
+    .filters-wrap button.active {{
+      background: linear-gradient(135deg, rgba(123,92,250,0.8), rgba(224,64,251,0.7));
+      color: #fff; box-shadow: 0 2px 12px rgba(123,92,250,0.4);
+    }}
+
+    /* ── Todo list ── */
+    .todo-list {{ display: flex; flex-direction: column; gap: 8px; }}
+    .todo-item {{
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px;
+      background: var(--card-bg);
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+      border-radius: var(--radius); border: 1.5px solid var(--card-border);
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s, border-color 0.2s;
+      animation: slideIn 0.28s cubic-bezier(0.34,1.4,0.64,1);
+    }}
+    @keyframes slideIn {{ from {{ opacity:0; transform:translateY(10px) scale(0.98); }} to {{ opacity:1; transform:none; }} }}
+    @media (hover:hover) {{ .todo-item:hover {{ transform: translateY(-2px); box-shadow: 0 10px 36px rgba(0,0,0,0.35); border-color: rgba(123,92,250,0.35); }} }}
+    .todo-item.done {{ opacity: 0.35; }}
+
+    /* Custom checkbox */
     .check-wrap {{ flex-shrink: 0; width: 26px; height: 26px; position: relative; cursor: pointer; }}
     .check-wrap input {{ position: absolute; opacity: 0; width: 0; height: 0; }}
-    .check-box {{ width: 26px; height: 26px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1); background: rgba(255,255,255,0.05); }}
-    .check-wrap input:checked + .check-box {{ background: linear-gradient(135deg,var(--green),#25a244); border-color: transparent; box-shadow: 0 0 14px rgba(48,209,88,0.5); }}
-    .check-box svg {{ opacity: 0; transform: scale(0.5); transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); }}
-    .check-wrap input:checked + .check-box svg {{ opacity: 1; transform: scale(1); }}
-    .todo-text {{ flex: 1; font-size: clamp(0.9rem,3.5vw,0.97rem); color: #fff; word-break: break-word; line-height: 1.45; }}
-    .todo-item.done .todo-text {{ text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.35); }}
-    .edit-input {{ flex: 1; min-width: 0; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(0,122,255,0.6); border-radius: 8px; color: #fff; font-size: 16px; font-family: inherit; outline: none; padding: 4px 10px; box-shadow: 0 0 0 3px rgba(0,122,255,0.15); -webkit-appearance: none; }}
-    .btn-icon {{ background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.28); padding: 8px; border-radius: 10px; transition: color 0.2s, background 0.2s, transform 0.15s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }}
-    @media (hover:hover) {{ .btn-icon:hover {{ color: #fff; background: rgba(255,255,255,0.12); transform: scale(1.15); }} .btn-delete:hover {{ color: var(--accent3); background: rgba(255,55,95,0.12); }} }}
-    .btn-icon:active {{ transform: scale(0.9); opacity: 0.7; }}
-    .empty {{ text-align: center; color: var(--text-muted); padding: 52px 0; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 0.92rem; }}
-    .empty-icon {{ font-size: 2.8rem; opacity: 0.4; }}
-    .stats {{ margin-top: 20px; color: var(--text-sub); font-size: clamp(0.75rem,2.5vw,0.82rem); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }}
-    .clear-btn {{ background: none; border: none; color: var(--text-sub); font-size: clamp(0.75rem,2.5vw,0.82rem); font-family: inherit; cursor: pointer; padding: 6px 12px; border-radius: 8px; transition: color 0.2s, background 0.2s; -webkit-tap-highlight-color: transparent; }}
-    @media (hover:hover) {{ .clear-btn:hover {{ color: var(--accent3); background: rgba(255,55,95,0.10); }} }}
-    @media (max-width:400px) {{ .user-name {{ display: none; }} .btn-icon {{ padding: 6px; }} .todo-item {{ gap: 10px; padding: 14px 12px; }} }}
-    [dir="rtl"] .header {{ flex-direction: row-reverse; }} [dir="rtl"] .header-right {{ flex-direction: row-reverse; }} [dir="rtl"] .add-form {{ flex-direction: row-reverse; }} [dir="rtl"] .filters {{ flex-direction: row-reverse; }} [dir="rtl"] .stats {{ flex-direction: row-reverse; }} [dir="rtl"] .todo-item {{ flex-direction: row-reverse; }} [dir="rtl"] .todo-text {{ text-align: right; }}
+    .check-box {{
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      background: rgba(255,255,255,0.04);
+    }}
+    .check-wrap input:checked + .check-box {{
+      background: linear-gradient(135deg, var(--green), #00b96b);
+      border-color: transparent;
+      box-shadow: 0 0 16px rgba(0,224,150,0.5);
+    }}
+    .check-box svg {{ opacity:0; transform:scale(0.4); transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); }}
+    .check-wrap input:checked + .check-box svg {{ opacity:1; transform:scale(1); }}
+
+    .todo-text {{
+      flex: 1; font-size: 0.97rem; font-weight: 400; color: var(--text);
+      word-break: break-word; line-height: 1.5;
+    }}
+    .todo-item.done .todo-text {{ text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.3); }}
+
+    .edit-input {{
+      flex: 1; min-width: 0;
+      background: rgba(123,92,250,0.1); border: 1.5px solid var(--accent);
+      border-radius: 10px; color: var(--text); font-size: 16px; font-family: inherit;
+      outline: none; padding: 5px 12px;
+      box-shadow: 0 0 0 3px rgba(123,92,250,0.15);
+      -webkit-appearance: none;
+    }}
+    .btn-icon {{
+      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.22); padding: 7px; border-radius: 10px;
+      transition: color 0.2s, background 0.2s, transform 0.15s;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }}
+    @media (hover:hover) {{
+      .btn-icon:hover {{ color: var(--text); background: rgba(255,255,255,0.1); transform: scale(1.18); }}
+      .btn-delete:hover {{ color: var(--accent3); background: rgba(255,55,95,0.12); }}
+    }}
+    .btn-icon:active {{ transform: scale(0.88); }}
+
+    /* ── Empty state ── */
+    .empty {{
+      text-align: center; color: var(--text-muted); padding: 56px 0;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }}
+    .empty-icon {{ font-size: 3rem; opacity: 0.35; }}
+    .empty-title {{ font-size: 1rem; font-weight: 600; color: var(--text-sub); }}
+    .empty-sub {{ font-size: 0.82rem; }}
+
+    /* ── Stats bar ── */
+    .stats {{
+      margin-top: 18px; display: flex; justify-content: space-between; align-items: center;
+      color: var(--text-sub); font-size: 0.8rem; flex-wrap: wrap; gap: 8px;
+    }}
+    .clear-btn {{
+      background: none; border: none; color: var(--text-sub); font-size: 0.8rem;
+      font-family: inherit; cursor: pointer; padding: 6px 12px; border-radius: 8px;
+      transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+    }}
+    .clear-btn:hover {{ color: var(--accent3); background: rgba(255,55,95,0.1); }}
+
+    /* ── Mobile ── */
+    @media (max-width:420px) {{
+      .user-name {{ display: none; }}
+      .navbar {{ padding-left: 14px; padding-right: 14px; }}
+      .main {{ padding: 0 12px; }}
+      .todo-item {{ padding: 14px; gap: 10px; }}
+    }}
+
+    /* ── RTL support ── */
+    /* Navbar: reverse order so lang-toggle is on the right, user on left */
+    [dir="rtl"] .navbar {{ flex-direction: row-reverse; }}
+    [dir="rtl"] .nav-left {{ flex-direction: row-reverse; }}
+    [dir="rtl"] .nav-right {{ flex-direction: row-reverse; }}
+    /* Hero stays centered — no change needed */
+    /* Add form: button on left side in RTL */
+    [dir="rtl"] .add-form {{ flex-direction: row-reverse; }}
+    [dir="rtl"] .add-form input {{ text-align: right; }}
+    /* Filters: right-to-left order */
+    [dir="rtl"] .filters-wrap {{ flex-direction: row-reverse; }}
+    /* Todo items: checkbox on right, buttons on left */
+    [dir="rtl"] .todo-item {{ flex-direction: row-reverse; }}
+    [dir="rtl"] .todo-text {{ text-align: right; }}
+    [dir="rtl"] .edit-input {{ text-align: right; direction: rtl; }}
+    /* Stats: reverse */
+    [dir="rtl"] .stats {{ flex-direction: row-reverse; }}
+    [dir="rtl"] .progress-labels {{ flex-direction: row-reverse; }}
   </style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <div>
-      <h1 id="title">My Tasks</h1>
-      <p class="subtitle" id="date"></p>
-    </div>
-    <div class="header-right">
-      <div class="user-info">
-        {avatar}
-        <span class="user-name">{name}</span>
-      </div>
-      <div class="lang-toggle">
-        <button class="active" onclick="setLang('en')">EN</button>
-        <button onclick="setLang('he')">עב</button>
-      </div>
-      <form method="post" action="/auth/logout" style="margin:0">
-        <button class="logout-btn" type="submit">Sign out</button>
-      </form>
+<div class="bg">
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+</div>
+
+<!-- Sticky navbar -->
+<nav class="navbar">
+  <div class="nav-left">
+    <div class="user-pill">
+      {avatar}
+      <span class="user-name">{name}</span>
     </div>
   </div>
-  <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="active" onclick="setLang('en')">EN</button>
+      <button onclick="setLang('he')">עב</button>
+    </div>
+    <form method="post" action="/auth/logout" style="margin:0">
+      <button class="logout-btn" type="submit" id="logoutBtn">Sign out</button>
+    </form>
+  </div>
+</nav>
+
+<div class="main">
+  <!-- Centered hero -->
+  <div class="hero">
+    <span class="hero-icon">✦</span>
+    <h1 id="title">My Tasks</h1>
+    <p class="subtitle" id="date"></p>
+  </div>
+
+  <!-- Progress card -->
+  <div class="progress-section">
+    <div class="progress-labels">
+      <span id="statsText">0 remaining</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Add form -->
   <form class="add-form" id="addForm">
     <input id="newTodo" type="text" autocomplete="off"/>
     <button type="submit" id="addBtn">+ Add</button>
   </form>
-  <div class="filters">
+
+  <!-- Segmented filters -->
+  <div class="filters-wrap">
     <button class="active" data-filter="all" onclick="setFilter('all')" id="fAll">All</button>
     <button data-filter="active" onclick="setFilter('active')" id="fActive">Active</button>
     <button data-filter="done" onclick="setFilter('done')" id="fDone">Done</button>
   </div>
+
+  <!-- Task list -->
   <div class="todo-list" id="list"></div>
+
+  <!-- Bottom stats -->
   <div class="stats">
-    <span id="statsText"></span>
+    <span id="clearInfo"></span>
     <button class="clear-btn" id="clearBtn" onclick="clearDone()">Clear completed</button>
   </div>
 </div>
+
 <script>
   const T = {{
-    en: {{ title:'My Tasks', placeholder:'Add a new task…', add:'+ Add', all:'All', active:'Active', done:'Done', remaining:n=>`${{n}} remaining`, completed:n=>`${{n}} done`, clear:'Clear completed', empty:'No tasks here.', emptySub:'Add something above!' }},
-    he: {{ title:'המשימות שלי', placeholder:'הוסף משימה חדשה…', add:'+ הוסף', all:'הכל', active:'פעיל', done:'הושלם', remaining:n=>`נותרו ${{n}}`, completed:n=>`${{n}} הושלמו`, clear:'נקה שהושלמו', empty:'אין משימות כאן.', emptySub:'הוסף משימה למעלה!' }}
+    en: {{
+      title:'My Tasks', placeholder:'What needs to be done?', add:'Add',
+      all:'All', active:'Active', done:'Done',
+      remaining: n => n === 1 ? '1 task left' : `${{n}} tasks left`,
+      completed: n => `${{n}} done`,
+      clear:'Clear completed', empty:'All clear!', emptySub:'Add a task above to get started.',
+      logout: 'Sign out'
+    }},
+    he: {{
+      title:'המשימות שלי', placeholder:'מה צריך לעשות?', add:'הוסף',
+      all:'הכל', active:'פעיל', done:'הושלם',
+      remaining: n => `נותרו ${{n}} משימות`,
+      completed: n => `${{n}} הושלמו`,
+      clear:'נקה שהושלמו', empty:'הכל נקי!', emptySub:'הוסף משימה כדי להתחיל.',
+      logout: 'התנתק'
+    }}
   }};
-  let todos=[], filter='all', lang='en';
+
+  let todos = [], filter = 'all', lang = 'en';
 
   function setLang(l) {{
-    lang=l; document.documentElement.lang=l; document.documentElement.dir=l==='he'?'rtl':'ltr';
-    document.querySelectorAll('.lang-toggle button').forEach((b,i)=>b.classList.toggle('active',(i===0&&l==='en')||(i===1&&l==='he')));
+    lang = l;
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === 'he' ? 'rtl' : 'ltr';
+    document.querySelectorAll('.lang-toggle button').forEach((b,i) =>
+      b.classList.toggle('active', (i===0 && l==='en') || (i===1 && l==='he')));
     applyT(); render();
   }}
+
   function applyT() {{
-    const t=T[lang];
-    document.getElementById('title').textContent=t.title;
-    document.getElementById('newTodo').placeholder=t.placeholder;
-    document.getElementById('addBtn').textContent=t.add;
-    document.getElementById('fAll').textContent=t.all;
-    document.getElementById('fActive').textContent=t.active;
-    document.getElementById('fDone').textContent=t.done;
-    document.getElementById('clearBtn').textContent=t.clear;
-    document.getElementById('date').textContent=new Date().toLocaleDateString(lang==='he'?'he-IL':'en-US',{{weekday:'long',year:'numeric',month:'long',day:'numeric'}});
+    const t = T[lang];
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('newTodo').placeholder = t.placeholder;
+    document.getElementById('addBtn').textContent = t.add;
+    document.getElementById('fAll').textContent = t.all;
+    document.getElementById('fActive').textContent = t.active;
+    document.getElementById('fDone').textContent = t.done;
+    document.getElementById('clearBtn').textContent = t.clear;
+    document.getElementById('logoutBtn').textContent = t.logout;
+    const locale = lang === 'he' ? 'he-IL' : 'en-US';
+    document.getElementById('date').textContent = new Date().toLocaleDateString(locale,
+      {{weekday:'long', year:'numeric', month:'long', day:'numeric'}});
   }}
-  async function load() {{ todos=await(await fetch('/api/todos')).json(); applyT(); render(); }}
-  async function saveTodos() {{ await fetch('/api/todos',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(todos)}}); }}
-  function esc(s) {{ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }}
+
+  async function load() {{
+    todos = await (await fetch('/api/todos')).json();
+    applyT(); render();
+  }}
+
+  async function saveTodos() {{
+    await fetch('/api/todos', {{
+      method: 'POST',
+      headers: {{'Content-Type': 'application/json'}},
+      body: JSON.stringify(todos)
+    }});
+  }}
+
+  function esc(s) {{
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }}
+
   function render() {{
-    const t=T[lang];
-    const visible=todos.filter(x=>filter==='all'||(filter==='done'?x.done:!x.done));
-    const list=document.getElementById('list');
-    if(!visible.length) {{ list.innerHTML=`<div class="empty"><div class="empty-icon">${{filter==='done'?'✅':'🌟'}}</div><div>${{t.empty}}</div><div style="font-size:0.8rem;opacity:0.6">${{t.emptySub}}</div></div>`; }}
-    else list.innerHTML=visible.map(x=>`<div class="todo-item ${{x.done?'done':''}}" id="item-${{x.id}}"><label class="check-wrap"><input type="checkbox" ${{x.done?'checked':''}} onchange="toggle(${{x.id}})"/><div class="check-box"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5L4.5 8.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></label><span class="todo-text" ondblclick="startEdit(${{x.id}})">${{esc(x.text)}}</span><button class="btn-icon" onclick="startEdit(${{x.id}})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn-icon btn-delete" onclick="del(${{x.id}})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>`).join('');
-    const done=todos.filter(x=>x.done).length;
-    document.getElementById('progressBar').style.width=(todos.length?Math.round(done/todos.length*100):0)+'%';
-    document.getElementById('statsText').textContent=t.remaining(todos.length-done)+' · '+t.completed(done);
+    const t = T[lang];
+    const visible = todos.filter(x => filter==='all' || (filter==='done' ? x.done : !x.done));
+    const list = document.getElementById('list');
+
+    if (!visible.length) {{
+      list.innerHTML = `<div class="empty">
+        <div class="empty-icon">${{filter==='done' ? '🎉' : '✦'}}</div>
+        <div class="empty-title">${{t.empty}}</div>
+        <div class="empty-sub">${{t.emptySub}}</div>
+      </div>`;
+    }} else {{
+      list.innerHTML = visible.map(x => `
+        <div class="todo-item ${{x.done ? 'done' : ''}}" id="item-${{x.id}}">
+          <label class="check-wrap">
+            <input type="checkbox" ${{x.done ? 'checked' : ''}} onchange="toggle(${{x.id}})"/>
+            <div class="check-box">
+              <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+                <path d="M1 4L4 7.5L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </label>
+          <span class="todo-text" ondblclick="startEdit(${{x.id}})">${{esc(x.text)}}</span>
+          <button class="btn-icon" onclick="startEdit(${{x.id}})" title="Edit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button class="btn-icon btn-delete" onclick="del(${{x.id}})" title="Delete">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <path d="M10 11v6"/><path d="M14 11v6"/>
+              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            </svg>
+          </button>
+        </div>`).join('');
+    }}
+
+    const doneCount = todos.filter(x => x.done).length;
+    const pct = todos.length ? Math.round(doneCount / todos.length * 100) : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+    document.getElementById('statsText').textContent = t.remaining(todos.length - doneCount) + ' · ' + t.completed(doneCount);
   }}
-  document.getElementById('addForm').onsubmit=async e=>{{ e.preventDefault(); const inp=document.getElementById('newTodo'); const text=inp.value.trim(); if(!text)return; todos.unshift({{id:Date.now(),text,done:false}}); inp.value=''; await saveTodos(); render(); }};
-  async function toggle(id) {{ todos=todos.map(t=>t.id===id?{{...t,done:!t.done}}:t); await saveTodos(); render(); }}
-  async function del(id) {{ const el=document.getElementById('item-'+id); if(el){{el.style.transition='opacity 0.2s,transform 0.2s';el.style.opacity='0';el.style.transform='scale(0.95)';}} await new Promise(r=>setTimeout(r,180)); todos=todos.filter(t=>t.id!==id); await saveTodos(); render(); }}
-  function startEdit(id) {{ const item=document.getElementById('item-'+id); const span=item.querySelector('.todo-text'); const todo=todos.find(t=>t.id===id); const inp=document.createElement('input'); inp.className='edit-input'; inp.value=todo.text; if(document.documentElement.dir==='rtl')inp.dir='rtl'; span.replaceWith(inp); inp.focus(); inp.select(); const finish=async()=>{{ const val=inp.value.trim(); if(val&&val!==todo.text){{todos=todos.map(t=>t.id===id?{{...t,text:val}}:t);await saveTodos();}} render(); }}; inp.onblur=finish; inp.onkeydown=e=>{{if(e.key==='Enter')inp.blur();if(e.key==='Escape'){{inp.value=todo.text;inp.blur();}}}}; }}
-  async function clearDone() {{ todos=todos.filter(t=>!t.done); await saveTodos(); render(); }}
-  function setFilter(f) {{ filter=f; document.querySelectorAll('.filters button').forEach(b=>b.classList.toggle('active',b.dataset.filter===f)); render(); }}
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(()=>{{}});
+
+  document.getElementById('addForm').onsubmit = async e => {{
+    e.preventDefault();
+    const inp = document.getElementById('newTodo');
+    const text = inp.value.trim();
+    if (!text) return;
+    todos.unshift({{ id: Date.now(), text, done: false }});
+    inp.value = '';
+    await saveTodos(); render();
+  }};
+
+  async function toggle(id) {{
+    todos = todos.map(t => t.id === id ? {{...t, done: !t.done}} : t);
+    await saveTodos(); render();
+  }}
+
+  async function del(id) {{
+    const el = document.getElementById('item-' + id);
+    if (el) {{ el.style.transition = 'opacity 0.18s, transform 0.18s'; el.style.opacity = '0'; el.style.transform = 'scale(0.94)'; }}
+    await new Promise(r => setTimeout(r, 170));
+    todos = todos.filter(t => t.id !== id);
+    await saveTodos(); render();
+  }}
+
+  function startEdit(id) {{
+    const item = document.getElementById('item-' + id);
+    const span = item.querySelector('.todo-text');
+    const todo = todos.find(t => t.id === id);
+    const inp = document.createElement('input');
+    inp.className = 'edit-input';
+    inp.value = todo.text;
+    inp.dir = document.documentElement.dir;
+    span.replaceWith(inp);
+    inp.focus(); inp.select();
+    const finish = async () => {{
+      const val = inp.value.trim();
+      if (val && val !== todo.text) {{
+        todos = todos.map(t => t.id === id ? {{...t, text: val}} : t);
+        await saveTodos();
+      }}
+      render();
+    }};
+    inp.onblur = finish;
+    inp.onkeydown = e => {{
+      if (e.key === 'Enter') inp.blur();
+      if (e.key === 'Escape') {{ inp.value = todo.text; inp.blur(); }}
+    }};
+  }}
+
+  async function clearDone() {{
+    todos = todos.filter(t => !t.done);
+    await saveTodos(); render();
+  }}
+
+  function setFilter(f) {{
+    filter = f;
+    document.querySelectorAll('.filters-wrap button').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+    render();
+  }}
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {{}});
   load();
 </script>
 </body>
