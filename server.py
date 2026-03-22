@@ -26,6 +26,21 @@ TEMPLATES_DIR = os.path.join(BASE, "templates")
 DATA_DIR      = os.path.join(BASE, "userdata")
 os.makedirs(DATA_DIR, exist_ok=True)
 
+# ─── Default settings ─────────────────────────────────────────────────────────
+DEFAULT_SETTINGS = {
+    "language": "en",
+    "notifications": {
+        "taskReminders": True,
+        "dailyDigest": False,
+        "taskCompleted": True,
+        "overdueTasks": True,
+        "weeklyReport": False,
+        "notificationSound": True,
+        "badgeCount": True,
+        "doNotDisturb": False
+    }
+}
+
 # ─── MongoDB ──────────────────────────────────────────────────────────────────
 db = None
 if MONGODB_URI:
@@ -50,6 +65,20 @@ def save_todos(user_id, data):
         db["todos"].replace_one({"_id": user_id}, {"_id": user_id, "data": data}, upsert=True)
         return
     with open(os.path.join(DATA_DIR, f"{user_id}.json"), "w") as f:
+        json.dump(data, f, indent=2)
+
+def load_settings(user_id):
+    if db is not None:
+        doc = db["settings"].find_one({"_id": user_id})
+        return doc["data"] if doc else DEFAULT_SETTINGS
+    path = os.path.join(DATA_DIR, f"{user_id}_settings.json")
+    return json.load(open(path)) if os.path.exists(path) else DEFAULT_SETTINGS
+
+def save_settings(user_id, data):
+    if db is not None:
+        db["settings"].replace_one({"_id": user_id}, {"_id": user_id, "data": data}, upsert=True)
+        return
+    with open(os.path.join(DATA_DIR, f"{user_id}_settings.json"), "w") as f:
         json.dump(data, f, indent=2)
 
 # ─── Anthropic AI ─────────────────────────────────────────────────────────────
@@ -170,12 +199,17 @@ def load_template(name):
 
 def render_app(user):
     name    = user.get("name", "")
+    email   = user.get("email", "")
     picture = user.get("picture", "")
     avatar  = (f'<img class="user-avatar" src="{picture}" referrerpolicy="no-referrer" alt="{name}">'
                if picture else
                f'<div class="user-avatar-fallback">{name[:1].upper()}</div>')
+    user_json = json.dumps({"name": name, "email": email, "picture": picture})
     html = load_template("app.html")
-    html = html.replace("{{AVATAR}}", avatar).replace("{{NAME}}", name)
+    html = (html.replace("{{AVATAR}}", avatar)
+                .replace("{{NAME}}", name)
+                .replace("{{EMAIL}}", email)
+                .replace("{{USER_JSON}}", user_json))
     return html.encode()
 
 # ─── Static assets ────────────────────────────────────────────────────────────
@@ -276,6 +310,13 @@ class Handler(BaseHTTPRequestHandler):
                 return self.redirect("/login")
 
         # API — require auth
+        if path == "/api/settings":
+            user = self.get_session()
+            if not user:
+                return self.ok("application/json", b'{"error":"unauthorized"}')
+            data = json.dumps(load_settings(user["id"])).encode()
+            return self.ok("application/json", data)
+
         if path == "/api/todos":
             user = self.get_session()
             if not user:
@@ -307,6 +348,14 @@ class Handler(BaseHTTPRequestHandler):
             length = int(self.headers.get("Content-Length", 0))
             body   = self.rfile.read(length)
             save_todos(user["id"], json.loads(body))
+            return self.ok("application/json", b'{"ok":true}')
+
+        if path == "/api/settings":
+            if not user:
+                return self.ok("application/json", b'{"error":"unauthorized"}')
+            length = int(self.headers.get("Content-Length", 0))
+            body   = json.loads(self.rfile.read(length))
+            save_settings(user["id"], body)
             return self.ok("application/json", b'{"ok":true}')
 
         if path in ("/api/ai/suggest", "/api/ai/summary", "/api/ai/split"):
