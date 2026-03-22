@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import hmac
 import hashlib
 import base64
@@ -239,6 +240,36 @@ def save_settings(user_id, data):
 # ─── Groups helpers ───────────────────────────────────────────────────────────
 def new_id():
     return str(_uuid.uuid4())
+
+def generate_slug(name, existing_slugs=None):
+    """Generate a URL-friendly slug from a group name."""
+    s = name.lower().strip()
+    s = re.sub(r'[^a-z0-9]+', '-', s)
+    s = s.strip('-')[:50]
+    if not s:
+        s = secrets.token_hex(4)
+    if existing_slugs is None:
+        existing_slugs = []
+    base = s
+    counter = 2
+    while s in existing_slugs:
+        s = f"{base}-{counter}"
+        counter += 1
+    return s
+
+def migrate_group_slugs():
+    """Add slugs to groups that don't have them (idempotent)."""
+    if db is None:
+        return
+    groups_without = list(db["groups"].find({"slug": {"$exists": False}}))
+    if not groups_without:
+        return
+    existing = [g.get("slug","") for g in db["groups"].find({"slug": {"$exists": True}}, {"slug": 1})]
+    for g in groups_without:
+        slug = generate_slug(g.get("name","group"), existing)
+        db["groups"].update_one({"_id": g["_id"]}, {"$set": {"slug": slug}})
+        existing.append(slug)
+        print(f"  Migrated group '{g.get('name')}' → slug: {slug}")
 
 def load_groups_for_user(user_id):
     """Return all groups where user is an active member."""
@@ -515,10 +546,11 @@ class Handler(BaseHTTPRequestHandler):
                 # Check for pending invite cookie
                 cookies = SimpleCookie(self.headers.get("Cookie",""))
                 invite_token = cookies["pending_invite"].value if "pending_invite" in cookies else None
+                joined_group = None
                 if invite_token and db is not None:
-                    g = db["groups"].find_one({"members.inviteToken": invite_token})
-                    if g:
-                        for m in g["members"]:
+                    joined_group = db["groups"].find_one({"members.inviteToken": invite_token})
+                    if joined_group:
+                        for m in joined_group["members"]:
                             if m.get("inviteToken") == invite_token and m.get("status") == "pending":
                                 m["userId"] = user["id"]
                                 m["name"] = user.get("name","")
@@ -527,13 +559,22 @@ class Handler(BaseHTTPRequestHandler):
                                 m["joinedAt"] = int(__import__("time").time() * 1000)
                                 m.pop("inviteToken", None)
                                 break
-                        save_group(g)
-                # Send response manually to support clearing invite cookie
+                        save_group(joined_group)
+                # Determine redirect destination after login
+                redirect_to = "/mytasks"
+                if joined_group and joined_group.get("slug"):
+                    redirect_to = f"/groups/{joined_group['slug']}"
+                elif "redirect_after_login" in cookies:
+                    rval = cookies["redirect_after_login"].value
+                    if rval and rval.startswith("/") and "//" not in rval and "@" not in rval:
+                        redirect_to = rval
+                # Send response manually to support clearing cookies
                 self.send_response(302)
-                self.send_header("Location", "/")
+                self.send_header("Location", redirect_to)
                 self.send_header("Set-Cookie", self.session_cookie(user))
                 if invite_token:
                     self.send_header("Set-Cookie", "pending_invite=; Path=/; Max-Age=0")
+                self.send_header("Set-Cookie", "redirect_after_login=; Path=/; Max-Age=0")
                 self.end_headers()
                 return
             except Exception as e:
@@ -556,6 +597,7 @@ class Handler(BaseHTTPRequestHandler):
             for g in groups:
                 result.append({
                     "_id": g["_id"], "name": g["name"],
+                    "slug": g.get("slug",""),
                     "description": g.get("description",""),
                     "color": g.get("color","#3B82F6"),
                     "createdBy": g.get("createdBy"),
@@ -567,6 +609,19 @@ class Handler(BaseHTTPRequestHandler):
 
         if path.startswith("/api/groups/"):
             parts = path.split("/")
+            # GET /api/groups/by-slug/{slug}
+            if len(parts) == 5 and parts[3] == "by-slug":
+                slug = parts[4]
+                user = self.get_session()
+                if not user: return self.ok("application/json", b'{"error":"unauthorized"}')
+                if db is None: return self.ok("application/json", b'{"error":"not found"}')
+                g = db["groups"].find_one({"slug": slug})
+                if not g: return self.ok("application/json", b'{"error":"not found"}')
+                role = get_member_role(g, user["id"])
+                if not role: return self.ok("application/json", b'{"error":"forbidden"}')
+                out = dict(g); out["myRole"] = role
+                return self.ok("application/json", json.dumps(out).encode())
+
             # /api/groups/{id}
             if len(parts) == 4:
                 group_id = parts[3]
@@ -576,7 +631,7 @@ class Handler(BaseHTTPRequestHandler):
                 if not g: return self.ok("application/json", b'{"error":"not found"}')
                 role = get_member_role(g, user["id"])
                 if not role: return self.ok("application/json", b'{"error":"forbidden"}')
-                out = dict(g); out["_id"] = g["_id"]; out["myRole"] = role
+                out = dict(g); out["_id"] = g["_id"]; out["slug"] = g.get("slug",""); out["myRole"] = role
                 return self.ok("application/json", json.dumps(out).encode())
 
         # Notifications
@@ -636,7 +691,10 @@ class Handler(BaseHTTPRequestHandler):
                         subject=f'{user.get("name","Someone")} joined your group "{g["name"]}"',
                         html_body=html,
                     )
-            return self.redirect("/")
+            # Redirect to the group board
+            group_slug = g.get("slug","")
+            redirect_target = f"/groups/{group_slug}" if group_slug else "/groups"
+            return self.redirect(redirect_target)
 
         if path == "/api/settings":
             user = self.get_session()
@@ -652,11 +710,32 @@ class Handler(BaseHTTPRequestHandler):
             data = json.dumps(load_todos(user["id"])).encode()
             return self.ok("application/json", data)
 
-        # Main app — require auth
-        user = self.get_session()
-        if not user:
-            return self.redirect("/login")
-        return self.ok("text/html; charset=utf-8", render_app(user))
+        # Root redirect
+        if path == "/":
+            user = self.get_session()
+            if not user:
+                return self.redirect("/login")
+            return self.redirect("/mytasks")
+
+        # SPA app routes — serve app.html (frontend handles routing)
+        SPA_ROUTES = {"/mytasks", "/analytics", "/groups"}
+        if path in SPA_ROUTES or path.startswith("/groups/"):
+            user = self.get_session()
+            if not user:
+                # Validate redirect target (must be a safe relative path)
+                safe_path = path if path.startswith("/") and "//" not in path and "@" not in path else "/mytasks"
+                self.send_response(302)
+                self.send_header("Location", "/login")
+                self.send_header("Set-Cookie", f"redirect_after_login={safe_path}; Path=/; Max-Age=300; HttpOnly")
+                self.end_headers()
+                return
+            return self.ok("text/html; charset=utf-8", render_app(user))
+
+        # 404 for unknown routes
+        self.send_response(404)
+        self.send_header("Content-Type", "text/plain")
+        self.end_headers()
+        self.wfile.write(b"404 Not Found")
 
     def do_POST(self):
         path = urlparse(self.path).path
@@ -707,9 +786,14 @@ class Handler(BaseHTTPRequestHandler):
             if not user: return self.ok("application/json", b'{"error":"unauthorized"}')
             length = int(self.headers.get("Content-Length", 0))
             body = json.loads(self.rfile.read(length))
+            group_name = body.get("name","").strip()
+            # Generate unique slug for the new group
+            existing_slugs = [g.get("slug","") for g in db["groups"].find({}, {"slug": 1})] if db is not None else []
+            group_slug = generate_slug(group_name, existing_slugs)
             group = {
                 "_id": new_id(),
-                "name": body.get("name","").strip(),
+                "name": group_name,
+                "slug": group_slug,
                 "description": body.get("description","").strip(),
                 "color": body.get("color","#3B82F6"),
                 "createdBy": user["id"],
@@ -727,7 +811,7 @@ class Handler(BaseHTTPRequestHandler):
             }
             if db is not None:
                 db["groups"].insert_one(group)
-            return self.ok("application/json", json.dumps({"_id": group["_id"]}).encode())
+            return self.ok("application/json", json.dumps({"_id": group["_id"], "slug": group_slug}).encode())
 
         if path.startswith("/api/groups/"):
             parts = path.split("/")
@@ -955,6 +1039,9 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    # Migrate existing groups to have slugs
+    if db is not None:
+        migrate_group_slugs()
     server = HTTPServer(("0.0.0.0", PORT), Handler)
     print(f"✓ Running at http://localhost:{PORT}")
     if not GOOGLE_CLIENT_ID:   print("⚠  GOOGLE_CLIENT_ID not set")

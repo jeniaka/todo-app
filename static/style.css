@@ -1007,6 +1007,8 @@ body{
 /* chart-btn in navbar */
 .chart-btn{border:none;background:transparent}
 .chart-btn:hover{background:var(--bg-secondary)}
+/* Active nav icon */
+.icon-btn.nav-active{color:var(--accent);background:var(--accent-soft);border-color:transparent}
 
 /* ─── Confirmation/Create modal ──────────────────────────────────────────── */
 .confirm-overlay{

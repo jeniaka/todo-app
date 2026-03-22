@@ -875,6 +875,7 @@ function updateNotifBell() {
 }
 
 function updateTabTitle() {
+  if (typeof updatePageTitle === 'function') { updatePageTitle(); return; }
   document.title = state.unreadCount > 0 ? `(${state.unreadCount}) My Tasks` : 'My Tasks';
 }
 
@@ -936,14 +937,8 @@ function renderNotifDropdown() {
 }
 
 // ─── Groups page ──────────────────────────────────────────────────────────────
-async function showGroupsPage() {
-  state.groupsView = true;
-  state.activeGroup = null;
-  document.getElementById('mainContent').style.display = 'none';
-  document.getElementById('groupBoardPage').style.display = 'none';
-  document.getElementById('groupsPage').style.display = '';
-  const groups = await apiLoadGroups();
-  renderGroupsList(groups);
+function showGroupsPage() {
+  navigateTo('/groups');
 }
 
 function renderGroupsList(groups) {
@@ -962,7 +957,7 @@ function renderGroupsList(groups) {
       m.picture ? `<img class="gm-avatar" src="${m.picture}" title="${m.name}">` :
       `<div class="gm-avatar gm-avatar-fb" title="${m.name}">${(m.name||'?')[0].toUpperCase()}</div>`
     ).join('') + (activeMembers.length > 5 ? `<div class="gm-avatar gm-avatar-more">+${activeMembers.length-5}</div>` : '');
-    return `<div class="group-card" data-gid="${g._id}" style="--g-color:${g.color}">
+    return `<div class="group-card" data-gid="${g._id}" data-slug="${g.slug||g._id}" style="--g-color:${g.color}">
       <div class="group-card-stripe"></div>
       <div class="group-card-body">
         <div class="group-card-top">
@@ -979,7 +974,7 @@ function renderGroupsList(groups) {
     </div>`;
   }).join('');
   container.querySelectorAll('.group-card').forEach(card => {
-    card.addEventListener('click', () => openGroupBoard(card.dataset.gid));
+    card.addEventListener('click', () => navigateTo(`/groups/${card.dataset.slug}`));
   });
 }
 
@@ -1018,21 +1013,23 @@ function showCreateGroupModal() {
     if (!name) { el.querySelector('#cgName').focus(); return; }
     const result = await apiCreateGroup({ name, description: el.querySelector('#cgDesc').value.trim(), color: selectedColor });
     close();
-    if (result._id) openGroupBoard(result._id);
+    if (result.slug) {
+      navigateTo(`/groups/${result.slug}`);
+    } else if (result._id) {
+      navigateTo(`/groups/${result._id}`);
+    }
   };
   el.addEventListener('click', e => { if (e.target === el) close(); });
 }
 
 // ─── Group board ──────────────────────────────────────────────────────────────
-async function openGroupBoard(groupId) {
-  const g = await apiLoadGroup(groupId);
-  state.activeGroup = g;
-  state.groupFilter = 'all';
-  state.groupSort = 'newest';
-  document.getElementById('mainContent').style.display = 'none';
-  document.getElementById('groupsPage').style.display = 'none';
-  document.getElementById('groupBoardPage').style.display = '';
-  renderGroupBoard();
+function openGroupBoard(groupId, slug) {
+  if (slug) {
+    navigateTo(`/groups/${slug}`);
+  } else {
+    // Fallback: use group ID (router will handle by-slug lookup)
+    navigateTo(`/groups/${groupId}`);
+  }
 }
 
 function renderGroupBoard() {
@@ -1040,6 +1037,14 @@ function renderGroupBoard() {
   const tl = TL[state.lang] || TL.en;
   const myRole = g.myRole;
   const userId = window.__USER__?.id;
+
+  // Ensure URL shows the slug-based path (canonical URL)
+  if (g.slug) {
+    const expectedPath = `/groups/${g.slug}`;
+    if (!window.location.pathname.startsWith(expectedPath)) {
+      history.replaceState({ path: expectedPath }, '', expectedPath);
+    }
+  }
 
   document.getElementById('gbName').textContent = g.name;
   document.getElementById('gbName').style.color = g.color;
@@ -1436,7 +1441,14 @@ function showMembersPanel() {
     </div>`;
   document.body.appendChild(el);
   requestAnimationFrame(() => el.classList.add('open'));
-  const close = () => { el.classList.remove('open'); setTimeout(() => el.remove(), 200); };
+  const close = () => {
+    el.classList.remove('open');
+    setTimeout(() => el.remove(), 200);
+    // If opened via /settings URL, navigate back to group board
+    if (window.location.pathname.endsWith('/settings') && g.slug) {
+      navigateTo(`/groups/${g.slug}`, true);
+    }
+  };
   el.querySelector('#membersClose').onclick = close;
   el.addEventListener('click', e => { if (e.target === el) close(); });
 
@@ -1585,6 +1597,8 @@ function playNotifSound() {
 
 // ─── Badge count ──────────────────────────────────────────────────────────────
 function updateBadge() {
+  // Delegate to updatePageTitle which handles badge + route-aware titles
+  if (typeof updatePageTitle === 'function') { updatePageTitle(); return; }
   if (!state.settings?.notifications?.badgeCount) {
     document.title = t('appTitle');
     return;
@@ -1625,13 +1639,14 @@ function applyLanguage(code) {
   if (state.activeDrawer !== null) renderDrawer(state.activeDrawer);
   // Re-render task list (relative times change language)
   render();
-  // Re-render groups pages if active
+  // Re-render groups pages if active (language change)
   if (state.activeGroup && document.getElementById('groupBoardPage').style.display !== 'none') {
     renderGroupBoard();
   } else if (state.groupsView && document.getElementById('groupsPage').style.display !== 'none') {
-    // Re-fetch and re-render groups list with new language
     apiLoadGroups().then(groups => renderGroupsList(groups));
   }
+  // Update document title with new language
+  updatePageTitle();
   // Update language list checkmarks
   renderLangList();
 }
@@ -1804,21 +1819,12 @@ const CHART_COLORS = {
 let activeChartInstance = null;
 
 function openCharts() {
-  state.chartView = true;
-  const el = document.getElementById('chartsView');
-  if (el) { el.style.display = ''; }
-  renderChartStats();
-  renderActiveChart();
-  applyI18n();
-  history.pushState({ app: true }, '');
+  navigateTo('/analytics');
 }
 
 function closeCharts() {
-  state.chartView = false;
-  const el = document.getElementById('chartsView');
-  if (el) { el.style.display = 'none'; }
   if (activeChartInstance) { activeChartInstance.destroy(); activeChartInstance = null; }
-  history.pushState({ app: true }, '');
+  navigateTo('/mytasks');
 }
 
 function renderChartStats() {
@@ -2337,23 +2343,144 @@ function checkWeeklyReport() {
   showToast(`📊 ${done} tasks completed this week`);
 }
 
-// ─── Boot ─────────────────────────────────────────────────────────────────────
-// ─── Android / browser back button ───────────────────────────────────────────
-// Push a state on load so there is always something to "pop" back to.
-// When the user presses back, we intercept and close drawer/menu instead of
-// navigating away (which would land on /login and effectively log them out).
-history.replaceState({ app: true }, '');
+// ─── Router ───────────────────────────────────────────────────────────────────
+function navigateTo(path, replace = false) {
+  if (replace) {
+    history.replaceState({ path }, '', path);
+  } else {
+    history.pushState({ path }, '', path);
+  }
+  handleRoute(path);
+}
 
-window.addEventListener('popstate', () => {
-  if (state.chartView) {
-    closeCharts();
-  } else if (state.activeDrawer !== null) {
+async function handleRoute(path) {
+  const tl = TL[state.lang] || TL.en;
+  const appName = tl.appTitle || 'My Tasks';
+
+  // Close any open overlays before switching view
+  if (state.activeDrawer !== null) closeDrawer();
+  document.getElementById('gtDetailModal')?.remove();
+
+  if (path === '/mytasks' || path === '/') {
+    state.groupsView = false;
+    state.activeGroup = null;
+    state.chartView = false;
+    document.getElementById('chartsView').style.display = 'none';
+    document.getElementById('groupsPage').style.display = 'none';
+    document.getElementById('groupBoardPage').style.display = 'none';
+    document.getElementById('mainContent').style.display = '';
+    document.title = appName;
+    updateActiveNavigation(path);
+
+  } else if (path === '/analytics') {
+    state.groupsView = false;
+    state.activeGroup = null;
+    state.chartView = true;
+    document.getElementById('groupsPage').style.display = 'none';
+    document.getElementById('groupBoardPage').style.display = 'none';
+    document.getElementById('mainContent').style.display = '';
+    const el = document.getElementById('chartsView');
+    if (el) el.style.display = '';
+    renderChartStats();
+    renderActiveChart();
+    applyI18n();
+    document.title = `${tl.charts||'Analytics'} — ${appName}`;
+    updateActiveNavigation(path);
+
+  } else if (path === '/groups') {
+    state.groupsView = true;
+    state.activeGroup = null;
+    state.chartView = false;
+    document.getElementById('chartsView').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('groupBoardPage').style.display = 'none';
+    document.getElementById('groupsPage').style.display = '';
+    document.title = `${tl.groups||'Groups'} — ${appName}`;
+    updateActiveNavigation(path);
+    const groups = await apiLoadGroups();
+    renderGroupsList(groups);
+
+  } else {
+    // Try /groups/{slug} or /groups/{slug}/settings
+    const boardMatch = path.match(/^\/groups\/([^/]+)$/);
+    const settingsMatch = path.match(/^\/groups\/([^/]+)\/settings$/);
+    if (boardMatch || settingsMatch) {
+      const slug = (boardMatch || settingsMatch)[1];
+      state.groupsView = false;
+      state.chartView = false;
+      document.getElementById('chartsView').style.display = 'none';
+      document.getElementById('groupsPage').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'none';
+      document.getElementById('groupBoardPage').style.display = '';
+      updateActiveNavigation('/groups');
+      // Load group by slug
+      let g = null;
+      try {
+        g = await fetch(`/api/groups/by-slug/${encodeURIComponent(slug)}`).then(r => r.json());
+      } catch(_) {}
+      if (!g || g.error) {
+        // Fallback: maybe it's an ID not a slug
+        try {
+          g = await apiLoadGroup(slug);
+        } catch(_) {}
+      }
+      if (g && !g.error) {
+        state.activeGroup = g;
+        state.groupFilter = 'all';
+        state.groupSort = 'newest';
+        renderGroupBoard();
+        document.title = `${g.name} — ${appName}`;
+        if (settingsMatch) {
+          showMembersPanel();
+        }
+      } else {
+        // Group not found — go back to groups list
+        navigateTo('/groups', true);
+      }
+      return;
+    }
+    // Unknown path — go to mytasks
+    navigateTo('/mytasks', true);
+  }
+}
+
+function updateActiveNavigation(path) {
+  const chartBtn = document.getElementById('chartBtn');
+  const groupsBtn = document.getElementById('groupsBtn');
+  if (chartBtn) chartBtn.classList.toggle('nav-active', path === '/analytics');
+  if (groupsBtn) groupsBtn.classList.toggle('nav-active', path === '/groups' || path.startsWith('/groups/'));
+}
+
+function updatePageTitle() {
+  const tl = TL[state.lang] || TL.en;
+  const appName = tl.appTitle || 'My Tasks';
+  const path = window.location.pathname;
+  let title = appName;
+  if (path === '/analytics') {
+    title = `${tl.charts||'Analytics'} — ${appName}`;
+  } else if (path === '/groups') {
+    title = `${tl.groups||'Groups'} — ${appName}`;
+  } else if (state.activeGroup && path.startsWith('/groups/')) {
+    title = `${state.activeGroup.name} — ${appName}`;
+  }
+  // Prepend unread count if badge enabled
+  if (state.unreadCount > 0 && state.settings?.notifications?.badgeCount) {
+    title = `(${state.unreadCount}) ${title}`;
+  }
+  document.title = title;
+}
+
+window.addEventListener('popstate', e => {
+  const path = (e.state && e.state.path) || window.location.pathname;
+  if (state.activeDrawer !== null) {
     closeDrawer();
+    history.pushState({ path: window.location.pathname }, '', window.location.pathname);
   } else if (menuOpen) {
     closeMenu();
+    history.pushState({ path: window.location.pathname }, '', window.location.pathname);
+  } else {
+    handleRoute(path);
   }
-  // Always re-push so the next back press is also caught.
-  history.pushState({ app: true }, '');
 });
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
@@ -2370,9 +2497,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('dbBannerClose')?.addEventListener('click', () => {
     document.getElementById('dbBanner').style.display = 'none';
   });
-
-  // Push initial history entry so popstate fires on first back press
-  history.pushState({ app: true }, '');
 
   // Theme
   const savedTheme = localStorage.getItem('theme');
@@ -2656,24 +2780,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ── Groups ────────────────────────────────────────────────────────────────
-  document.getElementById('groupsBtn').addEventListener('click', showGroupsPage);
+  document.getElementById('groupsBtn').addEventListener('click', () => navigateTo('/groups'));
 
-  document.getElementById('gbBackBtn').addEventListener('click', showGroupsPage);
+  document.getElementById('gbBackBtn').addEventListener('click', () => navigateTo('/groups'));
 
   // "Personal tasks" button — goes back to mainContent from groups list
-  document.getElementById('groupsBackBtn').addEventListener('click', () => {
-    state.groupsView = false;
-    document.getElementById('groupsPage').style.display = 'none';
-    document.getElementById('mainContent').style.display = '';
-  });
+  document.getElementById('groupsBackBtn').addEventListener('click', () => navigateTo('/mytasks'));
 
   // "Personal tasks" button — goes back to mainContent from group board
-  document.getElementById('gbPersonalBtn').addEventListener('click', () => {
-    state.groupsView = false;
-    state.activeGroup = null;
-    document.getElementById('groupBoardPage').style.display = 'none';
-    document.getElementById('mainContent').style.display = '';
-  });
+  document.getElementById('gbPersonalBtn').addEventListener('click', () => navigateTo('/mytasks'));
 
   document.getElementById('newGroupBtn').addEventListener('click', showCreateGroupModal);
 
@@ -2766,7 +2881,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('gbSortSelect').addEventListener('change', e => { state.groupSort=e.target.value; renderGroupTaskList(); });
 
   document.getElementById('gbInviteBtn').addEventListener('click', showInviteModal);
-  document.getElementById('gbSettingsBtn').addEventListener('click', showMembersPanel);
+  document.getElementById('gbSettingsBtn').addEventListener('click', () => {
+    if (state.activeGroup?.slug) {
+      navigateTo(`/groups/${state.activeGroup.slug}/settings`);
+    } else {
+      showMembersPanel();
+    }
+  });
 
   document.getElementById('gbDeleteBtn').addEventListener('click', () => {
     const g = state.activeGroup;
@@ -2777,7 +2898,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       confirmText: tl.yes||'Yes',
       onConfirm: async () => {
         await apiDeleteGroup(g._id);
-        showGroupsPage();
+        navigateTo('/groups');
       }
     });
   });
@@ -2811,4 +2932,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Mark body as ready (prevents language flash)
   document.body.classList.add('lang-ready');
+
+  // Initial route — read URL and show correct view
+  const initPath = window.location.pathname || '/mytasks';
+  // Replace state so back button works from initial page
+  history.replaceState({ path: initPath }, '', initPath);
+  await handleRoute(initPath);
 });
