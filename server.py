@@ -461,6 +461,15 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/login":
             return self.respond(200, "text/html; charset=utf-8", LOGIN_HTML.encode())
 
+        if path == "/debug-env":
+            info = {
+                "GOOGLE_CLIENT_ID_set": bool(os.environ.get("GOOGLE_CLIENT_ID")),
+                "GOOGLE_CLIENT_SECRET_set": bool(os.environ.get("GOOGLE_CLIENT_SECRET")),
+                "REDIRECT_URI": os.environ.get("REDIRECT_URI", "NOT SET"),
+                "SESSION_SECRET_set": bool(os.environ.get("SESSION_SECRET")),
+            }
+            return self.respond(200, "application/json", json.dumps(info).encode())
+
         if path == "/auth/google":
             if not GOOGLE_CLIENT_ID:
                 return self.respond(500, "text/plain", b"GOOGLE_CLIENT_ID not configured")
