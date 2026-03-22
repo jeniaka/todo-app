@@ -368,10 +368,17 @@ function duration(from, to) {
   return remMins > 0 ? `${hrs}h ${remMins}m` : `${hrs}h`;
 }
 
+// BCP-47 locale tags for each supported language code
+const LOCALE_MAP = {
+  en:'en-US', he:'he-IL', ar:'ar-SA', es:'es-ES',
+  fr:'fr-FR', de:'de-DE', ru:'ru-RU', pt:'pt-BR',
+  zh:'zh-CN', ja:'ja-JP',
+};
+function langLocale() { return LOCALE_MAP[state.lang] || state.lang; }
+
 function absTime(ts) {
   if (!ts) return '';
-  const locale = LANGS.find(l => l.code === state.lang)?.dir === 'rtl' ? 'he-IL' : 'en-US';
-  return new Date(ts).toLocaleString(locale, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  return new Date(ts).toLocaleString(langLocale(), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
 }
 
 // ─── API ──────────────────────────────────────────────────────────────────────
@@ -606,8 +613,7 @@ const io = new IntersectionObserver(entries => {
 function render() {
   // Hero
   document.getElementById('heroDate').textContent = new Date().toLocaleDateString(
-    state.lang === 'he' ? 'he-IL' : state.lang === 'ar' ? 'ar-SA' : 'en-US',
-    { weekday:'long', year:'numeric', month:'long', day:'numeric' }
+    langLocale(), { weekday:'long', year:'numeric', month:'long', day:'numeric' }
   );
 
   // Progress
@@ -878,7 +884,7 @@ function renderActiveChart() {
     const data = [];
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(now - i * 86400000);
-      labels.push(d.toLocaleDateString(state.lang, { month: 'short', day: 'numeric' }));
+      labels.push(d.toLocaleDateString(langLocale(), { month: 'short', day: 'numeric' }));
       const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
       const dayEnd = dayStart + 86400000;
       data.push(todos.filter(t => t.done && t.completedAt >= dayStart && t.completedAt < dayEnd).length);
