@@ -425,7 +425,7 @@ body{
   transition:max-height 0.3s var(--ease-out),opacity 0.25s var(--ease-out);
   opacity:0;
 }
-.add-dropdown.open{max-height:140px;opacity:1}
+.add-dropdown.open{max-height:320px;opacity:1}
 .add-p-row{display:flex;gap:6px;padding:10px 2px 8px;flex-wrap:wrap}
 .add-p-btn{
   padding:6px 14px;border-radius:var(--radius-full);
@@ -1259,3 +1259,54 @@ body{
   font-family:var(--font-body);cursor:pointer;padding:0;
 }
 .link-btn:hover{text-decoration:underline}
+
+/* ─── Status indicators ───────────────────────────────────────────────────── */
+.task-cb.in-progress{background:#3B82F6;border-color:#3B82F6;animation:pulseDot 1.5s infinite}
+.task-card.in-progress-card{border-left:3px solid #3B82F6}
+.group-task-row.in-progress-card{border-left:3px solid #3B82F6}
+@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:0.6}}
+
+/* ─── 3-segment progress bar ─────────────────────────────────────────────── */
+.progress-fill-done{background:#22C55E}
+.progress-fill-prog{background:#3B82F6}
+
+/* ─── Time badges on cards ───────────────────────────────────────────────── */
+.time-badge{font-size:11px;color:var(--text-tertiary)}
+.due-badge{font-size:11px}
+.due-badge.overdue{color:#EF4444;font-weight:600}
+.due-badge.due-soon{color:#F59E0B}
+.due-badge.due-ok{color:#22C55E}
+
+/* ─── Inline analytics ───────────────────────────────────────────────────── */
+.inline-analytics{margin:8px 0}
+.analytics-toggle{display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-secondary);padding:8px 0;width:100%;text-align:left;font-family:var(--font-body)}
+.analytics-toggle:hover{color:var(--text-primary)}
+.analytics-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-top:4px}
+.chart-container-inline{position:relative;height:220px;margin:12px 0}
+.analytics-stats-row{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;padding:8px 0}
+.perf-table{display:flex;flex-direction:column;gap:8px;font-size:13px;margin-top:8px}
+.perf-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.stats-grid-mini{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text-secondary);margin-top:8px}
+.done-stat{color:#22C55E}
+.prog-stat{color:#3B82F6}
+
+/* ─── More options in add form ───────────────────────────────────────────── */
+.more-options-toggle{font-size:12px;color:var(--text-tertiary);cursor:pointer;padding:4px 12px}
+.more-options-toggle:hover{color:var(--accent)}
+.more-options{padding:8px 12px;border-top:1px solid var(--border)}
+.time-row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}
+.time-row label{color:var(--text-secondary);min-width:70px}
+.time-row select,.time-row input{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-secondary);font-family:var(--font-body);font-size:13px;color:var(--text-primary)}
+
+/* ─── Status dropdown in detail ──────────────────────────────────────────── */
+.status-select{padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-secondary);font-family:var(--font-body);font-size:14px;width:100%}
+
+/* ─── Time detail grid in drawer ─────────────────────────────────────────── */
+.time-detail-grid{display:flex;flex-direction:column;gap:10px}
+.time-row-detail{display:flex;align-items:center;gap:10px}
+.time-label{font-size:13px;color:var(--text-secondary);min-width:80px}
+.time-row-detail select,.time-row-detail input{flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-secondary);font-family:var(--font-body);font-size:13px;color:var(--text-primary)}
+.time-info-block{font-size:13px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:var(--radius-md);padding:10px 12px;margin-top:8px}
+.time-perf-green{color:#22C55E;font-weight:600}
+.time-perf-yellow{color:#F59E0B;font-weight:600}
+.time-perf-red{color:#EF4444;font-weight:600}

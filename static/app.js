@@ -101,6 +101,17 @@ const TL = {
     sortNewest:'Newest',sortPriority:'Priority',sortAssignee:'Assignee',
     personalTasks:'My Tasks',
     groupTaskNotes:'Notes',groupTaskDetails:'Task Details',
+    analytics:'Analytics',teamAnalytics:'Team Analytics',overview:'Overview',
+    byMember:'By Member',byPriority:'By Priority',timeAnalysis:'Time Analysis',
+    performance:'Performance',estimatedTime:'Estimated',dueDate:'Due date',
+    dueIn:'Due in {time}',overdue:'Overdue',overdueBy:'Overdue by {time}',
+    completedIn:'Completed in {time}',vsEstimate:'est. {time}',underEstimate:'Under estimate',
+    overEstimate:'Over estimate',onTime:'On time',moreOptions:'More options',
+    timeAndSchedule:'Time & Schedule',elapsed:'Elapsed',running:'running',
+    noEstimate:'No estimate',noDueDate:'No due date',todo:'To Do',inProgress:'In Progress',
+    status:'Status',tasksCompleted:'Tasks this week',avgCompletionTime:'Avg time',
+    overdueRate:'Overdue rate',onTimeRate:'On-time rate',onTrack:'On Track',
+    needsAttention:'Needs Attention',atRisk:'At Risk',
   },
   he: {
     appTitle:'המשימות שלי',add:'הוסף',filterAll:'הכל',filterActive:'פעיל',filterDone:'הושלם',
@@ -163,6 +174,17 @@ const TL = {
     copyLink:'העתק קישור',copied:'הועתק!',done:'סיום',
     sortNewest:'חדש ביותר',sortPriority:'עדיפות',sortAssignee:'מוקצה',
     personalTasks:'המשימות שלי',groupTaskNotes:'הערות',groupTaskDetails:'פרטי המשימה',
+    analytics:'ניתוח',teamAnalytics:'ניתוח צוות',overview:'סקירה',
+    byMember:'לפי חבר',byPriority:'לפי עדיפות',timeAnalysis:'ניתוח זמן',
+    performance:'ביצועים',estimatedTime:'הערכה',dueDate:'תאריך יעד',
+    dueIn:'יעד בעוד {time}',overdue:'באיחור',overdueBy:'באיחור של {time}',
+    completedIn:'הושלם תוך {time}',vsEstimate:'הערכה {time}',underEstimate:'מתחת להערכה',
+    overEstimate:'מעל להערכה',onTime:'בזמן',moreOptions:'אפשרויות נוספות',
+    timeAndSchedule:'זמן ולוח זמנים',elapsed:'חלף',running:'פועל',
+    noEstimate:'ללא הערכה',noDueDate:'ללא תאריך יעד',todo:'לביצוע',inProgress:'בתהליך',
+    status:'סטטוס',tasksCompleted:'משימות השבוע',avgCompletionTime:'זמן ממוצע',
+    overdueRate:'שיעור איחור',onTimeRate:'שיעור בזמן',onTrack:'במסלול',
+    needsAttention:'דורש תשומת לב',atRisk:'בסיכון',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -225,6 +247,17 @@ const TL = {
     copyLink:'نسخ الرابط',copied:'تم النسخ!',done:'تم',
     sortNewest:'الأحدث',sortPriority:'الأولوية',sortAssignee:'المعين',
     personalTasks:'مهامي',groupTaskNotes:'ملاحظات',groupTaskDetails:'تفاصيل المهمة',
+    analytics:'تحليلات',teamAnalytics:'تحليلات الفريق',overview:'نظرة عامة',
+    byMember:'حسب العضو',byPriority:'حسب الأولوية',timeAnalysis:'تحليل الوقت',
+    performance:'الأداء',estimatedTime:'التقدير',dueDate:'تاريخ الاستحقاق',
+    dueIn:'يستحق في {time}',overdue:'متأخر',overdueBy:'متأخر بـ {time}',
+    completedIn:'أُنجز في {time}',vsEstimate:'تقدير {time}',underEstimate:'أقل من التقدير',
+    overEstimate:'أكثر من التقدير',onTime:'في الوقت',moreOptions:'خيارات أخرى',
+    timeAndSchedule:'الوقت والجدول',elapsed:'مضى',running:'يعمل',
+    noEstimate:'بدون تقدير',noDueDate:'بدون موعد',todo:'للتنفيذ',inProgress:'قيد التنفيذ',
+    status:'الحالة',tasksCompleted:'مهام هذا الأسبوع',avgCompletionTime:'متوسط الوقت',
+    overdueRate:'معدل التأخر',onTimeRate:'معدل الالتزام',onTrack:'على المسار',
+    needsAttention:'يحتاج انتباه',atRisk:'في خطر',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -287,6 +320,17 @@ const TL = {
     copyLink:'Copiar enlace',copied:'¡Copiado!',done:'Listo',
     sortNewest:'Más reciente',sortPriority:'Prioridad',sortAssignee:'Asignado',
     personalTasks:'Mis Tareas',groupTaskNotes:'Notas',groupTaskDetails:'Detalles de tarea',
+    analytics:'Análisis',teamAnalytics:'Análisis de equipo',overview:'Resumen',
+    byMember:'Por miembro',byPriority:'Por prioridad',timeAnalysis:'Análisis de tiempo',
+    performance:'Rendimiento',estimatedTime:'Estimado',dueDate:'Fecha límite',
+    dueIn:'Vence en {time}',overdue:'Vencido',overdueBy:'Vencido por {time}',
+    completedIn:'Completado en {time}',vsEstimate:'est. {time}',underEstimate:'Por debajo',
+    overEstimate:'Por encima',onTime:'A tiempo',moreOptions:'Más opciones',
+    timeAndSchedule:'Tiempo y agenda',elapsed:'Transcurrido',running:'en curso',
+    noEstimate:'Sin estimación',noDueDate:'Sin fecha',todo:'Pendiente',inProgress:'En progreso',
+    status:'Estado',tasksCompleted:'Tareas esta semana',avgCompletionTime:'Tiempo medio',
+    overdueRate:'Tasa de retraso',onTimeRate:'Tasa a tiempo',onTrack:'En camino',
+    needsAttention:'Necesita atención',atRisk:'En riesgo',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -349,6 +393,17 @@ const TL = {
     copyLink:'Copier le lien',copied:'Copié !',done:'Terminé',
     sortNewest:'Plus récent',sortPriority:'Priorité',sortAssignee:'Assigné',
     personalTasks:'Mes Tâches',groupTaskNotes:'Notes',groupTaskDetails:'Détails de la tâche',
+    analytics:'Analyses',teamAnalytics:'Analyses équipe',overview:'Vue d\'ensemble',
+    byMember:'Par membre',byPriority:'Par priorité',timeAnalysis:'Analyse temps',
+    performance:'Performance',estimatedTime:'Estimé',dueDate:'Échéance',
+    dueIn:'Échéance dans {time}',overdue:'En retard',overdueBy:'En retard de {time}',
+    completedIn:'Terminé en {time}',vsEstimate:'est. {time}',underEstimate:'Sous l\'estimation',
+    overEstimate:'Au-delà',onTime:'À temps',moreOptions:'Plus d\'options',
+    timeAndSchedule:'Temps & Agenda',elapsed:'Écoulé',running:'en cours',
+    noEstimate:'Sans estimation',noDueDate:'Sans échéance',todo:'À faire',inProgress:'En cours',
+    status:'Statut',tasksCompleted:'Tâches cette semaine',avgCompletionTime:'Temps moyen',
+    overdueRate:'Taux de retard',onTimeRate:'Taux à temps',onTrack:'Dans les délais',
+    needsAttention:'Attention requise',atRisk:'À risque',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -411,6 +466,17 @@ const TL = {
     copyLink:'Link kopieren',copied:'Kopiert!',done:'Fertig',
     sortNewest:'Neueste',sortPriority:'Priorität',sortAssignee:'Zugewiesen',
     personalTasks:'Meine Aufgaben',groupTaskNotes:'Notizen',groupTaskDetails:'Aufgabendetails',
+    analytics:'Analysen',teamAnalytics:'Team-Analysen',overview:'Übersicht',
+    byMember:'Nach Mitglied',byPriority:'Nach Priorität',timeAnalysis:'Zeitanalyse',
+    performance:'Leistung',estimatedTime:'Schätzung',dueDate:'Fälligkeitsdatum',
+    dueIn:'Fällig in {time}',overdue:'Überfällig',overdueBy:'Überfällig um {time}',
+    completedIn:'Abgeschlossen in {time}',vsEstimate:'gesch. {time}',underEstimate:'Unter Schätzung',
+    overEstimate:'Über Schätzung',onTime:'Pünktlich',moreOptions:'Weitere Optionen',
+    timeAndSchedule:'Zeit & Zeitplan',elapsed:'Verstrichen',running:'läuft',
+    noEstimate:'Keine Schätzung',noDueDate:'Kein Datum',todo:'Zu erledigen',inProgress:'In Arbeit',
+    status:'Status',tasksCompleted:'Aufgaben diese Woche',avgCompletionTime:'Durchschn. Zeit',
+    overdueRate:'Überfälligkeitsrate',onTimeRate:'Pünktlichkeitsrate',onTrack:'Im Plan',
+    needsAttention:'Aufmerksamkeit nötig',atRisk:'Gefährdet',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -473,6 +539,17 @@ const TL = {
     copyLink:'Скопировать ссылку',copied:'Скопировано!',done:'Готово',
     sortNewest:'Новейшие',sortPriority:'Приоритет',sortAssignee:'Исполнитель',
     personalTasks:'Мои задачи',groupTaskNotes:'Заметки',groupTaskDetails:'Детали задачи',
+    analytics:'Аналитика',teamAnalytics:'Аналитика команды',overview:'Обзор',
+    byMember:'По участнику',byPriority:'По приоритету',timeAnalysis:'Анализ времени',
+    performance:'Производительность',estimatedTime:'Оценка',dueDate:'Срок выполнения',
+    dueIn:'Срок через {time}',overdue:'Просрочено',overdueBy:'Просрочено на {time}',
+    completedIn:'Выполнено за {time}',vsEstimate:'оценка {time}',underEstimate:'Ниже оценки',
+    overEstimate:'Выше оценки',onTime:'Вовремя',moreOptions:'Дополнительно',
+    timeAndSchedule:'Время и расписание',elapsed:'Прошло',running:'выполняется',
+    noEstimate:'Без оценки',noDueDate:'Без срока',todo:'К выполнению',inProgress:'В процессе',
+    status:'Статус',tasksCompleted:'Задачи за неделю',avgCompletionTime:'Среднее время',
+    overdueRate:'Просроченность',onTimeRate:'Своевременность',onTrack:'В срок',
+    needsAttention:'Требует внимания',atRisk:'Под угрозой',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -535,6 +612,17 @@ const TL = {
     copyLink:'Copiar link',copied:'Copiado!',done:'Pronto',
     sortNewest:'Mais recente',sortPriority:'Prioridade',sortAssignee:'Responsável',
     personalTasks:'Minhas Tarefas',groupTaskNotes:'Notas',groupTaskDetails:'Detalhes da tarefa',
+    analytics:'Análises',teamAnalytics:'Análises da equipe',overview:'Visão geral',
+    byMember:'Por membro',byPriority:'Por prioridade',timeAnalysis:'Análise de tempo',
+    performance:'Desempenho',estimatedTime:'Estimado',dueDate:'Prazo',
+    dueIn:'Vence em {time}',overdue:'Atrasado',overdueBy:'Atrasado em {time}',
+    completedIn:'Concluído em {time}',vsEstimate:'est. {time}',underEstimate:'Abaixo do estimado',
+    overEstimate:'Acima do estimado',onTime:'No prazo',moreOptions:'Mais opções',
+    timeAndSchedule:'Tempo e agenda',elapsed:'Decorrido',running:'em andamento',
+    noEstimate:'Sem estimativa',noDueDate:'Sem prazo',todo:'A fazer',inProgress:'Em andamento',
+    status:'Status',tasksCompleted:'Tarefas esta semana',avgCompletionTime:'Tempo médio',
+    overdueRate:'Taxa de atraso',onTimeRate:'Taxa no prazo',onTrack:'No caminho',
+    needsAttention:'Precisa atenção',atRisk:'Em risco',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -597,6 +685,17 @@ const TL = {
     copyLink:'复制链接',copied:'已复制！',done:'完成',
     sortNewest:'最新',sortPriority:'优先级',sortAssignee:'负责人',
     personalTasks:'我的任务',groupTaskNotes:'备注',groupTaskDetails:'任务详情',
+    analytics:'统计',teamAnalytics:'团队统计',overview:'概览',
+    byMember:'按成员',byPriority:'按优先级',timeAnalysis:'时间分析',
+    performance:'绩效',estimatedTime:'预估',dueDate:'截止日期',
+    dueIn:'还剩{time}',overdue:'已逾期',overdueBy:'逾期{time}',
+    completedIn:'用时{time}',vsEstimate:'估计{time}',underEstimate:'低于预估',
+    overEstimate:'超出预估',onTime:'准时',moreOptions:'更多选项',
+    timeAndSchedule:'时间与计划',elapsed:'已用时',running:'进行中',
+    noEstimate:'无预估',noDueDate:'无截止日期',todo:'待办',inProgress:'进行中',
+    status:'状态',tasksCompleted:'本周任务',avgCompletionTime:'平均时间',
+    overdueRate:'逾期率',onTimeRate:'准时率',onTrack:'按计划',
+    needsAttention:'需要关注',atRisk:'有风险',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -659,6 +758,17 @@ const TL = {
     copyLink:'リンクをコピー',copied:'コピーしました！',done:'完了',
     sortNewest:'新しい順',sortPriority:'優先度',sortAssignee:'担当者',
     personalTasks:'マイタスク',groupTaskNotes:'メモ',groupTaskDetails:'タスク詳細',
+    analytics:'分析',teamAnalytics:'チーム分析',overview:'概要',
+    byMember:'メンバー別',byPriority:'優先度別',timeAnalysis:'時間分析',
+    performance:'パフォーマンス',estimatedTime:'見積もり',dueDate:'期限',
+    dueIn:'{time}後に期限',overdue:'期限切れ',overdueBy:'{time}遅延',
+    completedIn:'{time}で完了',vsEstimate:'見積: {time}',underEstimate:'見積以下',
+    overEstimate:'見積超過',onTime:'時間通り',moreOptions:'詳細オプション',
+    timeAndSchedule:'時間とスケジュール',elapsed:'経過',running:'実行中',
+    noEstimate:'見積なし',noDueDate:'期限なし',todo:'未着手',inProgress:'進行中',
+    status:'ステータス',tasksCompleted:'今週のタスク',avgCompletionTime:'平均時間',
+    overdueRate:'遅延率',onTimeRate:'時間遵守率',onTrack:'順調',
+    needsAttention:'要注意',atRisk:'リスクあり',
   },
 };
 
@@ -679,6 +789,12 @@ const DEFAULT_SETTINGS = {
     notificationSound: true,
   },
 };
+
+// ─── Task status helper ───────────────────────────────────────────────────────
+function getTaskStatus(task) {
+  if (task.status) return task.status;
+  return task.done ? 'done' : 'todo';
+}
 
 // ─── Time helpers ─────────────────────────────────────────────────────────────
 function relativeTime(ts) {
@@ -1089,6 +1205,10 @@ function renderGroupBoard() {
 
   updateGbFilterBtns();
   renderGroupTaskList();
+  // Re-render group analytics if open
+  if (typeof renderGbAnalytics === 'function') {
+    setTimeout(renderGbAnalytics, 0);
+  }
 }
 
 function getFilteredGroupTasks() {
@@ -1124,9 +1244,14 @@ function renderGroupTaskList() {
     const subs = task.subtasks || [];
     const subsDone = subs.filter(s=>s.done).length;
     const subBar = subs.length ? `<span class="gt-sub-count">${subsDone}/${subs.length}</span>` : '';
-    return `<div class="group-task-row${task.done?' gt-done':''}" data-tid="${task.id}" style="cursor:pointer">
-      <button class="task-cb${task.done?' ticked':''}" data-gtcheck="${task.id}" aria-label="Toggle done">
-        ${task.done?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 12 4 10"/></svg>`:''}
+    const taskStatus = getTaskStatus(task);
+    const isDone = taskStatus === 'done';
+    const isInProg = taskStatus === 'in_progress';
+    const cbClass = isDone ? ' ticked' : isInProg ? ' in-progress' : '';
+    const rowClass = isDone ? ' gt-done' : isInProg ? ' in-progress-card' : '';
+    return `<div class="group-task-row${rowClass}" data-tid="${task.id}" style="cursor:pointer">
+      <button class="task-cb${cbClass}" data-gtcheck="${task.id}" aria-label="Cycle status">
+        ${isDone?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 12 4 10"/></svg>`:''}
       </button>
       <span class="gt-title">${esc(task.text)}${subBar}</span>
       <span class="gt-assignee">
@@ -1143,10 +1268,30 @@ function renderGroupTaskList() {
       const task = g.tasks.find(tk => tk.id === btn.dataset.gtcheck);
       if (!task) return;
       if (myRole === 'member' && task.assignedTo !== userId) return;
-      task.done = !task.done;
-      task.completedAt = task.done ? Date.now() : null;
+      const currentStatus = getTaskStatus(task);
+      let nextStatus;
+      if (currentStatus === 'todo') {
+        nextStatus = 'in_progress';
+      } else if (currentStatus === 'in_progress') {
+        nextStatus = 'done';
+      } else {
+        nextStatus = 'todo';
+      }
+      task.status = nextStatus;
+      if (nextStatus === 'done') {
+        task.done = true;
+        task.completedAt = Date.now();
+      } else if (nextStatus === 'in_progress') {
+        task.done = false;
+        task.completedAt = null;
+        if (!task.startedAt) task.startedAt = Date.now();
+      } else {
+        task.done = false;
+        task.completedAt = null;
+        task.startedAt = null;
+      }
       renderGroupTaskList();
-      await apiUpdateGroupTask(g._id, task.id, {done: task.done});
+      await apiUpdateGroupTask(g._id, task.id, {status: nextStatus, done: task.done, startedAt: task.startedAt || null, completedAt: task.completedAt || null});
     });
   });
 
@@ -1526,22 +1671,30 @@ function showMembersPanel() {
 
 // ─── Data migration ───────────────────────────────────────────────────────────
 function migrateTodo(raw) {
+  const done = !!raw.done;
+  const derivedStatus = raw.status || (done ? 'done' : 'todo');
   return {
-    id:          raw.id          || Date.now(),
-    text:        raw.text        || '',
-    done:        !!raw.done,
-    priority:    raw.priority    || 'none',
-    description: raw.description || '',
-    tags:        raw.tags        || [],
-    subtasks:    (raw.subtasks   || []).map(s => ({
+    id:             raw.id             || Date.now(),
+    text:           raw.text           || '',
+    done:           done,
+    status:         derivedStatus,
+    priority:       raw.priority       || 'none',
+    description:    raw.description    || '',
+    tags:           raw.tags           || [],
+    subtasks:       (raw.subtasks      || []).map(s => ({
       id:          s.id          || Date.now() + Math.random(),
       text:        s.text        || '',
       done:        !!s.done,
       createdAt:   s.createdAt   || Date.now(),
       completedAt: s.completedAt || null,
     })),
-    createdAt:   raw.createdAt   || Date.now(),
-    completedAt: raw.completedAt || null,
+    createdAt:      raw.createdAt      || Date.now(),
+    completedAt:    raw.completedAt    || null,
+    startedAt:      raw.startedAt      || null,
+    estimatedHours: raw.estimatedHours != null ? raw.estimatedHours : null,
+    dueDate:        raw.dueDate        || null,
+    overdueNotified: raw.overdueNotified || false,
+    notifyOnDone:   raw.notifyOnDone   || false,
   };
 }
 
@@ -1603,7 +1756,7 @@ function updateBadge() {
     document.title = t('appTitle');
     return;
   }
-  const pending = state.todos.filter(x => !x.done).length;
+  const pending = state.todos.filter(x => getTaskStatus(x) !== 'done').length;
   document.title = pending > 0 ? `(${pending}) ${t('appTitle')}` : t('appTitle');
 }
 
@@ -1688,22 +1841,62 @@ function subBarHTML(todo) {
   </div>`;
 }
 
+function formatDueBadge(todo) {
+  const status = getTaskStatus(todo);
+  if (status === 'done') {
+    if (todo.completedAt && todo.estimatedHours) {
+      const actualMs = todo.completedAt - (todo.startedAt || todo.createdAt);
+      const actualH = actualMs / 3600000;
+      const diff = actualH - todo.estimatedHours;
+      if (diff > 0.5) return `<span class="due-badge" style="color:#F59E0B">Done in ${formatDuration(actualMs)} (est ${todo.estimatedHours}h)</span>`;
+      if (diff < -0.5) return `<span class="due-badge" style="color:#22C55E">Done in ${formatDuration(actualMs)} (est ${todo.estimatedHours}h)</span>`;
+      return `<span class="due-badge" style="color:#22C55E">Done in ${formatDuration(actualMs)}</span>`;
+    }
+    return '';
+  }
+  const now = Date.now();
+  let html = '';
+  if (todo.estimatedHours) {
+    html += `<span class="time-badge">⏱ ${todo.estimatedHours >= 1 ? todo.estimatedHours + 'h' : Math.round(todo.estimatedHours * 60) + 'm'}</span>`;
+  }
+  if (todo.dueDate) {
+    const diff = todo.dueDate - now;
+    const diffH = diff / 3600000;
+    const diffD = diff / 86400000;
+    if (diff < 0) {
+      html += `<span class="due-badge overdue">⚠ Overdue by ${formatDuration(-diff)}</span>`;
+    } else if (diffH < 24) {
+      html += `<span class="due-badge due-soon">Due in ${Math.round(diffH)}h</span>`;
+    } else if (diffD < 2) {
+      html += `<span class="due-badge due-soon">Due tomorrow</span>`;
+    } else {
+      html += `<span class="due-badge due-ok">Due in ${Math.round(diffD)}d</span>`;
+    }
+  }
+  return html;
+}
+
 function taskCardHTML(todo) {
-  const dur      = todo.done && todo.completedAt ? duration(todo.createdAt, todo.completedAt) : '';
+  const status   = getTaskStatus(todo);
+  const dur      = status === 'done' && todo.completedAt ? duration(todo.createdAt, todo.completedAt) : '';
   const p        = todo.priority || 'none';
-  const blocked  = !todo.done && todo.subtasks && todo.subtasks.some(s => !s.done);
-  return `<div class="task-card${todo.done ? ' done-card' : ''}" data-id="${todo.id}" data-p="${p}" role="button" tabindex="0">
+  const blocked  = status !== 'done' && todo.subtasks && todo.subtasks.some(s => !s.done);
+  const isInProg = status === 'in_progress';
+  const isDone   = status === 'done';
+  const cbClass  = isDone ? ' ticked' : isInProg ? ' in-progress' : '';
+  const cardClass = isDone ? ' done-card' : isInProg ? ' in-progress-card' : '';
+  const dueBadge = formatDueBadge(todo);
+  return `<div class="task-card${cardClass}" data-id="${todo.id}" data-p="${p}" role="button" tabindex="0">
   <div class="task-inner">
-    <button class="task-cb${todo.done ? ' ticked' : ''}${blocked ? ' blocked' : ''}" data-check="${todo.id}" aria-label="${todo.done ? 'Mark incomplete' : 'Mark complete'}"${blocked ? ' title="Complete all sub-tasks first"' : ''}>
-      <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-        <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <button class="task-cb${cbClass}${blocked ? ' blocked' : ''}" data-check="${todo.id}" aria-label="Cycle status"${blocked ? ' title="Complete all sub-tasks first"' : ''}>
+      ${isDone ? `<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}
     </button>
     <div class="task-body">
       <div class="task-title">${esc(todo.text)}</div>
       <div class="task-meta">
         <span class="task-time">${relativeTime(todo.createdAt)}</span>
         ${dur ? `<span class="task-dur">${t('took')} ${dur}</span>` : ''}
+        ${dueBadge}
       </div>
       ${subBarHTML(todo)}
     </div>
@@ -1733,20 +1926,28 @@ function render() {
     langLocale(), { weekday:'long', year:'numeric', month:'long', day:'numeric' }
   );
 
-  // Progress
-  const doneCount = state.todos.filter(x => x.done).length;
-  const total     = state.todos.length;
-  const pct       = total ? Math.round(doneCount / total * 100) : 0;
-  document.getElementById('progFill').style.width  = pct + '%';
+  // Progress — 3 segments
+  const doneCount  = state.todos.filter(x => getTaskStatus(x) === 'done').length;
+  const progCount  = state.todos.filter(x => getTaskStatus(x) === 'in_progress').length;
+  const total      = state.todos.length;
+  const pct        = total ? Math.round(doneCount / total * 100) : 0;
+  const progPct    = total ? Math.round(progCount / total * 100) : 0;
+  const trackEl    = document.querySelector('.progress-track-mini');
+  if (trackEl) {
+    trackEl.innerHTML = `<div class="progress-fill progress-fill-done" style="width:${pct}%;display:inline-block;height:100%;vertical-align:top;border-radius:999px 0 0 999px"></div><div class="progress-fill progress-fill-prog" style="width:${progPct}%;display:inline-block;height:100%;vertical-align:top"></div>`;
+  }
   document.getElementById('progPct').textContent   = pct + '%';
-  document.getElementById('statsText').textContent = (typeof t('remaining') === 'function' ? t('remaining')(total - doneCount) : '') + ' · ' + (typeof t('completed') === 'function' ? t('completed')(doneCount) : '');
-  document.getElementById('statsCount').textContent = total ? `${total - doneCount} / ${total}` : '';
+  const activePendingCount = total - doneCount;
+  document.getElementById('statsText').textContent = (typeof t('remaining') === 'function' ? t('remaining')(activePendingCount) : '') + ' · ' + (typeof t('completed') === 'function' ? t('completed')(doneCount) : '');
+  document.getElementById('statsCount').textContent = total ? `${doneCount} / ${total}` : '';
 
   // Task list
-  const visible = state.todos.filter(todo =>
-    state.filter === 'all' ||
-    (state.filter === 'done' ? todo.done : !todo.done)
-  );
+  const visible = state.todos.filter(todo => {
+    const s = getTaskStatus(todo);
+    if (state.filter === 'all') return true;
+    if (state.filter === 'done') return s === 'done';
+    return s !== 'done'; // active = todo or in_progress
+  });
 
   const listEl = document.getElementById('taskList');
   if (!visible.length) {
@@ -1772,6 +1973,10 @@ function render() {
 
   applyI18n();
   updateBadge();
+  // Re-render inline analytics if open
+  if (typeof renderInlineAnalytics === 'function') {
+    setTimeout(renderInlineAnalytics, 0);
+  }
 }
 
 // ─── Live time refresh ────────────────────────────────────────────────────────
@@ -1788,11 +1993,27 @@ setInterval(() => {
 async function toggleTodo(id, checkEl) {
   const todo = state.todos.find(x => x.id === id);
   if (!todo) return;
-  // Block marking done while subtasks remain incomplete
-  if (!todo.done && todo.subtasks && todo.subtasks.some(s => !s.done)) return;
-  todo.done        = !todo.done;
-  todo.completedAt = todo.done ? Date.now() : null;
-  if (todo.done) {
+  const currentStatus = getTaskStatus(todo);
+  // Cycle: todo → in_progress → done → todo
+  let nextStatus;
+  if (currentStatus === 'todo') {
+    nextStatus = 'in_progress';
+  } else if (currentStatus === 'in_progress') {
+    // Block marking done while subtasks remain incomplete
+    if (todo.subtasks && todo.subtasks.some(s => !s.done)) return;
+    nextStatus = 'done';
+  } else {
+    nextStatus = 'todo';
+  }
+
+  todo.status = nextStatus;
+  if (nextStatus === 'in_progress') {
+    todo.done = false;
+    todo.startedAt = Date.now();
+    todo.completedAt = null;
+  } else if (nextStatus === 'done') {
+    todo.done = true;
+    todo.completedAt = Date.now();
     if (checkEl) {
       const rect = checkEl.getBoundingClientRect();
       burst(rect.left + rect.width / 2, rect.top + rect.height / 2);
@@ -1801,6 +2022,10 @@ async function toggleTodo(id, checkEl) {
       showToast(`✓ ${t('taskDone')}`, 'success');
       playNotifSound();
     }
+  } else {
+    todo.done = false;
+    todo.completedAt = null;
+    todo.startedAt = null;
   }
   render();
   await apiSave();
@@ -2047,12 +2272,27 @@ async function addTodo(text) {
   if (!text.trim()) return;
   const notifyCheck = document.getElementById('notifyDoneCheck');
   const notifyOnDone = notifyCheck ? notifyCheck.checked : false;
+  const estimateEl = document.getElementById('estimateSelect');
+  const dueDateEl = document.getElementById('dueDateInput');
+  const dueTimeEl = document.getElementById('dueTimeInput');
+  let estimatedHours = estimateEl && estimateEl.value ? parseFloat(estimateEl.value) : null;
+  let dueDate = null;
+  if (dueDateEl && dueDateEl.value) {
+    const timeStr = dueTimeEl && dueTimeEl.value ? dueTimeEl.value : '00:00';
+    dueDate = new Date(`${dueDateEl.value}T${timeStr}`).getTime();
+  }
   const todo = migrateTodo({
     id: Date.now(), text: text.trim(), done: false,
+    status: 'todo',
     priority: state.newPriority, createdAt: Date.now(),
     notifyOnDone,
+    estimatedHours,
+    dueDate,
   });
   if (notifyCheck) notifyCheck.checked = false;
+  if (estimateEl) estimateEl.value = '';
+  if (dueDateEl) dueDateEl.value = '';
+  if (dueTimeEl) dueTimeEl.value = '';
   state.todos.unshift(todo);
   resetPriorityPicker();
   render();
@@ -2130,11 +2370,49 @@ function renderDrawer(todoOrId) {
     btn.className = 'p-chip' + (isActive ? (p === 'none' ? ' active-none' : ' cur') : '');
   });
 
-  // Time
+  // Status dropdown
+  const statusEl = document.getElementById('drawerStatus');
+  if (statusEl) {
+    statusEl.value = getTaskStatus(todo);
+  }
+
+  // Drawer estimate + due date
+  const drawerEst = document.getElementById('drawerEstimate');
+  if (drawerEst) drawerEst.value = todo.estimatedHours != null ? String(todo.estimatedHours) : '';
+  const drawerDD = document.getElementById('drawerDueDate');
+  const drawerDT = document.getElementById('drawerDueTime');
+  if (drawerDD && todo.dueDate) {
+    const d = new Date(todo.dueDate);
+    drawerDD.value = d.toISOString().slice(0, 10);
+    if (drawerDT) drawerDT.value = d.toTimeString().slice(0, 5);
+  } else {
+    if (drawerDD) drawerDD.value = '';
+    if (drawerDT) drawerDT.value = '';
+  }
+
+  // Time info block
+  const status = getTaskStatus(todo);
+  const now = Date.now();
   let timeHTML = `<div class="time-row"><span class="time-badge">${t('created')}</span>${absTime(todo.createdAt)}</div>`;
+  if (todo.startedAt && status !== 'todo') {
+    timeHTML += `<div class="time-row"><span class="time-badge">${t('elapsed')}</span>${duration(todo.startedAt, todo.completedAt || now)} ${status === 'in_progress' ? `<em>(${t('running')})</em>` : ''}</div>`;
+  }
   if (todo.completedAt) {
     timeHTML += `<div class="time-row"><span class="time-badge">${t('completedAt')}</span>${absTime(todo.completedAt)}</div>`;
     timeHTML += `<div class="time-row"><span class="time-badge">${t('took')}</span>${duration(todo.createdAt, todo.completedAt)}</div>`;
+    if (todo.estimatedHours) {
+      const actualMs = todo.completedAt - (todo.startedAt || todo.createdAt);
+      const actualH = actualMs / 3600000;
+      const diff = actualH - todo.estimatedHours;
+      const perfClass = diff > 0.5 ? 'time-perf-yellow' : 'time-perf-green';
+      timeHTML += `<div class="time-row time-info-block"><span class="${perfClass}">${diff > 0.5 ? t('overEstimate') : diff < -0.5 ? t('underEstimate') : t('onTime')}</span></div>`;
+    }
+  }
+  if (todo.dueDate && status !== 'done') {
+    const diff = todo.dueDate - now;
+    const cls = diff < 0 ? 'time-perf-red' : diff < 86400000 ? 'time-perf-yellow' : 'time-perf-green';
+    const label = diff < 0 ? `⚠ ${t('overdueBy').replace('{time}', formatDuration(-diff))}` : `${t('dueIn').replace('{time}', formatDuration(diff))}`;
+    timeHTML += `<div class="time-row"><span class="${cls}">${label}</span></div>`;
   }
   document.getElementById('timeInfo').innerHTML = timeHTML;
 
@@ -2195,10 +2473,39 @@ function flushDrawerSave() {
   if (state.activeDrawer === null) return;
   const todo = state.todos.find(x => x.id === state.activeDrawer);
   if (!todo) return;
-  const titleEl = document.getElementById('drawerTitle');
-  const descEl  = document.getElementById('drawerDesc');
+  const titleEl  = document.getElementById('drawerTitle');
+  const descEl   = document.getElementById('drawerDesc');
+  const statusEl = document.getElementById('drawerStatus');
+  const estEl    = document.getElementById('drawerEstimate');
+  const ddEl     = document.getElementById('drawerDueDate');
+  const dtEl     = document.getElementById('drawerDueTime');
   if (titleEl) todo.text        = titleEl.value.trim() || todo.text;
   if (descEl)  todo.description = descEl.value;
+  if (statusEl && statusEl.value) {
+    const newStatus = statusEl.value;
+    if (newStatus !== getTaskStatus(todo)) {
+      todo.status = newStatus;
+      if (newStatus === 'done') {
+        todo.done = true;
+        todo.completedAt = todo.completedAt || Date.now();
+      } else if (newStatus === 'in_progress') {
+        todo.done = false;
+        todo.completedAt = null;
+        if (!todo.startedAt) todo.startedAt = Date.now();
+      } else {
+        todo.done = false;
+        todo.completedAt = null;
+        todo.startedAt = null;
+      }
+    }
+  }
+  if (estEl) todo.estimatedHours = estEl.value ? parseFloat(estEl.value) : null;
+  if (ddEl && ddEl.value) {
+    const timeStr = dtEl && dtEl.value ? dtEl.value : '00:00';
+    todo.dueDate = new Date(`${ddEl.value}T${timeStr}`).getTime();
+  } else if (ddEl) {
+    todo.dueDate = null;
+  }
 }
 
 function scheduleDrawerSave() {
@@ -2327,7 +2634,7 @@ function checkDailyDigest() {
   const hour = new Date().getHours();
   if (hour < 9) return;
   localStorage.setItem('dailyDigestShown', today);
-  const open   = state.todos.filter(x => !x.done).length;
+  const open   = state.todos.filter(x => getTaskStatus(x) !== 'done').length;
   showToast(`📋 ${open} tasks today`);
 }
 
@@ -2373,19 +2680,9 @@ async function handleRoute(path) {
     updateActiveNavigation(path);
 
   } else if (path === '/analytics') {
-    state.groupsView = false;
-    state.activeGroup = null;
-    state.chartView = true;
-    document.getElementById('groupsPage').style.display = 'none';
-    document.getElementById('groupBoardPage').style.display = 'none';
-    document.getElementById('mainContent').style.display = '';
-    const el = document.getElementById('chartsView');
-    if (el) el.style.display = '';
-    renderChartStats();
-    renderActiveChart();
-    applyI18n();
-    document.title = `${tl.charts||'Analytics'} — ${appName}`;
-    updateActiveNavigation(path);
+    // Redirect analytics to mytasks — analytics is now inline
+    navigateTo('/mytasks', true);
+    return;
 
   } else if (path === '/groups') {
     state.groupsView = true;
@@ -2483,6 +2780,164 @@ window.addEventListener('popstate', e => {
   }
 });
 
+// ─── Inline Analytics ─────────────────────────────────────────────────────────
+let inlineAnalyticsOpen = localStorage.getItem('analyticsOpen') === '1';
+let inlineChartInstance = null;
+let inlineChartType = 'pie';
+
+function renderInlineAnalytics() {
+  if (!inlineAnalyticsOpen) return;
+  const panel = document.getElementById('analyticsPanel');
+  if (!panel || panel.style.display === 'none') return;
+  const todos = state.todos;
+  const total = todos.length;
+  const done = todos.filter(t => getTaskStatus(t) === 'done').length;
+  const inProg = todos.filter(t => getTaskStatus(t) === 'in_progress').length;
+  const pending = total - done - inProg;
+
+  const statsEl = document.getElementById('inlineStatsGrid');
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <span>${total} total</span>
+      <span class="done-stat">${done} done</span>
+      <span class="prog-stat">${inProg} in progress</span>
+      <span class="pend-stat">${pending} todo</span>
+    `;
+  }
+
+  if (inlineChartInstance) { inlineChartInstance.destroy(); inlineChartInstance = null; }
+  const ctx = document.getElementById('inlineChart')?.getContext('2d');
+  if (!ctx) return;
+
+  if (inlineChartType === 'pie') {
+    inlineChartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Done', 'In Progress', 'Todo'],
+        datasets: [{ data: [done, inProg, pending], backgroundColor: ['#22C55E','#3B82F6','#9CA3AF'] }]
+      },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+  } else {
+    const pCounts = { high: 0, medium: 0, low: 0, none: 0 };
+    todos.forEach(tk => { pCounts[tk.priority || 'none']++; });
+    inlineChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['High', 'Medium', 'Low', 'None'],
+        datasets: [{ label: 'Tasks', data: [pCounts.high, pCounts.medium, pCounts.low, pCounts.none],
+          backgroundColor: ['#EF4444','#F59E0B','#6366F1','#9CA3AF'] }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+    });
+  }
+}
+
+// ─── Group (Team) Analytics ───────────────────────────────────────────────────
+const MEMBER_COLORS = ['#3B82F6','#EF4444','#22C55E','#F59E0B','#8B5CF6','#EC4899','#14B8A6','#F97316'];
+let gbAnalyticsOpen = false;
+let gbChartInstance = null;
+let gbChartTab = 'overview';
+
+function renderGbAnalytics() {
+  if (!gbAnalyticsOpen || !state.activeGroup) return;
+  const panel = document.getElementById('gbAnalyticsPanel');
+  if (!panel || panel.style.display === 'none') return;
+  const g = state.activeGroup;
+  const tasks = g.tasks || [];
+  const members = g.members.filter(m => m.status === 'active');
+  const now = Date.now();
+
+  if (gbChartInstance) { gbChartInstance.destroy(); gbChartInstance = null; }
+  const ctx = document.getElementById('gbChart')?.getContext('2d');
+  if (!ctx) return;
+
+  const infoEl = document.getElementById('gbAnalyticsInfo');
+
+  if (gbChartTab === 'overview') {
+    const done = tasks.filter(t => getTaskStatus(t) === 'done').length;
+    const inProg = tasks.filter(t => getTaskStatus(t) === 'in_progress').length;
+    const todo = tasks.length - done - inProg;
+    const overdue = tasks.filter(t => t.dueDate && t.dueDate < now && getTaskStatus(t) !== 'done').length;
+    gbChartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels: ['Done','In Progress','Todo'], datasets: [{ data: [done, inProg, todo], backgroundColor: ['#22C55E','#3B82F6','#9CA3AF'] }] },
+      options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    });
+    if (infoEl) infoEl.innerHTML = `<div class="analytics-stats-row"><span>Total: ${tasks.length}</span><span class="done-stat">Done: ${done}</span><span class="prog-stat">In Progress: ${inProg}</span><span style="color:#EF4444">Overdue: ${overdue}</span></div>`;
+
+  } else if (gbChartTab === 'members') {
+    const labels = members.map(m => m.name.split(' ')[0]);
+    const doneCounts = members.map(m => tasks.filter(t => t.assignedTo === m.userId && getTaskStatus(t) === 'done').length);
+    const progCounts = members.map(m => tasks.filter(t => t.assignedTo === m.userId && getTaskStatus(t) === 'in_progress').length);
+    const todoCounts = members.map(m => tasks.filter(t => t.assignedTo === m.userId && getTaskStatus(t) === 'todo').length);
+    gbChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: { labels, datasets: [
+        { label: 'Done', data: doneCounts, backgroundColor: '#22C55E' },
+        { label: 'In Progress', data: progCounts, backgroundColor: '#3B82F6' },
+        { label: 'Todo', data: todoCounts, backgroundColor: '#9CA3AF' }
+      ]},
+      options: { responsive: true, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { position: 'bottom' } } }
+    });
+
+  } else if (gbChartTab === 'priority') {
+    const priorities = ['high','medium','low','none'];
+    const datasets = members.map((m, i) => ({
+      label: m.name.split(' ')[0],
+      data: priorities.map(p => tasks.filter(t => t.assignedTo === m.userId && (t.priority||'none') === p).length),
+      backgroundColor: MEMBER_COLORS[i % MEMBER_COLORS.length],
+    }));
+    gbChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: ['High','Medium','Low','None'], datasets },
+      options: { responsive: true, scales: { x: { stacked: false }, y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { position: 'bottom' } } }
+    });
+
+  } else if (gbChartTab === 'time') {
+    const labels = members.map(m => m.name.split(' ')[0]);
+    const avgTimes = members.map(m => {
+      const completed = tasks.filter(t => t.assignedTo === m.userId && t.completedAt && t.createdAt);
+      if (!completed.length) return 0;
+      const avg = completed.reduce((s, t) => s + (t.completedAt - t.createdAt), 0) / completed.length;
+      return Math.round(avg / 3600000 * 10) / 10;
+    });
+    gbChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: { labels, datasets: [{ label: 'Avg Hours to Complete', data: avgTimes, backgroundColor: MEMBER_COLORS }] },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+    if (infoEl) infoEl.innerHTML = labels.map((l, i) => `<span>${l}: ${avgTimes[i] ? avgTimes[i]+'h avg' : 'no data'}</span>`).join(' · ');
+
+  } else if (gbChartTab === 'performance') {
+    const weekAgo = now - 7 * 24 * 3600000;
+    const memberStats = members.map((m, i) => {
+      const assigned = tasks.filter(t => t.assignedTo === m.userId);
+      const completedThisWeek = assigned.filter(t => t.completedAt && t.completedAt > weekAgo);
+      const overdueTasks = assigned.filter(t => t.dueDate && t.dueDate < now && getTaskStatus(t) !== 'done');
+      const overdueRate = assigned.length ? Math.round(overdueTasks.length / assigned.length * 100) : 0;
+      const onTimeTasks = assigned.filter(t => t.completedAt && t.dueDate && t.completedAt <= t.dueDate);
+      const onTimeRate = assigned.filter(t => t.completedAt && t.dueDate).length
+        ? Math.round(onTimeTasks.length / assigned.filter(t => t.completedAt && t.dueDate).length * 100) : 100;
+      const emoji = overdueRate < 10 ? '🟢' : overdueRate < 30 ? '🟡' : '🔴';
+      return { name: m.name.split(' ')[0], completedThisWeek: completedThisWeek.length, overdueRate, onTimeRate, emoji, color: MEMBER_COLORS[i % MEMBER_COLORS.length] };
+    });
+    gbChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: memberStats.map(s => s.name),
+        datasets: [{ label: 'Tasks Completed This Week', data: memberStats.map(s => s.completedThisWeek), backgroundColor: memberStats.map(s => s.color) }]
+      },
+      options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+    });
+    if (infoEl) {
+      infoEl.innerHTML = `<div class="perf-table">${memberStats.map(s =>
+        `<div class="perf-row"><span>${s.emoji} ${s.name}</span><span>Done: ${s.completedThisWeek}</span><span>Overdue: ${s.overdueRate}%</span><span>On-time: ${s.onTimeRate}%</span></div>`
+      ).join('')}</div>`;
+    }
+  }
+}
+
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -2568,6 +3023,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       addDropdown.classList.remove('open');
   });
 
+  // ── More options toggle ────────────────────────────────────────────────────
+  const moreOptionsToggle = document.getElementById('moreOptionsToggle');
+  const moreOptions = document.getElementById('moreOptions');
+  if (moreOptionsToggle && moreOptions) {
+    moreOptionsToggle.addEventListener('mousedown', e => e.preventDefault());
+    moreOptionsToggle.addEventListener('click', () => {
+      const open = moreOptions.style.display !== 'none';
+      moreOptions.style.display = open ? 'none' : '';
+      moreOptionsToggle.textContent = (open ? '▶' : '▼') + ' More options';
+    });
+  }
+
   // ── Filters ───────────────────────────────────────────────────────────────
   document.querySelectorAll('.filter-btn[data-filter]').forEach(b =>
     b.addEventListener('click', () => setFilter(b.dataset.filter))
@@ -2579,7 +3046,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!doneCards.length) return;
     doneCards.forEach(card => card.classList.add('removing'));
     await new Promise(r => setTimeout(r, 420));
-    state.todos = state.todos.filter(x => !x.done);
+    state.todos = state.todos.filter(x => getTaskStatus(x) !== 'done');
     render();
     await apiSave();
   });
@@ -2630,6 +3097,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     await apiSave();
     closeDrawer();
   });
+
+  // Status dropdown change
+  document.getElementById('drawerStatus')?.addEventListener('change', async () => {
+    flushDrawerSave();
+    const todo = state.todos.find(x => x.id === state.activeDrawer);
+    if (todo) renderDrawer(todo);
+    render();
+    await apiSave();
+  });
+
+  // Estimate / due date change
+  document.getElementById('drawerEstimate')?.addEventListener('change', scheduleDrawerSave);
+  document.getElementById('drawerDueDate')?.addEventListener('change', scheduleDrawerSave);
+  document.getElementById('drawerDueTime')?.addEventListener('change', scheduleDrawerSave);
 
   document.getElementById('drawerDeleteBtn').addEventListener('click', () => {
     const tl = TL[state.lang] || TL.en;
@@ -2756,9 +3237,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // ── Charts ────────────────────────────────────────────────────────────────
+  // ── Charts (toggle inline analytics instead of navigating) ───────────────
   const chartBtn = document.getElementById('chartBtn');
-  if (chartBtn) chartBtn.addEventListener('click', openCharts);
+  if (chartBtn) chartBtn.addEventListener('click', () => {
+    const toggle = document.getElementById('analyticsToggle');
+    if (toggle) {
+      toggle.click();
+    }
+  });
 
   const chartsBackBtn = document.getElementById('chartsBackBtn');
   if (chartsBackBtn) chartsBackBtn.addEventListener('click', closeCharts);
@@ -2778,6 +3264,63 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.period-btn').forEach(b => b.classList.toggle('active', b.dataset.period === state.linePeriod));
     renderActiveChart();
   });
+
+  // ── Inline Analytics (personal tasks) ────────────────────────────────────
+  const analyticsToggle = document.getElementById('analyticsToggle');
+  const analyticsPanel  = document.getElementById('analyticsPanel');
+  const analyticsArrow  = document.getElementById('analyticsArrow');
+  if (analyticsToggle) {
+    // Set initial state
+    if (inlineAnalyticsOpen && analyticsPanel) {
+      analyticsPanel.style.display = '';
+      if (analyticsArrow) analyticsArrow.textContent = '▼';
+    }
+    analyticsToggle.addEventListener('click', () => {
+      inlineAnalyticsOpen = !inlineAnalyticsOpen;
+      localStorage.setItem('analyticsOpen', inlineAnalyticsOpen ? '1' : '0');
+      if (analyticsPanel) analyticsPanel.style.display = inlineAnalyticsOpen ? '' : 'none';
+      if (analyticsArrow) analyticsArrow.textContent = inlineAnalyticsOpen ? '▼' : '▶';
+      if (inlineAnalyticsOpen) renderInlineAnalytics();
+    });
+  }
+  document.getElementById('inlineChartTabs')?.addEventListener('click', e => {
+    const tab = e.target.closest('[data-chart]');
+    if (!tab) return;
+    inlineChartType = tab.dataset.chart;
+    document.querySelectorAll('#inlineChartTabs .chart-tab').forEach(b => b.classList.toggle('active', b.dataset.chart === inlineChartType));
+    renderInlineAnalytics();
+  });
+
+  // ── Group inline analytics ────────────────────────────────────────────────
+  const gbAnalyticsToggle = document.getElementById('gbAnalyticsToggle');
+  const gbAnalyticsPanel  = document.getElementById('gbAnalyticsPanel');
+  const gbAnalyticsArrow  = document.getElementById('gbAnalyticsArrow');
+  if (gbAnalyticsToggle) {
+    gbAnalyticsToggle.addEventListener('click', () => {
+      gbAnalyticsOpen = !gbAnalyticsOpen;
+      if (gbAnalyticsPanel) gbAnalyticsPanel.style.display = gbAnalyticsOpen ? '' : 'none';
+      if (gbAnalyticsArrow) gbAnalyticsArrow.textContent = gbAnalyticsOpen ? '▼' : '▶';
+      if (gbAnalyticsOpen) renderGbAnalytics();
+    });
+  }
+  document.getElementById('gbChartTabs')?.addEventListener('click', e => {
+    const tab = e.target.closest('[data-gbtab]');
+    if (!tab) return;
+    gbChartTab = tab.dataset.gbtab;
+    document.querySelectorAll('#gbChartTabs .chart-tab').forEach(b => b.classList.toggle('active', b.dataset.gbtab === gbChartTab));
+    renderGbAnalytics();
+  });
+
+  // ── Live elapsed timer ────────────────────────────────────────────────────
+  setInterval(() => {
+    // Re-render drawer time info if open and task is in_progress
+    if (state.activeDrawer !== null) {
+      const todo = state.todos.find(x => x.id === state.activeDrawer);
+      if (todo && getTaskStatus(todo) === 'in_progress') {
+        renderDrawer(todo);
+      }
+    }
+  }, 60000);
 
   // ── Groups ────────────────────────────────────────────────────────────────
   document.getElementById('groupsBtn').addEventListener('click', () => navigateTo('/groups'));

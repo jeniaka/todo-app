@@ -7,6 +7,7 @@ import base64
 import secrets
 import mimetypes
 import smtplib
+import time
 import urllib.request
 import urllib.parse
 import uuid as _uuid
@@ -143,6 +144,82 @@ def build_task_assigned_email(assigner_name, task_text, group_name, group_color,
         cta_text="View Task",
         cta_url=app_url,
     )
+
+def build_overdue_email(task_text, due_date_ms, group_name):
+    """Build an overdue task notification email."""
+    import datetime
+    due_str = ""
+    if due_date_ms:
+        try:
+            dt = datetime.datetime.fromtimestamp(due_date_ms / 1000)
+            due_str = dt.strftime("%b %d, %Y %H:%M")
+        except Exception:
+            due_str = ""
+    group_info = f"<p style='margin:6px 0 0 0;font-size:13px;color:#9B9B9B;'>in {group_name}</p>" if group_name else ""
+    body = f"""
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:32px;">⚠️</div>
+      <p style="margin:8px 0 0 0;font-size:15px;color:#6B6B6B;">A task is overdue</p>
+    </div>
+    <div style="background:#FEF2F2;border-radius:12px;padding:20px 24px;border-left:4px solid #EF4444;margin-bottom:8px;">
+      <p style="margin:0;font-size:16px;font-weight:600;color:#1A1A1A;">{task_text}</p>
+      {group_info}
+      {"<p style='margin:6px 0 0 0;font-size:13px;color:#9B9B9B;'>Was due: " + due_str + "</p>" if due_str else ""}
+    </div>
+    <p style="margin:16px 0 0 0;font-size:13px;color:#9B9B9B;text-align:center;">
+      Update or complete this task to clear the overdue status.
+    </p>"""
+    return build_email(
+        title=f'Overdue: "{task_text}"',
+        body_html=body,
+        cta_text="View Tasks",
+        cta_url="https://www.mytasks.bar/mytasks",
+    )
+
+
+def check_and_send_overdue_emails(user):
+    """Check for overdue tasks and send notification emails."""
+    if not smtp_configured():
+        return
+    now = int(time.time() * 1000)
+
+    # Personal tasks
+    todos = load_todos(user["id"])
+    changed = False
+    for task in todos:
+        if (task.get("dueDate") and
+                task["dueDate"] < now and
+                not task.get("done") and
+                task.get("status", "todo") != "done" and
+                not task.get("overdueNotified")):
+            html = build_overdue_email(task["text"], task.get("dueDate"), None)
+            send_email(user.get("email", ""), f'\u26a0 Overdue: "{task["text"]}"', html)
+            task["overdueNotified"] = True
+            changed = True
+    if changed:
+        save_todos(user["id"], todos)
+
+    # Group tasks
+    if db is None:
+        return
+    groups = load_groups_for_user(user["id"])
+    for g in groups:
+        g_changed = False
+        for task in g.get("tasks", []):
+            if (task.get("dueDate") and
+                    task["dueDate"] < now and
+                    not task.get("done") and
+                    task.get("status", "todo") != "done" and
+                    not task.get("overdueNotified") and
+                    task.get("assignedTo") == user["id"]):
+                assignee_email = user.get("email", "")
+                html = build_overdue_email(task["text"], task.get("dueDate"), g["name"])
+                send_email(assignee_email, f'\u26a0 Overdue: "{task["text"]}" in {g["name"]}', html)
+                task["overdueNotified"] = True
+                g_changed = True
+        if g_changed:
+            save_group(g)
+
 
 def build_member_joined_email(member_name, member_picture, group_name, app_url):
     avatar_html = ""
@@ -301,7 +378,7 @@ def create_notification(user_id, notif_type, group_id, group_name, task_text=Non
         "groupName": group_name,
         "taskText": task_text,
         "fromUser": from_user,
-        "createdAt": int(__import__("time").time() * 1000),
+        "createdAt": int(time.time() * 1000),
         "read": False,
     })
 
@@ -439,12 +516,17 @@ def render_app(user):
     avatar  = (f'<img class="user-avatar" src="{picture}" referrerpolicy="no-referrer" alt="{name}">'
                if picture else
                f'<div class="user-avatar-fallback">{name[:1].upper()}</div>')
-    user_json = json.dumps({"name": name, "email": email, "picture": picture})
+    user_json = json.dumps({"name": name, "email": email, "picture": picture, "id": user.get("id", "")})
     html = load_template("app.html")
     html = (html.replace("{{AVATAR}}", avatar)
                 .replace("{{NAME}}", name)
                 .replace("{{EMAIL}}", email)
                 .replace("{{USER_JSON}}", user_json))
+    # Check for overdue tasks in background (non-blocking attempt)
+    try:
+        check_and_send_overdue_emails(user)
+    except Exception as _e:
+        pass
     return html.encode()
 
 # ─── Static assets ────────────────────────────────────────────────────────────
@@ -556,7 +638,7 @@ class Handler(BaseHTTPRequestHandler):
                                 m["name"] = user.get("name","")
                                 m["picture"] = user.get("picture","")
                                 m["status"] = "active"
-                                m["joinedAt"] = int(__import__("time").time() * 1000)
+                                m["joinedAt"] = int(time.time() * 1000)
                                 m.pop("inviteToken", None)
                                 break
                         save_group(joined_group)
@@ -668,7 +750,7 @@ class Handler(BaseHTTPRequestHandler):
                     m["name"] = user.get("name","")
                     m["picture"] = user.get("picture","")
                     m["status"] = "active"
-                    m["joinedAt"] = int(__import__("time").time() * 1000)
+                    m["joinedAt"] = int(time.time() * 1000)
                     m.pop("inviteToken", None)
                     break
             save_group(g)
@@ -797,7 +879,7 @@ class Handler(BaseHTTPRequestHandler):
                 "description": body.get("description","").strip(),
                 "color": body.get("color","#3B82F6"),
                 "createdBy": user["id"],
-                "createdAt": int(__import__("time").time() * 1000),
+                "createdAt": int(time.time() * 1000),
                 "members": [{
                     "userId": user["id"],
                     "email": user.get("email",""),
@@ -805,7 +887,7 @@ class Handler(BaseHTTPRequestHandler):
                     "picture": user.get("picture",""),
                     "role": "admin",
                     "status": "active",
-                    "joinedAt": int(__import__("time").time() * 1000),
+                    "joinedAt": int(time.time() * 1000),
                 }],
                 "tasks": [],
             }
@@ -833,9 +915,14 @@ class Handler(BaseHTTPRequestHandler):
                     "text": body.get("text","").strip(),
                     "description": "",
                     "done": False,
+                    "status": "todo",
                     "priority": body.get("priority","low"),
-                    "createdAt": int(__import__("time").time() * 1000),
+                    "createdAt": int(time.time() * 1000),
                     "completedAt": None,
+                    "startedAt": None,
+                    "estimatedHours": body.get("estimatedHours", None),
+                    "dueDate": body.get("dueDate", None),
+                    "overdueNotified": False,
                     "createdBy": user["id"],
                     "assignedTo": assigned_to,
                     "subtasks": [],
@@ -958,9 +1045,34 @@ class Handler(BaseHTTPRequestHandler):
                     if "description" in body: t["description"] = body["description"]
                     if "priority" in body: t["priority"] = body["priority"]
                     if "subtasks" in body: t["subtasks"] = body["subtasks"]
+                    if "estimatedHours" in body: t["estimatedHours"] = body["estimatedHours"]
+                    if "dueDate" in body: t["dueDate"] = body["dueDate"]
+                    if "startedAt" in body: t["startedAt"] = body["startedAt"]
+                    if "overdueNotified" in body: t["overdueNotified"] = body["overdueNotified"]
+                    if "status" in body:
+                        t["status"] = body["status"]
+                        if body["status"] == "done":
+                            t["done"] = True
+                            if not t.get("completedAt"):
+                                t["completedAt"] = int(time.time() * 1000)
+                        elif body["status"] == "in_progress":
+                            t["done"] = False
+                            t["completedAt"] = None
+                            if not t.get("startedAt"):
+                                t["startedAt"] = int(time.time() * 1000)
+                        elif body["status"] == "todo":
+                            t["done"] = False
+                            t["completedAt"] = None
+                            t["startedAt"] = None
                     if "done" in body:
                         t["done"] = body["done"]
-                        t["completedAt"] = int(__import__("time").time()*1000) if body["done"] else None
+                        if body["done"]:
+                            t["completedAt"] = int(time.time() * 1000)
+                            t["status"] = "done"
+                        else:
+                            t["completedAt"] = None
+                            if t.get("status") == "done":
+                                t["status"] = "todo"
                         if body["done"]:
                             for m in g["members"]:
                                 if m.get("status")=="active" and m.get("userId") != user["id"]:

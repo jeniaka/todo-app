@@ -167,6 +167,25 @@
         <button class="add-p-btn"        data-p="medium" type="button" data-i18n="priorityMedium">Medium</button>
         <button class="add-p-btn"        data-p="high"   type="button" data-i18n="priorityHigh">High</button>
       </div>
+      <div class="more-options-toggle" id="moreOptionsToggle">▶ More options</div>
+      <div class="more-options" id="moreOptions" style="display:none">
+        <div class="time-row">
+          <label>Estimate:</label>
+          <select id="estimateSelect">
+            <option value="">None</option>
+            <option value="0.5">30m</option>
+            <option value="1">1h</option>
+            <option value="2">2h</option>
+            <option value="4">4h</option>
+            <option value="8">8h</option>
+          </select>
+        </div>
+        <div class="time-row">
+          <label>Due date:</label>
+          <input type="date" id="dueDateInput">
+          <input type="time" id="dueTimeInput">
+        </div>
+      </div>
       <div class="add-dropdown-footer">
         <label class="notify-done-row" id="notifyDoneRow">
           <input type="checkbox" id="notifyDoneCheck" class="notify-done-cb">
@@ -189,6 +208,24 @@
         <div class="progress-fill" id="progFill" style="width:0%"></div>
       </div>
       <span class="progress-pct" id="progPct">0%</span>
+    </div>
+  </div>
+
+  <!-- Inline Analytics (collapsible) -->
+  <div class="inline-analytics" id="inlineAnalytics">
+    <button class="analytics-toggle" id="analyticsToggle">
+      <span class="analytics-arrow" id="analyticsArrow">▶</span>
+      <span data-i18n="analytics">Analytics</span>
+    </button>
+    <div class="analytics-panel" id="analyticsPanel" style="display:none">
+      <div class="chart-tabs" id="inlineChartTabs">
+        <button class="chart-tab active" data-chart="pie">Pie</button>
+        <button class="chart-tab" data-chart="bar">By Priority</button>
+      </div>
+      <div class="chart-container-inline">
+        <canvas id="inlineChart" height="200"></canvas>
+      </div>
+      <div class="stats-grid-mini" id="inlineStatsGrid"></div>
     </div>
   </div>
 
@@ -292,6 +329,27 @@
       </select>
     </div>
 
+    <!-- Team Analytics (collapsible) -->
+    <div class="inline-analytics" id="gbInlineAnalytics">
+      <button class="analytics-toggle" id="gbAnalyticsToggle">
+        <span class="analytics-arrow" id="gbAnalyticsArrow">▶</span>
+        <span data-i18n="teamAnalytics">Team Analytics</span>
+      </button>
+      <div class="analytics-panel" id="gbAnalyticsPanel" style="display:none">
+        <div class="chart-tabs" id="gbChartTabs">
+          <button class="chart-tab active" data-gbtab="overview">Overview</button>
+          <button class="chart-tab" data-gbtab="members">By Member</button>
+          <button class="chart-tab" data-gbtab="priority">By Priority</button>
+          <button class="chart-tab" data-gbtab="time">Time</button>
+          <button class="chart-tab" data-gbtab="performance">Performance</button>
+        </div>
+        <div class="chart-container-inline">
+          <canvas id="gbChart" height="220"></canvas>
+        </div>
+        <div id="gbAnalyticsInfo"></div>
+      </div>
+    </div>
+
     <!-- Task list -->
     <div id="gbTaskList" class="gb-task-list"></div>
   </div>
@@ -360,6 +418,16 @@
       <textarea class="drawer-desc" id="drawerDesc" rows="3"></textarea>
     </div>
 
+    <!-- Status -->
+    <div class="drawer-section">
+      <label class="drawer-label" id="statusLabel" data-i18n="status">Status</label>
+      <select class="status-select" id="drawerStatus">
+        <option value="todo" data-i18n="todo">To Do</option>
+        <option value="in_progress" data-i18n="inProgress">In Progress</option>
+        <option value="done" data-i18n="done">Done</option>
+      </select>
+    </div>
+
     <!-- Priority -->
     <div class="drawer-section">
       <label class="drawer-label" id="priorityLabel" data-i18n="priority">Priority</label>
@@ -368,6 +436,30 @@
         <button class="p-chip" data-p="low"    id="dp_low"    data-i18n="priorityLow">Low</button>
         <button class="p-chip" data-p="medium" id="dp_medium" data-i18n="priorityMedium">Medium</button>
         <button class="p-chip" data-p="high"   id="dp_high"   data-i18n="priorityHigh">High</button>
+      </div>
+    </div>
+
+    <!-- Time & Schedule -->
+    <div class="drawer-section" id="timeScheduleSection">
+      <label class="drawer-label" data-i18n="timeAndSchedule">Time &amp; Schedule</label>
+      <div class="time-detail-grid">
+        <div class="time-row-detail">
+          <span class="time-label" data-i18n="estimatedTime">Estimated:</span>
+          <select id="drawerEstimate">
+            <option value="">No estimate</option>
+            <option value="0.5">30m</option>
+            <option value="1">1h</option>
+            <option value="2">2h</option>
+            <option value="4">4h</option>
+            <option value="8">8h</option>
+          </select>
+        </div>
+        <div class="time-row-detail">
+          <span class="time-label" data-i18n="dueDate">Due date:</span>
+          <input type="date" id="drawerDueDate">
+          <input type="time" id="drawerDueTime">
+        </div>
+        <div id="drawerTimeInfo"></div>
       </div>
     </div>
 
