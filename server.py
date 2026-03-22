@@ -5,9 +5,12 @@ import hashlib
 import base64
 import secrets
 import mimetypes
+import smtplib
 import urllib.request
 import urllib.parse
 import uuid as _uuid
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from http.cookies import SimpleCookie
 from urllib.parse import urlparse, parse_qs
@@ -20,6 +23,144 @@ GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 REDIRECT_URI       = os.environ.get("REDIRECT_URI", f"http://localhost:{PORT}/auth/callback")
 SESSION_SECRET     = os.environ.get("SESSION_SECRET", secrets.token_hex(32))
 ANTHROPIC_API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
+
+# ─── SMTP / Email ─────────────────────────────────────────────────────────────
+SMTP_HOST = os.environ.get("SMTP_HOST", "")
+SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
+SMTP_USER = os.environ.get("SMTP_USER", "")
+SMTP_PASS = os.environ.get("SMTP_PASS", "")
+SMTP_FROM = os.environ.get("SMTP_FROM", "noreply@mytasks.bar")
+
+def smtp_configured():
+    return bool(SMTP_HOST and SMTP_USER and SMTP_PASS)
+
+def send_email(to_email, subject, html_body):
+    """Send an HTML email via Brevo SMTP. Returns True on success, False on failure."""
+    if not smtp_configured():
+        print(f"⚠ SMTP not configured — cannot send email to {to_email}")
+        return False
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"]    = f"MyTasks <{SMTP_FROM}>"
+        msg["To"]      = to_email
+        msg["Reply-To"] = SMTP_FROM
+        msg.attach(MIMEText(html_body, "html", "utf-8"))
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.ehlo()
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASS)
+            server.send_message(msg)
+        print(f"✓ Email sent to {to_email}")
+        return True
+    except Exception as e:
+        print(f"✗ Email failed to {to_email}: {e}")
+        return False
+
+def build_email(title, body_html, cta_text=None, cta_url=None, footer_note=None):
+    """Reusable branded email template (table layout + inline CSS for email clients)."""
+    cta_block = ""
+    if cta_text and cta_url:
+        cta_block = f"""
+        <tr><td style="padding:0 32px 28px;text-align:center;">
+          <a href="{cta_url}" style="display:inline-block;background:#2563EB;color:#FFFFFF;text-decoration:none;padding:14px 40px;border-radius:12px;font-weight:600;font-size:15px;letter-spacing:0.01em;">{cta_text}</a>
+        </td></tr>"""
+    footer_text = footer_note or "If you didn't expect this email, you can safely ignore it."
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{title}</title></head>
+<body style="margin:0;padding:0;background-color:#F2F1ED;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#F2F1ED;padding:40px 16px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#FFFFFF;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+
+        <!-- Header -->
+        <tr><td style="background:linear-gradient(135deg,#1A1A1A 0%,#2D2D2D 100%);padding:36px 32px;text-align:center;">
+          <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;color:#FFFFFF;letter-spacing:-0.5px;">MyTasks</h1>
+          <p style="margin:8px 0 0 0;font-size:13px;color:rgba(255,255,255,0.5);">Collaborative Task Management</p>
+        </td></tr>
+
+        <!-- Body -->
+        <tr><td style="padding:36px 32px 8px;">
+          {body_html}
+        </td></tr>
+
+        <!-- CTA -->
+        {cta_block}
+
+        <!-- Footer -->
+        <tr><td style="padding:20px 32px;border-top:1px solid #F0F0F0;text-align:center;">
+          <p style="margin:0;font-size:12px;color:#BBBBBB;">
+            Sent from <a href="https://www.mytasks.bar" style="color:#2563EB;text-decoration:none;">mytasks.bar</a>
+          </p>
+          <p style="margin:6px 0 0 0;font-size:11px;color:#D0D0D0;">{footer_text}</p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>"""
+
+def build_invite_email(inviter_name, inviter_picture, group_name, group_color, invite_url):
+    avatar_html = ""
+    if inviter_picture:
+        avatar_html = f'<img src="{inviter_picture}" width="52" height="52" style="border-radius:50%;display:block;margin:0 auto 12px;" alt="{inviter_name}">'
+    body = f"""
+    <div style="text-align:center;margin-bottom:24px;">
+      {avatar_html}
+      <p style="margin:0;font-size:15px;color:#6B6B6B;">
+        <strong style="color:#1A1A1A;">{inviter_name}</strong> invited you to join
+      </p>
+    </div>
+    <div style="background:#FAFAF8;border-radius:12px;padding:20px 24px;text-align:center;border-left:4px solid {group_color};margin-bottom:8px;">
+      <h2 style="margin:0;font-size:20px;color:#1A1A1A;font-weight:600;">{group_name}</h2>
+    </div>
+    <p style="margin:20px 0 0 0;font-size:13px;color:#9B9B9B;text-align:center;line-height:1.5;">
+      Click below to join. If you don't have a MyTasks account yet, you'll sign in with Google first.
+    </p>"""
+    return build_email(
+        title=f'Join "{group_name}" on MyTasks',
+        body_html=body,
+        cta_text="Join Group",
+        cta_url=invite_url,
+    )
+
+def build_task_assigned_email(assigner_name, task_text, group_name, group_color, app_url):
+    body = f"""
+    <p style="margin:0 0 20px 0;font-size:15px;color:#6B6B6B;text-align:center;">
+      <strong style="color:#1A1A1A;">{assigner_name}</strong> assigned you a new task
+    </p>
+    <div style="background:#FAFAF8;border-radius:12px;padding:20px 24px;border-left:4px solid {group_color};margin-bottom:8px;">
+      <p style="margin:0;font-size:16px;font-weight:600;color:#1A1A1A;">{task_text}</p>
+      <p style="margin:6px 0 0 0;font-size:13px;color:#9B9B9B;">in {group_name}</p>
+    </div>"""
+    return build_email(
+        title=f'New task assigned: "{task_text}"',
+        body_html=body,
+        cta_text="View Task",
+        cta_url=app_url,
+    )
+
+def build_member_joined_email(member_name, member_picture, group_name, app_url):
+    avatar_html = ""
+    if member_picture:
+        avatar_html = f'<img src="{member_picture}" width="52" height="52" style="border-radius:50%;display:block;margin:0 auto 12px;" alt="{member_name}">'
+    body = f"""
+    <div style="text-align:center;">
+      {avatar_html}
+      <p style="margin:0;font-size:15px;color:#6B6B6B;">
+        <strong style="color:#1A1A1A;">{member_name}</strong> accepted your invitation and joined
+        <strong style="color:#1A1A1A;">{group_name}</strong>.
+      </p>
+    </div>"""
+    return build_email(
+        title=f"{member_name} joined your group",
+        body_html=body,
+        cta_text="View Group",
+        cta_url=app_url,
+    )
 
 BASE = os.path.dirname(__file__)
 STATIC_DIR    = os.path.join(BASE, "static")
@@ -477,6 +618,24 @@ class Handler(BaseHTTPRequestHandler):
                     break
             save_group(g)
             create_notification(g["createdBy"], "member_joined", g["_id"], g["name"], from_user=user.get("name",""))
+            # Email the group admin (creator) that someone joined
+            if smtp_configured() and g.get("createdBy"):
+                admin_member = next((m for m in g["members"] if m.get("userId") == g["createdBy"]), None)
+                if admin_member and admin_member.get("email") and admin_member["email"] != user.get("email",""):
+                    host = self.headers.get("Host","")
+                    is_local = host.startswith("localhost") or host.startswith("127.")
+                    app_url = f"{'http' if is_local else 'https'}://{host}/"
+                    html = build_member_joined_email(
+                        member_name=user.get("name","Someone"),
+                        member_picture=user.get("picture",""),
+                        group_name=g["name"],
+                        app_url=app_url,
+                    )
+                    send_email(
+                        to_email=admin_member["email"],
+                        subject=f'{user.get("name","Someone")} joined your group "{g["name"]}"',
+                        html_body=html,
+                    )
             return self.redirect("/")
 
         if path == "/api/settings":
@@ -602,6 +761,25 @@ class Handler(BaseHTTPRequestHandler):
                 if assigned_to and assigned_to != user["id"]:
                     create_notification(assigned_to, "task_assigned", group_id, g["name"],
                         task_text=task["text"], from_user=user.get("name",""))
+                    # Send email to assignee if SMTP configured
+                    if smtp_configured():
+                        assignee_member = next((m for m in g["members"] if m.get("userId") == assigned_to), None)
+                        if assignee_member and assignee_member.get("email"):
+                            host = self.headers.get("Host","")
+                            is_local = host.startswith("localhost") or host.startswith("127.")
+                            app_url = f"{'http' if is_local else 'https'}://{host}/"
+                            html = build_task_assigned_email(
+                                assigner_name=user.get("name","Someone"),
+                                task_text=task["text"],
+                                group_name=g["name"],
+                                group_color=g.get("color","#2563EB"),
+                                app_url=app_url,
+                            )
+                            send_email(
+                                to_email=assignee_member["email"],
+                                subject=f'New task: "{task["text"]}" assigned to you in {g["name"]}',
+                                html_body=html,
+                            )
                 return self.ok("application/json", json.dumps(task).encode())
 
             # POST /api/groups/{id}/invite
@@ -632,31 +810,23 @@ class Handler(BaseHTTPRequestHandler):
                 is_local = host.startswith("localhost") or host.startswith("127.")
                 scheme = "http" if is_local else "https"
                 invite_url = f"{scheme}://{host}/invite/{token}"
-                smtp_user = os.environ.get("SMTP_USER","")
-                smtp_pass = os.environ.get("SMTP_PASS","")
-                if smtp_user and smtp_pass:
-                    try:
-                        import smtplib
-                        from email.mime.text import MIMEText
-                        from email.mime.multipart import MIMEMultipart
-                        msg = MIMEMultipart("alternative")
-                        msg["Subject"] = f'{user.get("name","")} invited you to join "{g["name"]}" on MyTasks'
-                        msg["From"] = f"MyTasks <{smtp_user}>"
-                        msg["To"] = email
-                        html_body = f"""<div style="font-family:sans-serif;max-width:500px;margin:0 auto;padding:40px 24px;">
-                          <h1 style="color:#6366F1">MyTasks</h1>
-                          <div style="background:#F8F7F4;border-radius:16px;padding:32px;text-align:center;">
-                            <h2>{g["name"]}</h2>
-                            <p>{user.get("name","")} wants you to join their group</p>
-                            <a href="{invite_url}" style="display:inline-block;background:#6366F1;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:600">Join Group</a>
-                          </div></div>"""
-                        msg.attach(MIMEText(html_body, "html"))
-                        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as srv:
-                            srv.login(smtp_user, smtp_pass)
-                            srv.send_message(msg)
-                    except Exception as e:
-                        print(f"SMTP error: {e}")
-                return self.ok("application/json", json.dumps({"token": token, "inviteUrl": invite_url}).encode())
+                email_sent = False
+                if smtp_configured():
+                    html = build_invite_email(
+                        inviter_name=user.get("name", "Someone"),
+                        inviter_picture=user.get("picture", ""),
+                        group_name=g["name"],
+                        group_color=g.get("color", "#2563EB"),
+                        invite_url=invite_url,
+                    )
+                    email_sent = send_email(
+                        to_email=email,
+                        subject=f'{user.get("name","Someone")} invited you to "{g["name"]}" on MyTasks',
+                        html_body=html,
+                    )
+                return self.ok("application/json", json.dumps({
+                    "token": token, "inviteUrl": invite_url, "emailSent": email_sent
+                }).encode())
 
         # POST /api/notifications/read
         if path == "/api/notifications/read":
@@ -789,6 +959,10 @@ if __name__ == "__main__":
     print(f"✓ Running at http://localhost:{PORT}")
     if not GOOGLE_CLIENT_ID:   print("⚠  GOOGLE_CLIENT_ID not set")
     if not ANTHROPIC_API_KEY:  print("⚠  ANTHROPIC_API_KEY not set — AI features disabled")
+    if smtp_configured():
+        print(f"✓ SMTP configured — emails will be sent from {SMTP_FROM}")
+    else:
+        print("⚠  SMTP not configured — invitation emails will use copy-link fallback only")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

@@ -92,6 +92,11 @@ const TL = {
     notifTaskCompleted:'{name} completed "{task}" in {group}',
     notifGroupInvite:'{name} invited you to join "{group}"',
     notifMemberJoined:'{name} joined "{group}"',
+    invitationSent:'Invitation sent!',
+    invitationSentDesc:'An email has been sent to {email} from noreply@mytasks.bar',
+    invitationCreated:'Invitation created',
+    invitationShareLink:'Share this link with your friend:',
+    copyLink:'Copy Link',copied:'Copied!',done:'Done',
   },
   he: {
     appTitle:'המשימות שלי',add:'הוסף',filterAll:'הכל',filterActive:'פעיל',filterDone:'הושלם',
@@ -147,6 +152,11 @@ const TL = {
     notifTaskCompleted:'{name} השלים "{task}" ב{group}',
     notifGroupInvite:'{name} הזמין אותך להצטרף ל"{group}"',
     notifMemberJoined:'{name} הצטרף ל"{group}"',
+    invitationSent:'ההזמנה נשלחה!',
+    invitationSentDesc:'אימייל נשלח אל {email} מ-noreply@mytasks.bar',
+    invitationCreated:'ההזמנה נוצרה',
+    invitationShareLink:'שתף את הקישור הזה עם חברך:',
+    copyLink:'העתק קישור',copied:'הועתק!',done:'סיום',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -202,6 +212,11 @@ const TL = {
     notifTaskCompleted:'{name} أكمل "{task}" في {group}',
     notifGroupInvite:'{name} دعاك للانضمام إلى "{group}"',
     notifMemberJoined:'{name} انضم إلى "{group}"',
+    invitationSent:'تم إرسال الدعوة!',
+    invitationSentDesc:'تم إرسال بريد إلكتروني إلى {email} من noreply@mytasks.bar',
+    invitationCreated:'تم إنشاء الدعوة',
+    invitationShareLink:'شارك هذا الرابط مع صديقك:',
+    copyLink:'نسخ الرابط',copied:'تم النسخ!',done:'تم',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -257,6 +272,11 @@ const TL = {
     notifTaskCompleted:'{name} completó "{task}" en {group}',
     notifGroupInvite:'{name} te invitó a unirte a "{group}"',
     notifMemberJoined:'{name} se unió a "{group}"',
+    invitationSent:'¡Invitación enviada!',
+    invitationSentDesc:'Se ha enviado un correo a {email} desde noreply@mytasks.bar',
+    invitationCreated:'Invitación creada',
+    invitationShareLink:'Comparte este enlace con tu amigo:',
+    copyLink:'Copiar enlace',copied:'¡Copiado!',done:'Listo',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -312,6 +332,11 @@ const TL = {
     notifTaskCompleted:'{name} a terminé "{task}" dans {group}',
     notifGroupInvite:'{name} vous a invité à rejoindre "{group}"',
     notifMemberJoined:'{name} a rejoint "{group}"',
+    invitationSent:'Invitation envoyée !',
+    invitationSentDesc:'Un email a été envoyé à {email} depuis noreply@mytasks.bar',
+    invitationCreated:'Invitation créée',
+    invitationShareLink:'Partagez ce lien avec votre ami :',
+    copyLink:'Copier le lien',copied:'Copié !',done:'Terminé',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -367,6 +392,11 @@ const TL = {
     notifTaskCompleted:'{name} hat "{task}" in {group} abgeschlossen',
     notifGroupInvite:'{name} hat Sie eingeladen, "{group}" beizutreten',
     notifMemberJoined:'{name} ist "{group}" beigetreten',
+    invitationSent:'Einladung gesendet!',
+    invitationSentDesc:'Eine E-Mail wurde an {email} von noreply@mytasks.bar gesendet',
+    invitationCreated:'Einladung erstellt',
+    invitationShareLink:'Teilen Sie diesen Link mit Ihrem Freund:',
+    copyLink:'Link kopieren',copied:'Kopiert!',done:'Fertig',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -422,6 +452,11 @@ const TL = {
     notifTaskCompleted:'{name} выполнил "{task}" в {group}',
     notifGroupInvite:'{name} пригласил вас в "{group}"',
     notifMemberJoined:'{name} присоединился к "{group}"',
+    invitationSent:'Приглашение отправлено!',
+    invitationSentDesc:'Письмо отправлено на {email} с noreply@mytasks.bar',
+    invitationCreated:'Приглашение создано',
+    invitationShareLink:'Поделитесь этой ссылкой с другом:',
+    copyLink:'Скопировать ссылку',copied:'Скопировано!',done:'Готово',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -477,6 +512,11 @@ const TL = {
     notifTaskCompleted:'{name} concluiu "{task}" em {group}',
     notifGroupInvite:'{name} convidou você para entrar em "{group}"',
     notifMemberJoined:'{name} entrou em "{group}"',
+    invitationSent:'Convite enviado!',
+    invitationSentDesc:'Um email foi enviado para {email} de noreply@mytasks.bar',
+    invitationCreated:'Convite criado',
+    invitationShareLink:'Compartilhe este link com seu amigo:',
+    copyLink:'Copiar link',copied:'Copiado!',done:'Pronto',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -532,6 +572,11 @@ const TL = {
     notifTaskCompleted:'{name} 在 {group} 中完成了"{task}"',
     notifGroupInvite:'{name} 邀请您加入"{group}"',
     notifMemberJoined:'{name} 加入了"{group}"',
+    invitationSent:'邀请已发送！',
+    invitationSentDesc:'邮件已从 noreply@mytasks.bar 发送至 {email}',
+    invitationCreated:'邀请已创建',
+    invitationShareLink:'将此链接分享给您的朋友：',
+    copyLink:'复制链接',copied:'已复制！',done:'完成',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -587,6 +632,11 @@ const TL = {
     notifTaskCompleted:'{name} が {group} で "{task}" を完了しました',
     notifGroupInvite:'{name} があなたを "{group}" に招待しました',
     notifMemberJoined:'{name} が "{group}" に参加しました',
+    invitationSent:'招待を送信しました！',
+    invitationSentDesc:'{email} に noreply@mytasks.bar からメールを送りました',
+    invitationCreated:'招待を作成しました',
+    invitationShareLink:'このリンクを友達に共有してください：',
+    copyLink:'リンクをコピー',copied:'コピーしました！',done:'完了',
   },
 };
 
@@ -1087,11 +1137,16 @@ function showInviteModal() {
         <option value="member">${tl.member||'Member'}</option>
         <option value="manager">${tl.manager||'Manager'}</option>
       </select>
-      <div id="invLinkRow" style="display:none">
-        <div class="invite-link-box" id="invLinkBox"></div>
+      <!-- Result panel (shown after sending) -->
+      <div id="invResult" style="display:none">
+        <div id="invStatusMsg" class="invite-status-msg"></div>
+        <div class="invite-link-row" id="invLinkRow" style="display:none">
+          <p style="margin:0 0 8px;font-size:13px;color:var(--text-secondary)">${tl.invitationShareLink||'Share this link with your friend:'}</p>
+          <div class="invite-link-box" id="invLinkBox"></div>
+        </div>
         <div class="confirm-actions">
-          <button class="confirm-cancel" id="invCopyBtn">${tl.copyInviteLink||'Copy Invite Link'}</button>
-          <button class="confirm-ok" id="invEmailBtn">📧 ${tl.sendInvitation||'Send Invitation'}</button>
+          <button class="confirm-cancel" id="invCopyBtn">${tl.copyLink||'Copy Link'}</button>
+          <button class="confirm-ok" style="background:var(--accent)" id="invDoneBtn">${tl.done||'Done'}</button>
         </div>
       </div>
       <div class="confirm-actions" id="invActions">
@@ -1102,25 +1157,37 @@ function showInviteModal() {
   document.body.appendChild(el);
   requestAnimationFrame(() => el.classList.add('open'));
   const close = () => { el.classList.remove('open'); setTimeout(() => el.remove(), 200); };
+  let inviteUrl = '';
   el.querySelector('#invCancel').onclick = close;
   el.querySelector('#invSend').onclick = async () => {
-    const email = el.querySelector('#invEmail').value.trim();
-    if (!email) return;
+    const emailVal = el.querySelector('#invEmail').value.trim();
+    if (!emailVal) { el.querySelector('#invEmail').focus(); return; }
+    const sendBtn = el.querySelector('#invSend');
+    sendBtn.disabled = true; sendBtn.textContent = '...';
     const role = el.querySelector('#invRole').value;
-    const res = await apiInviteMember(g._id, email, role);
+    const res = await apiInviteMember(g._id, emailVal, role);
+    sendBtn.disabled = false; sendBtn.textContent = tl.sendInvitation||'Send Invitation';
     if (res.inviteUrl) {
-      el.querySelector('#invLinkBox').textContent = res.inviteUrl;
-      el.querySelector('#invLinkRow').style.display = '';
+      inviteUrl = res.inviteUrl;
       el.querySelector('#invActions').style.display = 'none';
+      el.querySelector('#invResult').style.display = '';
+      if (res.emailSent) {
+        el.querySelector('#invStatusMsg').innerHTML =
+          `<div class="invite-status-ok">✅ ${tl.invitationSent||'Invitation sent!'}</div>
+           <p class="invite-status-sub">${(tl.invitationSentDesc||'An email has been sent to {email} from noreply@mytasks.bar').replace('{email}','<strong>'+emailVal+'</strong>')}</p>`;
+        el.querySelector('#invLinkRow').style.display = 'none';
+      } else {
+        el.querySelector('#invStatusMsg').innerHTML =
+          `<div class="invite-status-ok">🔗 ${tl.invitationCreated||'Invitation created'}</div>`;
+        el.querySelector('#invLinkRow').style.display = '';
+        el.querySelector('#invLinkBox').textContent = inviteUrl;
+      }
       el.querySelector('#invCopyBtn').onclick = () => {
-        navigator.clipboard?.writeText(res.inviteUrl);
-        showToast(tl.linkCopied||'Link copied!', 'success');
+        navigator.clipboard?.writeText(inviteUrl).catch(() => {});
+        el.querySelector('#invCopyBtn').textContent = tl.copied||'Copied!';
+        setTimeout(() => { el.querySelector('#invCopyBtn').textContent = tl.copyLink||'Copy Link'; }, 2000);
       };
-      el.querySelector('#invEmailBtn').onclick = () => {
-        const subject = encodeURIComponent(`Join my group on MyTasks!`);
-        const body = encodeURIComponent(`Hi! I'm inviting you to join our group "${g.name}" on MyTasks.\n\nClick here to join: ${res.inviteUrl}`);
-        window.open(`mailto:${email}?subject=${subject}&body=${body}`);
-      };
+      el.querySelector('#invDoneBtn').onclick = close;
       const updated = await apiLoadGroup(g._id);
       state.activeGroup = updated;
     }
