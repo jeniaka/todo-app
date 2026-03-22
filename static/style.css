@@ -1,5 +1,6 @@
 /* ─── Reset ───────────────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;max-width:100vw;overflow-x:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
 /* ─── Design Tokens ──────────────────────────────────────────────────────── */
 :root{
@@ -161,14 +162,22 @@ body{
 .profile-wrap{position:relative}
 
 .profile-btn{
-  width:36px;height:36px;min-width:36px;border-radius:50%;
-  border:2px solid var(--border-strong);
-  overflow:hidden;cursor:pointer;background:var(--bg-secondary);
-  padding:0;transition:border-color var(--duration-fast),box-shadow var(--duration-fast);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;gap:5px;
+  height:36px;min-width:36px;border-radius:var(--radius-full);
+  border:1.5px solid var(--border-strong);
+  overflow:visible;cursor:pointer;background:var(--bg-secondary);
+  padding:0 8px 0 2px;
+  transition:border-color var(--duration-fast),box-shadow var(--duration-fast),background var(--duration-fast);
 }
-.profile-btn:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-.profile-btn img,.profile-btn .user-avatar{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.profile-btn:hover{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);background:var(--accent-soft)}
+.profile-btn img,.profile-btn .user-avatar{width:28px;height:28px;object-fit:cover;border-radius:50%;flex-shrink:0}
+.profile-btn .user-avatar-fallback{width:28px;height:28px;font-size:11px}
+.profile-menu-indicator{
+  color:var(--text-secondary);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:color var(--duration-fast);
+}
+.profile-btn:hover .profile-menu-indicator{color:var(--accent)}
 .user-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;display:block}
 .user-avatar-fallback{
   width:32px;height:32px;border-radius:50%;
@@ -728,6 +737,9 @@ body{
   .priority-group{gap:4px}
   .p-chip{padding:5px 10px;font-size:12px}
   .menu-item,.lang-item{min-height:44px}
+  .add-bar{gap:6px}
+  .add-input{font-size:16px}
+  .filter-row{max-width:100%}
 }
 
 /* ─── Login page ──────────────────────────────────────────────────────────── */
@@ -819,3 +831,96 @@ body{
   display:inline-block;width:3px;height:3px;border-radius:50%;
   background:var(--text-tertiary);vertical-align:middle;margin-inline:6px;opacity:0.6;
 }
+
+/* ─── Charts View ─────────────────────────────────────────────────────────── */
+.charts-overlay{
+  position:fixed;inset:0;z-index:350;
+  background:var(--bg-primary);
+  overflow-y:auto;
+  animation:slideInFromRight var(--duration-slow) var(--ease-out);
+}
+@keyframes slideInFromRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+
+.charts-page{
+  max-width:var(--max-w);margin-inline:auto;
+  padding:20px 20px calc(40px + env(safe-area-inset-bottom));
+}
+
+.charts-header{
+  display:flex;align-items:center;gap:12px;
+  margin-block-end:24px;padding-block-start:8px;
+}
+.charts-title{
+  font-family:var(--font-heading);font-size:1.5rem;font-weight:400;
+  background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.charts-back-btn{border:none;background:transparent}
+
+/* Stats grid */
+.stats-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-block-end:20px;
+}
+@media(min-width:500px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stat-card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:14px 16px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;inset:0;opacity:0.04;
+  background:var(--gradient);pointer-events:none;
+}
+.stat-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-tertiary);margin-block-end:6px}
+.stat-value{font-size:1.5rem;font-weight:700;line-height:1;
+  background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stat-sub{font-size:11px;color:var(--text-tertiary);margin-block-start:3px}
+
+/* Chart tabs */
+.chart-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-block-end:14px;padding-block-end:2px}
+.chart-tabs-wrap::-webkit-scrollbar{height:0}
+.chart-tabs{
+  display:flex;gap:6px;width:max-content;min-width:100%;
+  background:var(--bg-secondary);border-radius:var(--radius-full);
+  padding:3px;
+}
+.chart-tab{
+  padding:7px 16px;border-radius:var(--radius-full);border:none;background:transparent;
+  color:var(--text-secondary);font-size:13px;font-weight:600;font-family:var(--font-body);
+  cursor:pointer;white-space:nowrap;min-height:34px;
+  transition:all var(--duration-normal) var(--ease-out);
+  -webkit-tap-highlight-color:transparent;
+}
+.chart-tab.active{
+  background:var(--gradient);color:#fff;
+  box-shadow:0 3px 10px rgba(99,102,241,0.35);
+}
+
+/* Line period row */
+.line-period-row{
+  display:flex;gap:8px;margin-block-end:14px;
+}
+.period-btn{
+  padding:6px 14px;border-radius:var(--radius-full);border:1.5px solid var(--border-strong);
+  background:transparent;color:var(--text-secondary);font-size:12px;font-weight:600;
+  font-family:var(--font-body);cursor:pointer;
+  transition:all var(--duration-fast);min-height:32px;
+  -webkit-tap-highlight-color:transparent;
+}
+.period-btn.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+
+/* Chart container */
+.chart-container{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px;box-shadow:var(--shadow-sm);
+  position:relative;min-height:280px;
+  display:flex;align-items:center;justify-content:center;
+}
+.chart-container canvas{max-width:100%!important}
+
+.chart-nodata{
+  text-align:center;padding:40px;color:var(--text-tertiary);font-size:14px;
+}
+
+/* chart-btn in navbar */
+.chart-btn{border:none;background:transparent}
+.chart-btn:hover{background:var(--bg-secondary)}

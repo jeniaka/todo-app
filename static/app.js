@@ -8,6 +8,9 @@ const state = {
   newPriority: 'none',
   activeDrawer: null,
   settings: null,
+  chartView: false,
+  activeChart: 'pie',
+  linePeriod: '7',
 };
 
 // ─── Translations ─────────────────────────────────────────────────────────────
@@ -52,6 +55,11 @@ const TL = {
     notifBadge:'Badge Count',notifBadgeDesc:'Show task count in browser tab title',
     doNotDisturb:'Do Not Disturb',doNotDisturbDesc:'Silence all notifications',
     taskDone:'Done',
+    charts:'Analytics',totalTasks:'Total Tasks',completed:'Completed',
+    pending:'Pending',avgTime:'Avg Time',chartPie:'Pie',chartDoughnut:'Doughnut',
+    chartBar:'By Priority',chartHBar:'Horizontal',chartLine:'Trend',chartPolar:'Polar',
+    last7:'Last 7 days',last30:'Last 30 days',backToTasks:'← Tasks',
+    noData:'No data yet',
   },
   he: {
     appTitle:'המשימות שלי',add:'הוסף',filterAll:'הכל',filterActive:'פעיל',filterDone:'הושלם',
@@ -80,6 +88,7 @@ const TL = {
     notifBadge:'ספירת תגים',notifBadgeDesc:'הצג ספירת משימות בכותרת הדפדפן',
     doNotDisturb:'אל תפריע',doNotDisturbDesc:'השתק את כל ההתראות',
     taskDone:'הושלם',
+    charts:'ניתוח',totalTasks:'סה״כ משימות',completed:'הושלמו',pending:'ממתינות',avgTime:'זמן ממוצע',chartPie:'עוגה',chartDoughnut:'דונאט',chartBar:'לפי עדיפות',chartHBar:'אופקי',chartLine:'מגמה',chartPolar:'פולרי',last7:'7 ימים אחרונים',last30:'30 ימים אחרונים',backToTasks:'← משימות',noData:'אין נתונים עדיין',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -108,6 +117,7 @@ const TL = {
     notifBadge:'عدد الشارات',notifBadgeDesc:'إظهار عدد المهام في عنوان المتصفح',
     doNotDisturb:'عدم الإزعاج',doNotDisturbDesc:'كتم جميع الإشعارات',
     taskDone:'تم',
+    charts:'تحليلات',totalTasks:'إجمالي المهام',completed:'مكتملة',pending:'معلقة',avgTime:'متوسط الوقت',chartPie:'دائري',chartDoughnut:'دونات',chartBar:'حسب الأولوية',chartHBar:'أفقي',chartLine:'الاتجاه',chartPolar:'قطبي',last7:'آخر 7 أيام',last30:'آخر 30 يومًا',backToTasks:'← المهام',noData:'لا توجد بيانات بعد',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -136,6 +146,7 @@ const TL = {
     notifBadge:'Contador',notifBadgeDesc:'Mostrar contador en la pestaña',
     doNotDisturb:'No molestar',doNotDisturbDesc:'Silenciar todas las notificaciones',
     taskDone:'Hecho',
+    charts:'Análisis',totalTasks:'Total',completed:'Completadas',pending:'Pendientes',avgTime:'Tiempo medio',chartPie:'Tarta',chartDoughnut:'Dona',chartBar:'Por prioridad',chartHBar:'Horizontal',chartLine:'Tendencia',chartPolar:'Polar',last7:'Últimos 7 días',last30:'Últimos 30 días',backToTasks:'← Tareas',noData:'Sin datos aún',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -164,6 +175,7 @@ const TL = {
     notifBadge:'Compteur',notifBadgeDesc:'Afficher le compteur dans l\'onglet',
     doNotDisturb:'Ne pas déranger',doNotDisturbDesc:'Silencer toutes les notifications',
     taskDone:'Fait',
+    charts:'Analyses',totalTasks:'Total',completed:'Terminées',pending:'En attente',avgTime:'Temps moyen',chartPie:'Camembert',chartDoughnut:'Donut',chartBar:'Par priorité',chartHBar:'Horizontal',chartLine:'Tendance',chartPolar:'Polaire',last7:'7 derniers jours',last30:'30 derniers jours',backToTasks:'← Tâches',noData:'Aucune donnée',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -192,6 +204,7 @@ const TL = {
     notifBadge:'Badge-Zähler',notifBadgeDesc:'Aufgabenanzahl im Tab anzeigen',
     doNotDisturb:'Nicht stören',doNotDisturbDesc:'Alle Benachrichtigungen stummschalten',
     taskDone:'Erledigt',
+    charts:'Analysen',totalTasks:'Gesamt',completed:'Abgeschlossen',pending:'Ausstehend',avgTime:'Durchschn. Zeit',chartPie:'Kuchendiagramm',chartDoughnut:'Donut',chartBar:'Nach Priorität',chartHBar:'Horizontal',chartLine:'Verlauf',chartPolar:'Polar',last7:'Letzte 7 Tage',last30:'Letzte 30 Tage',backToTasks:'← Aufgaben',noData:'Keine Daten',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -220,6 +233,7 @@ const TL = {
     notifBadge:'Счётчик',notifBadgeDesc:'Показывать счётчик в заголовке',
     doNotDisturb:'Не беспокоить',doNotDisturbDesc:'Отключить все уведомления',
     taskDone:'Готово',
+    charts:'Аналитика',totalTasks:'Всего',completed:'Выполнено',pending:'В ожидании',avgTime:'Среднее время',chartPie:'Круговая',chartDoughnut:'Пончик',chartBar:'По приоритету',chartHBar:'Горизонт.',chartLine:'Тренд',chartPolar:'Полярная',last7:'Последние 7 дней',last30:'Последние 30 дней',backToTasks:'← Задачи',noData:'Нет данных',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -248,6 +262,7 @@ const TL = {
     notifBadge:'Contador',notifBadgeDesc:'Mostrar contagem na aba',
     doNotDisturb:'Não perturbe',doNotDisturbDesc:'Silenciar todas as notificações',
     taskDone:'Feito',
+    charts:'Análises',totalTasks:'Total',completed:'Concluídas',pending:'Pendentes',avgTime:'Tempo médio',chartPie:'Pizza',chartDoughnut:'Donuts',chartBar:'Por prioridade',chartHBar:'Horizontal',chartLine:'Tendência',chartPolar:'Polar',last7:'Últimos 7 dias',last30:'Últimos 30 dias',backToTasks:'← Tarefas',noData:'Sem dados',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -276,6 +291,7 @@ const TL = {
     notifBadge:'角标计数',notifBadgeDesc:'在标签标题中显示任务数',
     doNotDisturb:'勿扰模式',doNotDisturbDesc:'静音所有通知',
     taskDone:'完成',
+    charts:'统计',totalTasks:'总任务',completed:'已完成',pending:'待完成',avgTime:'平均时间',chartPie:'饼图',chartDoughnut:'环形图',chartBar:'按优先级',chartHBar:'横向柱图',chartLine:'趋势',chartPolar:'极坐标',last7:'最近7天',last30:'最近30天',backToTasks:'← 任务',noData:'暂无数据',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -304,6 +320,7 @@ const TL = {
     notifBadge:'バッジカウント',notifBadgeDesc:'タブタイトルにカウントを表示',
     doNotDisturb:'おやすみモード',doNotDisturbDesc:'すべての通知をミュート',
     taskDone:'完了',
+    charts:'分析',totalTasks:'合計',completed:'完了',pending:'未完了',avgTime:'平均時間',chartPie:'円グラフ',chartDoughnut:'ドーナツ',chartBar:'優先度別',chartHBar:'横棒グラフ',chartLine:'トレンド',chartPolar:'極座標',last7:'過去7日間',last30:'過去30日間',backToTasks:'← タスク',noData:'データなし',
   },
 };
 
@@ -500,6 +517,7 @@ function applyLanguage(code) {
   document.documentElement.dir  = langInfo.dir;
   if (state.settings) state.settings.language = code;
   localStorage.setItem('lang', code);
+  localStorage.setItem('app_language', code);
   applyI18n();
   // Update drawer if open
   if (state.activeDrawer !== null) renderDrawer(state.activeDrawer);
@@ -663,6 +681,245 @@ async function toggleTodo(id, checkEl) {
   }
   render();
   await apiSave();
+}
+
+// ─── Charts ───────────────────────────────────────────────────────────────────
+const CHART_COLORS = {
+  done: '#22C55E',
+  notDone: '#EF4444',
+  priorityHigh: '#EF4444',
+  priorityMedium: '#F59E0B',
+  priorityLow: '#6366F1',
+  priorityNone: '#9CA3AF',
+};
+
+let activeChartInstance = null;
+
+function openCharts() {
+  state.chartView = true;
+  const el = document.getElementById('chartsView');
+  if (el) { el.style.display = ''; }
+  renderChartStats();
+  renderActiveChart();
+  applyI18n();
+  history.pushState({ app: true }, '');
+}
+
+function closeCharts() {
+  state.chartView = false;
+  const el = document.getElementById('chartsView');
+  if (el) { el.style.display = 'none'; }
+  if (activeChartInstance) { activeChartInstance.destroy(); activeChartInstance = null; }
+  history.pushState({ app: true }, '');
+}
+
+function renderChartStats() {
+  const grid = document.getElementById('statsGrid');
+  if (!grid) return;
+  const todos = state.todos;
+  const total = todos.length;
+  const done = todos.filter(t => t.done).length;
+  const pending = total - done;
+  const completedPct = total > 0 ? Math.round(done / total * 100) : 0;
+
+  // Avg completion time
+  const durations = todos
+    .filter(t => t.done && t.createdAt && t.completedAt)
+    .map(t => t.completedAt - t.createdAt);
+  let avgStr = '—';
+  if (durations.length > 0) {
+    const avgMs = durations.reduce((a, b) => a + b, 0) / durations.length;
+    avgStr = formatDuration(avgMs);
+  }
+
+  grid.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label" data-i18n="totalTasks">${t('totalTasks')}</div>
+      <div class="stat-value">${total}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-i18n="completed">${t('completed')}</div>
+      <div class="stat-value">${done}</div>
+      <div class="stat-sub">${completedPct}%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-i18n="pending">${t('pending')}</div>
+      <div class="stat-value">${pending}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-i18n="avgTime">${t('avgTime')}</div>
+      <div class="stat-value" style="font-size:1.1rem">${avgStr}</div>
+    </div>
+  `;
+}
+
+function formatDuration(ms) {
+  const mins = Math.floor(ms / 60000);
+  if (mins < 60) return `${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ${mins % 60}m`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ${hrs % 24}h`;
+}
+
+function getChartBaseOptions(extraPlugins = {}) {
+  return {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          padding: 16,
+          usePointStyle: true,
+          font: { family: "'DM Sans', sans-serif", size: 13 },
+          color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#1A1A1A',
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        titleFont: { family: "'DM Sans', sans-serif" },
+        bodyFont: { family: "'DM Sans', sans-serif" },
+        cornerRadius: 8,
+        padding: 12,
+      },
+      ...extraPlugins
+    }
+  };
+}
+
+function renderActiveChart() {
+  const chartType = state.activeChart;
+  const periodRow = document.getElementById('linePeriodRow');
+  if (periodRow) periodRow.style.display = chartType === 'line' ? '' : 'none';
+
+  // Destroy old chart
+  if (activeChartInstance) { activeChartInstance.destroy(); activeChartInstance = null; }
+
+  const canvas = document.getElementById('mainChart');
+  const nodata = document.getElementById('chartNodata');
+  if (!canvas) return;
+
+  const todos = state.todos;
+  if (todos.length === 0) {
+    canvas.style.display = 'none';
+    if (nodata) nodata.style.display = '';
+    return;
+  }
+  canvas.style.display = '';
+  if (nodata) nodata.style.display = 'none';
+
+  const ctx = canvas.getContext('2d');
+
+  if (chartType === 'pie') {
+    const done = todos.filter(t => t.done).length;
+    const notDone = todos.length - done;
+    activeChartInstance = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: [t('completed'), t('pending')],
+        datasets: [{ data: [done, notDone], backgroundColor: [CHART_COLORS.done, CHART_COLORS.notDone], borderWidth: 2, borderColor: 'transparent', hoverOffset: 6 }]
+      },
+      options: getChartBaseOptions()
+    });
+  }
+
+  else if (chartType === 'doughnut') {
+    const done = todos.filter(t => t.done).length;
+    const notDone = todos.length - done;
+    activeChartInstance = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [t('completed'), t('pending')],
+        datasets: [{ data: [done, notDone], backgroundColor: [CHART_COLORS.done, CHART_COLORS.notDone], borderWidth: 2, borderColor: 'transparent', hoverOffset: 6 }]
+      },
+      options: {
+        ...getChartBaseOptions(),
+        cutout: '60%',
+        plugins: {
+          ...getChartBaseOptions().plugins,
+          doughnutLabel: {
+            labels: [{ text: String(todos.length), font: { size: 28, weight: 'bold' } }]
+          }
+        }
+      }
+    });
+  }
+
+  else if (chartType === 'bar' || chartType === 'hbar') {
+    const priorities = ['high', 'medium', 'low', 'none'];
+    const labels = priorities.map(p => t('priority' + p.charAt(0).toUpperCase() + p.slice(1)));
+    const doneData = priorities.map(p => todos.filter(x => (x.priority || 'none') === p && x.done).length);
+    const notDoneData = priorities.map(p => todos.filter(x => (x.priority || 'none') === p && !x.done).length);
+    activeChartInstance = new Chart(ctx, {
+      type: chartType === 'hbar' ? 'bar' : 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: t('completed'), data: doneData, backgroundColor: CHART_COLORS.done + 'CC', borderRadius: 6 },
+          { label: t('pending'), data: notDoneData, backgroundColor: CHART_COLORS.notDone + 'CC', borderRadius: 6 }
+        ]
+      },
+      options: {
+        ...getChartBaseOptions(),
+        indexAxis: chartType === 'hbar' ? 'y' : 'x',
+        scales: {
+          x: { stacked: false, grid: { color: 'rgba(128,128,128,0.1)' }, ticks: { font: { family: "'DM Sans', sans-serif" } } },
+          y: { stacked: false, grid: { color: 'rgba(128,128,128,0.1)' }, beginAtZero: true, ticks: { font: { family: "'DM Sans', sans-serif" }, stepSize: 1 } }
+        }
+      }
+    });
+  }
+
+  else if (chartType === 'line') {
+    const days = state.linePeriod === '30' ? 30 : 7;
+    const now = Date.now();
+    const labels = [];
+    const data = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now - i * 86400000);
+      labels.push(d.toLocaleDateString(state.lang, { month: 'short', day: 'numeric' }));
+      const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      const dayEnd = dayStart + 86400000;
+      data.push(todos.filter(t => t.done && t.completedAt >= dayStart && t.completedAt < dayEnd).length);
+    }
+    activeChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: t('completed'),
+          data,
+          borderColor: '#6366F1',
+          backgroundColor: 'rgba(99,102,241,0.12)',
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointBackgroundColor: '#6366F1',
+          tension: 0.4,
+          fill: true,
+        }]
+      },
+      options: {
+        ...getChartBaseOptions(),
+        scales: {
+          x: { grid: { color: 'rgba(128,128,128,0.1)' }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 }, maxRotation: 45 } },
+          y: { beginAtZero: true, grid: { color: 'rgba(128,128,128,0.1)' }, ticks: { stepSize: 1, font: { family: "'DM Sans', sans-serif" } } }
+        }
+      }
+    });
+  }
+
+  else if (chartType === 'polar') {
+    const priorities = ['high', 'medium', 'low', 'none'];
+    const labels = priorities.map(p => t('priority' + p.charAt(0).toUpperCase() + p.slice(1)));
+    const data = priorities.map(p => todos.filter(x => (x.priority || 'none') === p).length);
+    const bgColors = [CHART_COLORS.priorityHigh + 'BB', CHART_COLORS.priorityMedium + 'BB', CHART_COLORS.priorityLow + 'BB', CHART_COLORS.priorityNone + 'BB'];
+    activeChartInstance = new Chart(ctx, {
+      type: 'polarArea',
+      data: { labels, datasets: [{ data, backgroundColor: bgColors, borderWidth: 1, borderColor: 'transparent' }] },
+      options: getChartBaseOptions()
+    });
+  }
 }
 
 // ─── Add task ─────────────────────────────────────────────────────────────────
@@ -952,7 +1209,9 @@ function checkWeeklyReport() {
 history.replaceState({ app: true }, '');
 
 window.addEventListener('popstate', () => {
-  if (state.activeDrawer !== null) {
+  if (state.chartView) {
+    closeCharts();
+  } else if (state.activeDrawer !== null) {
     closeDrawer();
   } else if (menuOpen) {
     closeMenu();
@@ -1178,4 +1437,30 @@ document.addEventListener('DOMContentLoaded', async () => {
       else if (menuOpen) closeMenu();
     }
   });
+
+  // ── Charts ────────────────────────────────────────────────────────────────
+  const chartBtn = document.getElementById('chartBtn');
+  if (chartBtn) chartBtn.addEventListener('click', openCharts);
+
+  const chartsBackBtn = document.getElementById('chartsBackBtn');
+  if (chartsBackBtn) chartsBackBtn.addEventListener('click', closeCharts);
+
+  document.getElementById('chartTabs')?.addEventListener('click', e => {
+    const tab = e.target.closest('[data-chart]');
+    if (!tab) return;
+    state.activeChart = tab.dataset.chart;
+    document.querySelectorAll('.chart-tab').forEach(b => b.classList.toggle('active', b.dataset.chart === state.activeChart));
+    renderActiveChart();
+  });
+
+  document.getElementById('linePeriodRow')?.addEventListener('click', e => {
+    const btn = e.target.closest('[data-period]');
+    if (!btn) return;
+    state.linePeriod = btn.dataset.period;
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.toggle('active', b.dataset.period === state.linePeriod));
+    renderActiveChart();
+  });
+
+  // Mark body as ready (prevents language flash)
+  document.body.classList.add('lang-ready');
 });

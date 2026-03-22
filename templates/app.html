@@ -2,7 +2,15 @@
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <script>
+(function(){
+  var l=localStorage.getItem('app_language')||'en';
+  document.documentElement.lang=l;
+  document.documentElement.dir=(l==='he'||l==='ar')?'rtl':'ltr';
+})();
+</script>
+<style>body{opacity:0;transition:opacity 0.18s ease}body.lang-ready{opacity:1}</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover"/>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -23,6 +31,11 @@
     <span class="nav-title" data-i18n="appTitle">My Tasks</span>
   </div>
   <div class="nav-right">
+    <button class="icon-btn chart-btn" id="chartBtn" title="Analytics" aria-label="Analytics">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+    </button>
     <button class="icon-btn theme-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
       <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -33,6 +46,13 @@
     <div class="profile-wrap" id="profileWrap">
       <button class="profile-btn" id="profileBtn" aria-label="Profile menu" aria-expanded="false" aria-haspopup="true">
         {{AVATAR}}
+        <span class="profile-menu-indicator">
+          <svg width="10" height="8" viewBox="0 0 10 8" fill="currentColor" aria-hidden="true">
+            <rect y="0" width="10" height="1.5" rx="0.75"/>
+            <rect y="3.25" width="10" height="1.5" rx="0.75"/>
+            <rect y="6.5" width="10" height="1.5" rx="0.75"/>
+          </svg>
+        </span>
       </button>
 
       <div class="profile-menu" id="profileMenu" aria-hidden="true">
@@ -153,6 +173,52 @@
   2026
 </footer>
 
+<!-- ─── Charts View ─────────────────────────────────────────────────────────── -->
+<div class="charts-overlay" id="chartsView" style="display:none">
+  <div class="charts-page">
+
+    <!-- Back button -->
+    <div class="charts-header">
+      <button class="icon-btn charts-back-btn" id="chartsBackBtn" aria-label="Back to tasks">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h2 class="charts-title" data-i18n="charts">Analytics</h2>
+    </div>
+
+    <!-- Summary stats -->
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <!-- Chart type selector -->
+    <div class="chart-tabs-wrap">
+      <div class="chart-tabs" id="chartTabs">
+        <button class="chart-tab active" data-chart="pie" data-i18n="chartPie">Pie</button>
+        <button class="chart-tab" data-chart="doughnut" data-i18n="chartDoughnut">Doughnut</button>
+        <button class="chart-tab" data-chart="bar" data-i18n="chartBar">By Priority</button>
+        <button class="chart-tab" data-chart="hbar" data-i18n="chartHBar">Horizontal</button>
+        <button class="chart-tab" data-chart="line" data-i18n="chartLine">Trend</button>
+        <button class="chart-tab" data-chart="polar" data-i18n="chartPolar">Polar</button>
+      </div>
+    </div>
+
+    <!-- Line period toggle (only for line chart) -->
+    <div class="line-period-row" id="linePeriodRow" style="display:none">
+      <button class="period-btn active" data-period="7" data-i18n="last7">Last 7 days</button>
+      <button class="period-btn" data-period="30" data-i18n="last30">Last 30 days</button>
+    </div>
+
+    <!-- Chart canvas container -->
+    <div class="chart-container" id="chartContainer">
+      <canvas id="mainChart"></canvas>
+    </div>
+
+    <!-- No data message -->
+    <div class="chart-nodata" id="chartNodata" style="display:none">
+      <span data-i18n="noData">No data yet</span>
+    </div>
+
+  </div>
+</div>
+
 <!-- ─── Task Detail Drawer ──────────────────────────────────────────────────── -->
 <div class="overlay" id="overlay">
   <div class="drawer" id="drawer" role="dialog" aria-modal="true">
@@ -217,6 +283,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>window.__USER__ = {{USER_JSON}};</script>
 <script src="/static/app.js"></script>
 <script>if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});</script>

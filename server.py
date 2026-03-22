@@ -43,15 +43,28 @@ DEFAULT_SETTINGS = {
 
 # ─── MongoDB ──────────────────────────────────────────────────────────────────
 db = None
+DB_STATUS = "local_files"
 if MONGODB_URI:
     try:
         from pymongo import MongoClient
         import certifi
-        client = MongoClient(MONGODB_URI, tlsCAFile=certifi.where())
+        client = MongoClient(MONGODB_URI, tlsCAFile=certifi.where(), serverSelectionTimeoutMS=5000)
+        client.admin.command('ping')
         db = client["tododb"]
-        print("✓ MongoDB connected")
+        DB_STATUS = "mongodb"
+        print("✓ MongoDB connected successfully")
     except Exception as e:
-        print(f"MongoDB failed, using local files: {e}")
+        print(f"✗ MongoDB connection failed: {e}")
+        db = None
+else:
+    pass
+
+if DB_STATUS == "local_files":
+    print("╔══════════════════════════════════════════════════════════╗")
+    print("║  ⚠ WARNING: MongoDB not connected!                      ║")
+    print("║  Using local file storage — DATA WILL BE LOST ON DEPLOY  ║")
+    print("║  Set MONGODB_URI environment variable to fix this.       ║")
+    print("╚══════════════════════════════════════════════════════════╝")
 
 def load_todos(user_id):
     if db is not None:
@@ -325,6 +338,12 @@ class Handler(BaseHTTPRequestHandler):
                 return self.redirect("/login")
 
         # API — require auth
+        if path == "/api/health":
+            health = {"status": "ok", "database": DB_STATUS}
+            if DB_STATUS == "local_files":
+                health["warning"] = "Data will be lost on deploy. Set MONGODB_URI to use MongoDB."
+            return self.ok("application/json", json.dumps(health).encode())
+
         if path == "/api/settings":
             user = self.get_session()
             if not user:
