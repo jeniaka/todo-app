@@ -98,6 +98,7 @@ const TL = {
     invitationCreated:'Invitation created',
     invitationShareLink:'Share this link with your friend:',
     copyLink:'Copy Link',copied:'Copied!',done:'Done',
+    sending:'Sending...',invitationFailed:'Failed to send invitation. Please try again.',alreadyInvited:'This person has already been invited.',
     sortNewest:'Newest',sortPriority:'Priority',sortAssignee:'Assignee',
     personalTasks:'My Tasks',
     groupTaskNotes:'Notes',groupTaskDetails:'Task Details',
@@ -172,6 +173,7 @@ const TL = {
     invitationCreated:'ההזמנה נוצרה',
     invitationShareLink:'שתף את הקישור הזה עם חברך:',
     copyLink:'העתק קישור',copied:'הועתק!',done:'סיום',
+    sending:'שולח...',invitationFailed:'שגיאה בשליחת ההזמנה. נסה שוב.',alreadyInvited:'האדם הזה כבר הוזמן.',
     sortNewest:'חדש ביותר',sortPriority:'עדיפות',sortAssignee:'מוקצה',
     personalTasks:'המשימות שלי',groupTaskNotes:'הערות',groupTaskDetails:'פרטי המשימה',
     analytics:'ניתוח',teamAnalytics:'ניתוח צוות',overview:'סקירה',
@@ -245,6 +247,7 @@ const TL = {
     invitationCreated:'تم إنشاء الدعوة',
     invitationShareLink:'شارك هذا الرابط مع صديقك:',
     copyLink:'نسخ الرابط',copied:'تم النسخ!',done:'تم',
+    sending:'جارٍ الإرسال...',invitationFailed:'فشل إرسال الدعوة. يرجى المحاولة مرة أخرى.',alreadyInvited:'تمت دعوة هذا الشخص بالفعل.',
     sortNewest:'الأحدث',sortPriority:'الأولوية',sortAssignee:'المعين',
     personalTasks:'مهامي',groupTaskNotes:'ملاحظات',groupTaskDetails:'تفاصيل المهمة',
     analytics:'تحليلات',teamAnalytics:'تحليلات الفريق',overview:'نظرة عامة',
@@ -318,6 +321,7 @@ const TL = {
     invitationCreated:'Invitación creada',
     invitationShareLink:'Comparte este enlace con tu amigo:',
     copyLink:'Copiar enlace',copied:'¡Copiado!',done:'Listo',
+    sending:'Enviando...',invitationFailed:'Error al enviar la invitación. Inténtalo de nuevo.',alreadyInvited:'Esta persona ya ha sido invitada.',
     sortNewest:'Más reciente',sortPriority:'Prioridad',sortAssignee:'Asignado',
     personalTasks:'Mis Tareas',groupTaskNotes:'Notas',groupTaskDetails:'Detalles de tarea',
     analytics:'Análisis',teamAnalytics:'Análisis de equipo',overview:'Resumen',
@@ -391,6 +395,7 @@ const TL = {
     invitationCreated:'Invitation créée',
     invitationShareLink:'Partagez ce lien avec votre ami :',
     copyLink:'Copier le lien',copied:'Copié !',done:'Terminé',
+    sending:'Envoi...',invitationFailed:'Échec de l\'envoi. Veuillez réessayer.',alreadyInvited:'Cette personne a déjà été invitée.',
     sortNewest:'Plus récent',sortPriority:'Priorité',sortAssignee:'Assigné',
     personalTasks:'Mes Tâches',groupTaskNotes:'Notes',groupTaskDetails:'Détails de la tâche',
     analytics:'Analyses',teamAnalytics:'Analyses équipe',overview:'Vue d\'ensemble',
@@ -464,6 +469,7 @@ const TL = {
     invitationCreated:'Einladung erstellt',
     invitationShareLink:'Teilen Sie diesen Link mit Ihrem Freund:',
     copyLink:'Link kopieren',copied:'Kopiert!',done:'Fertig',
+    sending:'Senden...',invitationFailed:'Einladung fehlgeschlagen. Bitte erneut versuchen.',alreadyInvited:'Diese Person wurde bereits eingeladen.',
     sortNewest:'Neueste',sortPriority:'Priorität',sortAssignee:'Zugewiesen',
     personalTasks:'Meine Aufgaben',groupTaskNotes:'Notizen',groupTaskDetails:'Aufgabendetails',
     analytics:'Analysen',teamAnalytics:'Team-Analysen',overview:'Übersicht',
@@ -537,6 +543,7 @@ const TL = {
     invitationCreated:'Приглашение создано',
     invitationShareLink:'Поделитесь этой ссылкой с другом:',
     copyLink:'Скопировать ссылку',copied:'Скопировано!',done:'Готово',
+    sending:'Отправка...',invitationFailed:'Не удалось отправить приглашение. Попробуйте ещё раз.',alreadyInvited:'Этот человек уже приглашён.',
     sortNewest:'Новейшие',sortPriority:'Приоритет',sortAssignee:'Исполнитель',
     personalTasks:'Мои задачи',groupTaskNotes:'Заметки',groupTaskDetails:'Детали задачи',
     analytics:'Аналитика',teamAnalytics:'Аналитика команды',overview:'Обзор',
@@ -610,6 +617,7 @@ const TL = {
     invitationCreated:'Convite criado',
     invitationShareLink:'Compartilhe este link com seu amigo:',
     copyLink:'Copiar link',copied:'Copiado!',done:'Pronto',
+    sending:'Enviando...',invitationFailed:'Falha ao enviar convite. Tente novamente.',alreadyInvited:'Esta pessoa já foi convidada.',
     sortNewest:'Mais recente',sortPriority:'Prioridade',sortAssignee:'Responsável',
     personalTasks:'Minhas Tarefas',groupTaskNotes:'Notas',groupTaskDetails:'Detalhes da tarefa',
     analytics:'Análises',teamAnalytics:'Análises da equipe',overview:'Visão geral',
@@ -683,6 +691,7 @@ const TL = {
     invitationCreated:'邀请已创建',
     invitationShareLink:'将此链接分享给您的朋友：',
     copyLink:'复制链接',copied:'已复制！',done:'完成',
+    sending:'发送中...',invitationFailed:'发送邀请失败，请重试。',alreadyInvited:'此人已被邀请。',
     sortNewest:'最新',sortPriority:'优先级',sortAssignee:'负责人',
     personalTasks:'我的任务',groupTaskNotes:'备注',groupTaskDetails:'任务详情',
     analytics:'统计',teamAnalytics:'团队统计',overview:'概览',
@@ -756,6 +765,7 @@ const TL = {
     invitationCreated:'招待を作成しました',
     invitationShareLink:'このリンクを友達に共有してください：',
     copyLink:'リンクをコピー',copied:'コピーしました！',done:'完了',
+    sending:'送信中...',invitationFailed:'招待の送信に失敗しました。もう一度お試しください。',alreadyInvited:'このユーザーはすでに招待されています。',
     sortNewest:'新しい順',sortPriority:'優先度',sortAssignee:'担当者',
     personalTasks:'マイタスク',groupTaskNotes:'メモ',groupTaskDetails:'タスク詳細',
     analytics:'分析',teamAnalytics:'チーム分析',overview:'概要',
@@ -1509,6 +1519,7 @@ function showInviteModal() {
         <option value="member">${tl.member||'Member'}</option>
         <option value="manager">${tl.manager||'Manager'}</option>
       </select>
+      <div id="invError" class="invite-error-msg" style="display:none"></div>
       <!-- Result panel (shown after sending) -->
       <div id="invResult" style="display:none">
         <div id="invStatusMsg" class="invite-status-msg"></div>
@@ -1535,10 +1546,27 @@ function showInviteModal() {
     const emailVal = el.querySelector('#invEmail').value.trim();
     if (!emailVal) { el.querySelector('#invEmail').focus(); return; }
     const sendBtn = el.querySelector('#invSend');
-    sendBtn.disabled = true; sendBtn.textContent = '...';
+    const errEl = el.querySelector('#invError');
+    errEl.style.display = 'none';
+    sendBtn.disabled = true; sendBtn.textContent = tl.sending || 'Sending...';
     const role = el.querySelector('#invRole').value;
-    const res = await apiInviteMember(g._id, emailVal, role);
+    let res;
+    try {
+      res = await apiInviteMember(g._id, emailVal, role);
+    } catch(err) {
+      sendBtn.disabled = false; sendBtn.textContent = tl.sendInvitation||'Send Invitation';
+      errEl.textContent = tl.invitationFailed || 'Failed to send invitation. Please try again.';
+      errEl.style.display = '';
+      return;
+    }
     sendBtn.disabled = false; sendBtn.textContent = tl.sendInvitation||'Send Invitation';
+    if (res.error) {
+      errEl.textContent = res.error === 'already invited'
+        ? (tl.alreadyInvited || 'This person has already been invited.')
+        : (tl.invitationFailed || 'Failed to send invitation. Please try again.');
+      errEl.style.display = '';
+      return;
+    }
     if (res.inviteUrl) {
       inviteUrl = res.inviteUrl;
       el.querySelector('#invActions').style.display = 'none';
@@ -1561,7 +1589,10 @@ function showInviteModal() {
       };
       el.querySelector('#invDoneBtn').onclick = close;
       const updated = await apiLoadGroup(g._id);
-      state.activeGroup = updated;
+      if (updated && !updated.error) state.activeGroup = updated;
+    } else {
+      errEl.textContent = tl.invitationFailed || 'Failed to send invitation. Please try again.';
+      errEl.style.display = '';
     }
   };
   el.addEventListener('click', e => { if (e.target === el) close(); });

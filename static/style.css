@@ -1207,6 +1207,11 @@ body{
 .leave-btn:hover{background:rgba(239,68,68,0.1);color:var(--priority-high);border-color:var(--priority-high)}
 
 /* ─── Invite link box & status ───────────────────────────────────────────── */
+.invite-error-msg{
+  font-size:13px;color:#EF4444;background:rgba(239,68,68,0.08);
+  border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius-md);
+  padding:8px 12px;margin-block:8px 0;line-height:1.4;
+}
 .invite-link-box{
   background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-md);
   padding:10px 14px;font-size:12px;color:var(--text-secondary);word-break:break-all;

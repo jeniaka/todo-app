@@ -51,6 +51,7 @@ def send_email(to_email, subject, html_body):
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
             server.ehlo()
             server.starttls()
+            server.ehlo()
             server.login(SMTP_USER, SMTP_PASS)
             server.send_message(msg)
         print(f"✓ Email sent to {to_email}")
@@ -792,6 +793,42 @@ class Handler(BaseHTTPRequestHandler):
             data = json.dumps(load_todos(user["id"])).encode()
             return self.ok("application/json", data)
 
+        if path == "/api/test-email":
+            user = self.get_session()
+            if not user:
+                return self.ok("application/json", b'{"error":"unauthorized"}')
+            if not smtp_configured():
+                missing = []
+                if not SMTP_HOST: missing.append("SMTP_HOST")
+                if not SMTP_USER: missing.append("SMTP_USER")
+                if not SMTP_PASS: missing.append("SMTP_PASS")
+                return self.ok("application/json", json.dumps({
+                    "error": "SMTP not configured",
+                    "missing": missing,
+                    "SMTP_HOST": SMTP_HOST,
+                    "SMTP_PORT": SMTP_PORT,
+                    "SMTP_FROM": SMTP_FROM,
+                }).encode())
+            try:
+                ok = send_email(
+                    user["email"],
+                    "MyTasks Email Test",
+                    "<h1>It works!</h1><p>Email sending from MyTasks is configured correctly.</p>"
+                    f"<p>Sent from: {SMTP_FROM}</p>",
+                )
+                return self.ok("application/json", json.dumps({
+                    "success": ok,
+                    "sentTo": user["email"],
+                    "sentFrom": SMTP_FROM,
+                    "SMTP_HOST": SMTP_HOST,
+                    "SMTP_PORT": SMTP_PORT,
+                }).encode())
+            except Exception as e:
+                return self.ok("application/json", json.dumps({
+                    "error": str(e),
+                    "type": type(e).__name__,
+                }).encode())
+
         # Root redirect
         if path == "/":
             user = self.get_session()
@@ -1158,10 +1195,20 @@ if __name__ == "__main__":
     print(f"✓ Running at http://localhost:{PORT}")
     if not GOOGLE_CLIENT_ID:   print("⚠  GOOGLE_CLIENT_ID not set")
     if not ANTHROPIC_API_KEY:  print("⚠  ANTHROPIC_API_KEY not set — AI features disabled")
+    print("─── Email Configuration ───")
     if smtp_configured():
-        print(f"✓ SMTP configured — emails will be sent from {SMTP_FROM}")
+        print(f"  ✓ SMTP: {SMTP_HOST}:{SMTP_PORT}")
+        print(f"  ✓ From: {SMTP_FROM}")
+        print(f"  ✓ User: {SMTP_USER}")
+        print(f"  ✓ Pass: {'*' * min(4, len(SMTP_PASS))}****")
     else:
-        print("⚠  SMTP not configured — invitation emails will use copy-link fallback only")
+        missing = []
+        if not SMTP_HOST: missing.append("SMTP_HOST")
+        if not SMTP_USER: missing.append("SMTP_USER")
+        if not SMTP_PASS: missing.append("SMTP_PASS")
+        print(f"  ⚠ SMTP not configured — missing: {', '.join(missing)}")
+        print("  ⚠ Invitation emails will use copy-link fallback only")
+    print("────────────────────────────")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
