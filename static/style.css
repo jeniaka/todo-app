@@ -1190,7 +1190,31 @@ body{
   display:flex;align-items:center;gap:10px;padding:10px 0;
   border-block-end:1px solid var(--border);
 }
-.member-row:last-child{border-block-end:none}
+.member-wrap:last-child>.member-row{border-block-end:none}
+
+/* ─── Pending invite toggle ───────────────────────────────────────────────── */
+.pending-toggle{
+  cursor:pointer;display:inline-flex;align-items:center;gap:3px;
+  transition:background var(--duration-fast);border-radius:var(--radius-full);
+}
+.pending-toggle:hover{background:rgba(245,158,11,0.3)}
+.pending-chevron{flex-shrink:0;transition:transform 0.2s var(--ease-out)}
+.pending-toggle-open .pending-chevron{transform:rotate(180deg)}
+.pending-link-drop{
+  display:none;padding:6px 0 10px 44px;
+}
+.pending-link-url{
+  font-size:11px;color:var(--text-secondary);background:var(--bg-secondary);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:6px 10px;font-family:monospace;word-break:break-all;margin-block-end:6px;
+}
+.pending-copy-btn{
+  font-size:12px;font-weight:600;font-family:var(--font-body);
+  color:var(--accent);background:transparent;border:1px solid var(--accent);
+  border-radius:var(--radius-sm);padding:3px 12px;cursor:pointer;
+  transition:all var(--duration-fast);
+}
+.pending-copy-btn:hover{background:var(--accent);color:#fff}
 .member-info{flex:1;min-width:0}
 .member-name{font-size:13px;font-weight:600;color:var(--text-primary)}
 .member-email{font-size:11px;color:var(--text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

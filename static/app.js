@@ -1720,6 +1720,26 @@ function showMembersPanel() {
   el.querySelector('#membersClose').onclick = close;
   el.addEventListener('click', e => { if (e.target === el) close(); });
 
+  // Pending invite toggle & copy — event delegation survives re-renders
+  el.querySelector('#membersList').addEventListener('click', e => {
+    const toggle = e.target.closest('.pending-toggle');
+    if (toggle) {
+      const drop = el.querySelector(`#pdrop-${toggle.dataset.token}`);
+      if (drop) {
+        const opening = drop.style.display === 'none' || drop.style.display === '';
+        drop.style.display = opening ? 'block' : 'none';
+        toggle.classList.toggle('pending-toggle-open', opening);
+      }
+    }
+    const copyBtn = e.target.closest('.pending-copy-btn');
+    if (copyBtn) {
+      const tl2 = TL[state.lang] || TL.en;
+      navigator.clipboard?.writeText(copyBtn.dataset.link).catch(() => {});
+      copyBtn.textContent = tl2.copied || 'Copied!';
+      setTimeout(() => { copyBtn.textContent = tl2.copyLink || 'Copy Link'; }, 2000);
+    }
+  });
+
   const renderList = () => {
     el.querySelector('#membersList').innerHTML = g.members.map(m => {
       const isMe = m.userId === userId;
@@ -1735,15 +1755,22 @@ function showMembersPanel() {
       const actions = myRole==='admin' && !isMe
         ? `<button class="gt-del" data-rmuid="${m.userId||m.email}" data-rmname="${m.name}" title="${tl.removeMember||'Remove'}">🗑️</button>`
         : (isMe && myRole!=='admin' ? `<button class="leave-btn" data-leaveuid="${m.userId}">${tl.leaveGroup||'Leave'}</button>` : '');
-      return `<div class="member-row">
-        ${avatar}
-        <div class="member-info">
-          <div class="member-name">${m.name}</div>
-          <div class="member-email">${m.email}</div>
+      const invLink = isPending && m.inviteToken ? `${window.location.origin}/invite/${m.inviteToken}` : '';
+      return `<div class="member-wrap">
+        <div class="member-row">
+          ${avatar}
+          <div class="member-info">
+            <div class="member-name">${m.name}</div>
+            <div class="member-email">${m.email}</div>
+          </div>
+          ${isPending ? `<span class="pending-badge pending-toggle" data-token="${m.inviteToken||''}">${tl.pendingInvite||'Pending'}<svg class="pending-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></span>` : ''}
+          ${roleSelect}
+          ${actions}
         </div>
-        ${isPending ? `<span class="pending-badge">${tl.pendingInvite||'Pending'}</span>` : ''}
-        ${roleSelect}
-        ${actions}
+        ${invLink ? `<div class="pending-link-drop" id="pdrop-${m.inviteToken}">
+          <div class="pending-link-url">${invLink}</div>
+          <button class="pending-copy-btn" data-link="${invLink}">${tl.copyLink||'Copy Link'}</button>
+        </div>` : ''}
       </div>`;
     }).join('');
 
