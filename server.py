@@ -13,7 +13,7 @@ import urllib.parse
 import uuid as _uuid
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, ThreadingHTTPServer, BaseHTTPRequestHandler
 from http.cookies import SimpleCookie
 from urllib.parse import urlparse, parse_qs
 
@@ -48,7 +48,7 @@ def send_email(to_email, subject, html_body):
         msg["To"]      = to_email
         msg["Reply-To"] = SMTP_FROM
         msg.attach(MIMEText(html_body, "html", "utf-8"))
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15) as server:
             server.ehlo()
             server.starttls()
             server.ehlo()
@@ -1247,7 +1247,7 @@ if __name__ == "__main__":
     # Migrate existing groups to have slugs
     if db is not None:
         migrate_group_slugs()
-    server = HTTPServer(("0.0.0.0", PORT), Handler)
+    server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     print(f"✓ Running at http://localhost:{PORT}")
     if not GOOGLE_CLIENT_ID:   print("⚠  GOOGLE_CLIENT_ID not set")
     if not ANTHROPIC_API_KEY:  print("⚠  ANTHROPIC_API_KEY not set — AI features disabled")
