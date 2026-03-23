@@ -13,7 +13,6 @@ import urllib.parse
 import uuid as _uuid
 import csv
 import io
-import cgi
 from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -1232,30 +1231,21 @@ class Handler(BaseHTTPRequestHandler):
                 role = get_member_role(g, user["id"])
                 if role not in ("admin", "manager"):
                     return self.ok("application/json", b'{"error":"forbidden"}')
-                content_type = self.headers.get("Content-Type", "")
+                length = int(self.headers.get("Content-Length", 0))
+                body = json.loads(self.rfile.read(length)) if length else {}
                 rows = []
-                filename = ""
-                if "multipart/form-data" in content_type:
-                    try:
-                        form = cgi.FieldStorage(
-                            fp=self.rfile,
-                            headers=self.headers,
-                            environ={"REQUEST_METHOD": "POST", "CONTENT_TYPE": content_type},
-                        )
-                        file_item = form["file"]
-                        filename = file_item.filename or ""
-                        file_data = file_item.file.read()
-                        if filename.lower().endswith(".csv"):
-                            rows = parse_csv_rows(file_data)
-                        elif filename.lower().endswith((".xlsx", ".xls")):
-                            rows = parse_xlsx_rows(file_data)
-                        else:
-                            return self.ok("application/json", json.dumps({"error": "unsupported_file"}).encode())
-                    except Exception as e:
-                        print(f"[import] parse error: {e}")
-                        return self.ok("application/json", json.dumps({"error": str(e)}).encode())
-                else:
-                    return self.ok("application/json", json.dumps({"error": "multipart required"}).encode())
+                filename = body.get("filename", "")
+                try:
+                    file_data = base64.b64decode(body.get("data", ""))
+                    if filename.lower().endswith(".csv"):
+                        rows = parse_csv_rows(file_data)
+                    elif filename.lower().endswith((".xlsx", ".xls")):
+                        rows = parse_xlsx_rows(file_data)
+                    else:
+                        return self.ok("application/json", json.dumps({"error": "unsupported_file"}).encode())
+                except Exception as e:
+                    print(f"[import] parse error: {e}")
+                    return self.ok("application/json", json.dumps({"error": str(e)}).encode())
                 if not rows:
                     return self.ok("application/json", json.dumps({"error": "no_tasks"}).encode())
                 headers_list = list(rows[0].keys()) if rows else []

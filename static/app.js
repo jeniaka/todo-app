@@ -3729,9 +3729,17 @@ function showImportModal(groupId) {
       const btn = ov.querySelector('#imConfirmBtn');
       btn.textContent = tl.importing||'Importing...'; btn.disabled = true;
       try {
-        const formData = new FormData();
-        formData.append('file', parsedData.fileObj);
-        const r = await fetch(`/api/groups/${groupId}/import`, { method: 'POST', body: formData });
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(parsedData.fileObj);
+        });
+        const r = await fetch(`/api/groups/${groupId}/import`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: parsedData.fileObj.name, data: base64 }),
+        });
         const result = await r.json();
         if (result.error) {
           showToast(tl.importError||'Import failed', 'error');
