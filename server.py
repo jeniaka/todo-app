@@ -1232,18 +1232,23 @@ class Handler(BaseHTTPRequestHandler):
             save_group(g)
             return self.ok("application/json", b'{"ok":true}')
 
-        # DELETE /api/groups/{id}/members/{userId}
+        # DELETE /api/groups/{id}/members/{userId|email}
         if len(parts) == 6 and parts[1]=="api" and parts[2]=="groups" and parts[4]=="members":
             g = load_group(parts[3])
             if not g: return self.ok("application/json", b'{"error":"not found"}')
             role = get_member_role(g, user["id"])
             target_id = parts[5]
+            # Allow self-removal or admin removing anyone
             if target_id != user["id"] and role != "admin":
                 return self.ok("application/json", b'{"error":"forbidden"}')
-            g["members"] = [m for m in g["members"] if m.get("userId") != target_id]
+            # Match by userId (active members) OR by email (pending members, userId is null)
+            g["members"] = [m for m in g["members"]
+                if m.get("userId") != target_id
+                and m.get("email","").lower() != target_id.lower()]
             for t in g["tasks"]:
                 if t.get("assignedTo") == target_id: t["assignedTo"] = None
             save_group(g)
+            print(f"[remove-member] removed target={target_id} from group={g['_id']}")
             return self.ok("application/json", b'{"ok":true}')
 
         self.send_response(404); self.end_headers()

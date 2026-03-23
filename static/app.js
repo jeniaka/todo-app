@@ -1058,7 +1058,10 @@ async function apiChangeMemberRole(groupId, userId, role) {
 }
 
 async function apiRemoveMember(groupId, userId) {
-  await fetch(`/api/groups/${groupId}/members/${userId}`, { method: 'DELETE' });
+  const r = await fetch(`/api/groups/${groupId}/members/${userId}`, { method: 'DELETE' });
+  const data = await r.json().catch(() => ({}));
+  if (data.error) throw new Error(data.error);
+  return data;
 }
 
 async function apiLoadNotifications() {
@@ -1790,12 +1793,16 @@ function showMembersPanel() {
           message: (tl.confirmRemoveMember||'Remove {name}?').replace('{name}', btn.dataset.rmname),
           confirmText: tl.yes||'Yes',
           onConfirm: async () => {
-            await apiRemoveMember(g._id, btn.dataset.rmuid);
-            const updated = await apiLoadGroup(g._id);
-            state.activeGroup = updated; g = updated;
-            renderList();
-            renderGroupBoard();
-            showToast(tl.memberRemoved||'Member removed', 'success');
+            try {
+              await apiRemoveMember(g._id, btn.dataset.rmuid);
+              const updated = await apiLoadGroup(g._id);
+              state.activeGroup = updated; g = updated;
+              renderList();
+              renderGroupBoard();
+              showToast(tl.memberRemoved||'Member removed', 'success');
+            } catch(e) {
+              showToast(e.message || (tl.error||'Error'), 'error');
+            }
           }
         });
       });
