@@ -122,6 +122,29 @@ const TL = {
     actTaskAssigned:'assigned',actMemberJoined:'joined the group',
     statusBoard:'Status Board',
     dashboard:'Dashboard',groupTasks:'Group Tasks',openDashboard:'Open Dashboard',
+    import:'Import',importTasks:'Import Tasks',exportHelp:'Export Help',
+    howToExport:'How to Export Your Data',choosePlatform:'Choose your platform',
+    otherCSV:'Other / CSV',dragDropFile:'Drag & drop your file here',
+    orClickBrowse:'or click to browse',supportedFormats:'Supports: .csv, .xlsx, .xls',
+    source:'Source',autoDetect:'Auto-detect',generic:'Generic',
+    mapColumns:'Map Columns',detected:'Detected',tasksFound:'{count} tasks found',
+    fileColumn:'File Column',myTasksField:'MyTasks Field',
+    preview:'Preview',importCount:'Import {count} Tasks',
+    importing:'Importing...',importComplete:'Import Complete',
+    tasksImported:'{count} tasks imported successfully!',
+    importSummary:'Summary',assigneesNotInGroup:'Assignees not in this group',
+    quickInvite:'Invite',unsupportedFile:'Unsupported file type',
+    noTasksFound:'No tasks found in file',importError:'Import failed',
+    dragToMove:'Drag to move',dropHere:'Drop here',statusChanged:'Status changed',
+    jiraExportTitle:'How to export from Jira',
+    jiraStep1:'Go to your Jira project',jiraStep2:'Click "Issues" in the left sidebar',
+    jiraStep3:'Click "View all issues and filters"',jiraStep4:'Apply filters to select issues',
+    jiraStep5:'Click "Export" (top right)',jiraStep6:'Select "Export Excel CSV (all fields)"',
+    jiraStep7:'Save the downloaded CSV file',jiraStep8:'Come back here and click Import',
+    mondayExportTitle:'How to export from Monday.com',
+    mondayStep1:'Go to the board you want to export',mondayStep2:'Click the three-dot menu (⋯) at top right',
+    mondayStep3:'Click "More actions" → "Export board to Excel"',mondayStep4:'Click "Export" in the dialog',
+    mondayStep5:'Save the downloaded file',mondayStep6:'Come back here and click Import',
   },
   he: {
     appTitle:'המשימות שלי',add:'הוסף',filterAll:'הכל',filterActive:'פעיל',filterDone:'הושלם',
@@ -205,6 +228,29 @@ const TL = {
     actTaskAssigned:'הקצה',actMemberJoined:'הצטרף לקבוצה',
     statusBoard:'לוח סטטוס',
     dashboard:'לוח בקרה',groupTasks:'משימות קבוצה',openDashboard:'פתח לוח בקרה',
+    import:'ייבוא',importTasks:'ייבא משימות',exportHelp:'עזרה לייצוא',
+    howToExport:'כיצד לייצא את הנתונים שלך',choosePlatform:'בחר פלטפורמה',
+    otherCSV:'אחר / CSV',dragDropFile:'גרור ושחרר את הקובץ כאן',
+    orClickBrowse:'או לחץ לעיון',supportedFormats:'תומך ב: .csv, .xlsx, .xls',
+    source:'מקור',autoDetect:'זיהוי אוטומטי',generic:'כללי',
+    mapColumns:'מיפוי עמודות',detected:'זוהה',tasksFound:'נמצאו {count} משימות',
+    fileColumn:'עמודת קובץ',myTasksField:'שדה MyTasks',
+    preview:'תצוגה מקדימה',importCount:'ייבא {count} משימות',
+    importing:'מייבא...',importComplete:'הייבוא הושלם',
+    tasksImported:'{count} משימות יובאו בהצלחה!',
+    importSummary:'סיכום',assigneesNotInGroup:'משתמשים שאינם בקבוצה',
+    quickInvite:'הזמן',unsupportedFile:'סוג קובץ לא נתמך',
+    noTasksFound:'לא נמצאו משימות בקובץ',importError:'הייבוא נכשל',
+    dragToMove:'גרור להזזה',dropHere:'שחרר כאן',statusChanged:'הסטטוס שונה',
+    jiraExportTitle:'כיצד לייצא מ-Jira',
+    jiraStep1:'עבור לפרויקט Jira שלך',jiraStep2:'לחץ על "Issues" בסרגל הצד',
+    jiraStep3:'לחץ על "View all issues and filters"',jiraStep4:'הגדר פילטרים לבחירת issues',
+    jiraStep5:'לחץ על "Export" (למעלה מימין)',jiraStep6:'בחר "Export Excel CSV (all fields)"',
+    jiraStep7:'שמור את קובץ ה-CSV שהורד',jiraStep8:'חזור לכאן ולחץ על ייבוא',
+    mondayExportTitle:'כיצד לייצא מ-Monday.com',
+    mondayStep1:'עבור ללוח שברצונך לייצא',mondayStep2:'לחץ על תפריט שלוש הנקודות (⋯) למעלה מימין',
+    mondayStep3:'לחץ על "More actions" ← "Export board to Excel"',mondayStep4:'לחץ על "Export" בדיאלוג',
+    mondayStep5:'שמור את הקובץ שהורד',mondayStep6:'חזור לכאן ולחץ על ייבוא',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -288,6 +334,29 @@ const TL = {
     actTaskAssigned:'كلف',actMemberJoined:'انضم إلى المجموعة',
     statusBoard:'لوحة الحالة',
     dashboard:'لوحة التحكم',groupTasks:'مهام المجموعة',openDashboard:'فتح لوحة التحكم',
+    import:'استيراد',importTasks:'استيراد مهام',exportHelp:'مساعدة التصدير',
+    howToExport:'كيفية تصدير بياناتك',choosePlatform:'اختر منصتك',
+    otherCSV:'أخرى / CSV',dragDropFile:'اسحب وأفلت ملفك هنا',
+    orClickBrowse:'أو انقر للتصفح',supportedFormats:'يدعم: .csv, .xlsx, .xls',
+    source:'المصدر',autoDetect:'كشف تلقائي',generic:'عام',
+    mapColumns:'تعيين الأعمدة',detected:'تم الكشف',tasksFound:'تم العثور على {count} مهمة',
+    fileColumn:'عمود الملف',myTasksField:'حقل MyTasks',
+    preview:'معاينة',importCount:'استيراد {count} مهام',
+    importing:'جارٍ الاستيراد...',importComplete:'اكتمل الاستيراد',
+    tasksImported:'تم استيراد {count} مهمة بنجاح!',
+    importSummary:'ملخص',assigneesNotInGroup:'المعينون غير الموجودين في المجموعة',
+    quickInvite:'دعوة',unsupportedFile:'نوع ملف غير مدعوم',
+    noTasksFound:'لم يتم العثور على مهام في الملف',importError:'فشل الاستيراد',
+    dragToMove:'اسحب للتحريك',dropHere:'أفلت هنا',statusChanged:'تم تغيير الحالة',
+    jiraExportTitle:'كيفية التصدير من Jira',
+    jiraStep1:'انتقل إلى مشروع Jira الخاص بك',jiraStep2:'انقر على "Issues" في الشريط الجانبي',
+    jiraStep3:'انقر على "View all issues and filters"',jiraStep4:'طبّق فلاتر لتحديد المشكلات',
+    jiraStep5:'انقر على "Export" (أعلى اليمين)',jiraStep6:'اختر "Export Excel CSV (all fields)"',
+    jiraStep7:'احفظ ملف CSV الذي تم تنزيله',jiraStep8:'ارجع هنا وانقر على استيراد',
+    mondayExportTitle:'كيفية التصدير من Monday.com',
+    mondayStep1:'انتقل إلى اللوح الذي تريد تصديره',mondayStep2:'انقر على قائمة النقاط الثلاث (⋯) أعلى اليمين',
+    mondayStep3:'انقر على "More actions" ← "Export board to Excel"',mondayStep4:'انقر على "Export" في مربع الحوار',
+    mondayStep5:'احفظ الملف الذي تم تنزيله',mondayStep6:'ارجع هنا وانقر على استيراد',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -371,6 +440,29 @@ const TL = {
     actTaskAssigned:'asignó',actMemberJoined:'se unió al grupo',
     statusBoard:'Tablero de estado',
     dashboard:'Panel',groupTasks:'Tareas de grupo',openDashboard:'Abrir panel',
+    import:'Importar',importTasks:'Importar tareas',exportHelp:'Ayuda para exportar',
+    howToExport:'Cómo exportar tus datos',choosePlatform:'Elige tu plataforma',
+    otherCSV:'Otro / CSV',dragDropFile:'Arrastra y suelta tu archivo aquí',
+    orClickBrowse:'o haz clic para navegar',supportedFormats:'Admite: .csv, .xlsx, .xls',
+    source:'Fuente',autoDetect:'Detección automática',generic:'Genérico',
+    mapColumns:'Mapear columnas',detected:'Detectado',tasksFound:'{count} tareas encontradas',
+    fileColumn:'Columna del archivo',myTasksField:'Campo de MyTasks',
+    preview:'Vista previa',importCount:'Importar {count} tareas',
+    importing:'Importando...',importComplete:'Importación completa',
+    tasksImported:'{count} tareas importadas correctamente!',
+    importSummary:'Resumen',assigneesNotInGroup:'Asignados no en este grupo',
+    quickInvite:'Invitar',unsupportedFile:'Tipo de archivo no admitido',
+    noTasksFound:'No se encontraron tareas en el archivo',importError:'Error al importar',
+    dragToMove:'Arrastra para mover',dropHere:'Suelta aquí',statusChanged:'Estado cambiado',
+    jiraExportTitle:'Cómo exportar desde Jira',
+    jiraStep1:'Ve a tu proyecto Jira',jiraStep2:'Haz clic en "Issues" en la barra lateral',
+    jiraStep3:'Haz clic en "View all issues and filters"',jiraStep4:'Aplica filtros para seleccionar issues',
+    jiraStep5:'Haz clic en "Export" (arriba a la derecha)',jiraStep6:'Selecciona "Export Excel CSV (all fields)"',
+    jiraStep7:'Guarda el archivo CSV descargado',jiraStep8:'Vuelve aquí y haz clic en Importar',
+    mondayExportTitle:'Cómo exportar desde Monday.com',
+    mondayStep1:'Ve al tablero que quieres exportar',mondayStep2:'Haz clic en el menú de tres puntos (⋯) arriba a la derecha',
+    mondayStep3:'Haz clic en "More actions" → "Export board to Excel"',mondayStep4:'Haz clic en "Export" en el diálogo',
+    mondayStep5:'Guarda el archivo descargado',mondayStep6:'Vuelve aquí y haz clic en Importar',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -454,6 +546,29 @@ const TL = {
     actTaskAssigned:'a assigné',actMemberJoined:'a rejoint le groupe',
     statusBoard:'Tableau de statut',
     dashboard:'Tableau de bord',groupTasks:'Tâches de groupe',openDashboard:'Ouvrir le tableau de bord',
+    import:'Importer',importTasks:'Importer des tâches',exportHelp:'Aide à l\'export',
+    howToExport:'Comment exporter vos données',choosePlatform:'Choisissez votre plateforme',
+    otherCSV:'Autre / CSV',dragDropFile:'Glissez-déposez votre fichier ici',
+    orClickBrowse:'ou cliquez pour parcourir',supportedFormats:'Formats: .csv, .xlsx, .xls',
+    source:'Source',autoDetect:'Détection auto',generic:'Générique',
+    mapColumns:'Mapper les colonnes',detected:'Détecté',tasksFound:'{count} tâches trouvées',
+    fileColumn:'Colonne du fichier',myTasksField:'Champ MyTasks',
+    preview:'Aperçu',importCount:'Importer {count} tâches',
+    importing:'Importation...',importComplete:'Importation terminée',
+    tasksImported:'{count} tâches importées avec succès !',
+    importSummary:'Résumé',assigneesNotInGroup:'Assignés absents du groupe',
+    quickInvite:'Inviter',unsupportedFile:'Type de fichier non pris en charge',
+    noTasksFound:'Aucune tâche dans le fichier',importError:'Échec de l\'importation',
+    dragToMove:'Glisser pour déplacer',dropHere:'Déposer ici',statusChanged:'Statut modifié',
+    jiraExportTitle:'Comment exporter depuis Jira',
+    jiraStep1:'Allez dans votre projet Jira',jiraStep2:'Cliquez sur "Issues" dans la barre latérale',
+    jiraStep3:'Cliquez sur "View all issues and filters"',jiraStep4:'Appliquez des filtres pour sélectionner les issues',
+    jiraStep5:'Cliquez sur "Export" (en haut à droite)',jiraStep6:'Sélectionnez "Export Excel CSV (all fields)"',
+    jiraStep7:'Enregistrez le fichier CSV téléchargé',jiraStep8:'Revenez ici et cliquez sur Importer',
+    mondayExportTitle:'Comment exporter depuis Monday.com',
+    mondayStep1:'Allez sur le tableau à exporter',mondayStep2:'Cliquez sur le menu trois points (⋯) en haut à droite',
+    mondayStep3:'Cliquez sur "More actions" → "Export board to Excel"',mondayStep4:'Cliquez sur "Export" dans le dialogue',
+    mondayStep5:'Enregistrez le fichier téléchargé',mondayStep6:'Revenez ici et cliquez sur Importer',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -537,6 +652,29 @@ const TL = {
     actTaskAssigned:'zugewiesen',actMemberJoined:'ist beigetreten',
     statusBoard:'Statusboard',
     dashboard:'Dashboard',groupTasks:'Gruppenaufgaben',openDashboard:'Dashboard öffnen',
+    import:'Importieren',importTasks:'Aufgaben importieren',exportHelp:'Export-Hilfe',
+    howToExport:'So exportieren Sie Ihre Daten',choosePlatform:'Plattform wählen',
+    otherCSV:'Andere / CSV',dragDropFile:'Datei hier ablegen',
+    orClickBrowse:'oder klicken zum Suchen',supportedFormats:'Unterstützt: .csv, .xlsx, .xls',
+    source:'Quelle',autoDetect:'Automatisch erkennen',generic:'Generisch',
+    mapColumns:'Spalten zuordnen',detected:'Erkannt',tasksFound:'{count} Aufgaben gefunden',
+    fileColumn:'Dateispalte',myTasksField:'MyTasks-Feld',
+    preview:'Vorschau',importCount:'{count} Aufgaben importieren',
+    importing:'Wird importiert...',importComplete:'Import abgeschlossen',
+    tasksImported:'{count} Aufgaben erfolgreich importiert!',
+    importSummary:'Zusammenfassung',assigneesNotInGroup:'Zugewiesene nicht in der Gruppe',
+    quickInvite:'Einladen',unsupportedFile:'Nicht unterstützter Dateityp',
+    noTasksFound:'Keine Aufgaben in der Datei gefunden',importError:'Import fehlgeschlagen',
+    dragToMove:'Ziehen zum Verschieben',dropHere:'Hier ablegen',statusChanged:'Status geändert',
+    jiraExportTitle:'Export aus Jira',
+    jiraStep1:'Gehen Sie zu Ihrem Jira-Projekt',jiraStep2:'Klicken Sie auf "Issues" in der Seitenleiste',
+    jiraStep3:'Klicken Sie auf "View all issues and filters"',jiraStep4:'Filter anwenden',
+    jiraStep5:'Klicken Sie auf "Export" (oben rechts)',jiraStep6:'Wählen Sie "Export Excel CSV (all fields)"',
+    jiraStep7:'Speichern Sie die CSV-Datei',jiraStep8:'Kommen Sie zurück und klicken Sie auf Importieren',
+    mondayExportTitle:'Export aus Monday.com',
+    mondayStep1:'Gehen Sie zum zu exportierenden Board',mondayStep2:'Klicken Sie auf das Drei-Punkte-Menü (⋯) oben rechts',
+    mondayStep3:'Klicken Sie auf "Weitere Aktionen" → "Board nach Excel exportieren"',mondayStep4:'Klicken Sie auf "Exportieren"',
+    mondayStep5:'Speichern Sie die heruntergeladene Datei',mondayStep6:'Kommen Sie zurück und klicken Sie auf Importieren',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -620,6 +758,29 @@ const TL = {
     actTaskAssigned:'назначил',actMemberJoined:'присоединился к группе',
     statusBoard:'Доска статусов',
     dashboard:'Панель управления',groupTasks:'Групповые задачи',openDashboard:'Открыть панель',
+    import:'Импорт',importTasks:'Импортировать задачи',exportHelp:'Помощь по экспорту',
+    howToExport:'Как экспортировать данные',choosePlatform:'Выберите платформу',
+    otherCSV:'Другое / CSV',dragDropFile:'Перетащите файл сюда',
+    orClickBrowse:'или нажмите для выбора',supportedFormats:'Поддерживает: .csv, .xlsx, .xls',
+    source:'Источник',autoDetect:'Авто-определение',generic:'Общий',
+    mapColumns:'Сопоставить столбцы',detected:'Определено',tasksFound:'Найдено {count} задач',
+    fileColumn:'Столбец файла',myTasksField:'Поле MyTasks',
+    preview:'Предварительный просмотр',importCount:'Импортировать {count} задач',
+    importing:'Импорт...',importComplete:'Импорт завершён',
+    tasksImported:'{count} задач успешно импортировано!',
+    importSummary:'Итог',assigneesNotInGroup:'Исполнители не в группе',
+    quickInvite:'Пригласить',unsupportedFile:'Неподдерживаемый тип файла',
+    noTasksFound:'В файле не найдено задач',importError:'Ошибка импорта',
+    dragToMove:'Перетащить',dropHere:'Отпустить здесь',statusChanged:'Статус изменён',
+    jiraExportTitle:'Экспорт из Jira',
+    jiraStep1:'Перейдите в ваш проект Jira',jiraStep2:'Нажмите "Issues" на боковой панели',
+    jiraStep3:'Нажмите "View all issues and filters"',jiraStep4:'Примените фильтры',
+    jiraStep5:'Нажмите "Export" (вверху справа)',jiraStep6:'Выберите "Export Excel CSV (all fields)"',
+    jiraStep7:'Сохраните скачанный CSV',jiraStep8:'Вернитесь и нажмите Импорт',
+    mondayExportTitle:'Экспорт из Monday.com',
+    mondayStep1:'Перейдите на нужную доску',mondayStep2:'Нажмите на меню из трёх точек (⋯) вверху справа',
+    mondayStep3:'Нажмите "Дополнительные действия" → "Экспортировать в Excel"',mondayStep4:'Нажмите "Экспортировать"',
+    mondayStep5:'Сохраните скачанный файл',mondayStep6:'Вернитесь и нажмите Импорт',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -703,6 +864,29 @@ const TL = {
     actTaskAssigned:'atribuiu',actMemberJoined:'entrou no grupo',
     statusBoard:'Quadro de status',
     dashboard:'Painel',groupTasks:'Tarefas do grupo',openDashboard:'Abrir painel',
+    import:'Importar',importTasks:'Importar tarefas',exportHelp:'Ajuda de exportação',
+    howToExport:'Como exportar seus dados',choosePlatform:'Escolha sua plataforma',
+    otherCSV:'Outro / CSV',dragDropFile:'Arraste e solte seu arquivo aqui',
+    orClickBrowse:'ou clique para navegar',supportedFormats:'Suporta: .csv, .xlsx, .xls',
+    source:'Fonte',autoDetect:'Detecção automática',generic:'Genérico',
+    mapColumns:'Mapear colunas',detected:'Detectado',tasksFound:'{count} tarefas encontradas',
+    fileColumn:'Coluna do arquivo',myTasksField:'Campo do MyTasks',
+    preview:'Prévia',importCount:'Importar {count} tarefas',
+    importing:'Importando...',importComplete:'Importação concluída',
+    tasksImported:'{count} tarefas importadas com sucesso!',
+    importSummary:'Resumo',assigneesNotInGroup:'Responsáveis não no grupo',
+    quickInvite:'Convidar',unsupportedFile:'Tipo de arquivo não suportado',
+    noTasksFound:'Nenhuma tarefa no arquivo',importError:'Falha na importação',
+    dragToMove:'Arraste para mover',dropHere:'Solte aqui',statusChanged:'Status alterado',
+    jiraExportTitle:'Como exportar do Jira',
+    jiraStep1:'Vá ao seu projeto Jira',jiraStep2:'Clique em "Issues" na barra lateral',
+    jiraStep3:'Clique em "View all issues and filters"',jiraStep4:'Aplique filtros para selecionar issues',
+    jiraStep5:'Clique em "Export" (canto superior direito)',jiraStep6:'Selecione "Export Excel CSV (all fields)"',
+    jiraStep7:'Salve o arquivo CSV baixado',jiraStep8:'Volte aqui e clique em Importar',
+    mondayExportTitle:'Como exportar do Monday.com',
+    mondayStep1:'Vá ao quadro que deseja exportar',mondayStep2:'Clique no menu de três pontos (⋯) no canto superior direito',
+    mondayStep3:'Clique em "More actions" → "Export board to Excel"',mondayStep4:'Clique em "Export" no diálogo',
+    mondayStep5:'Salve o arquivo baixado',mondayStep6:'Volte aqui e clique em Importar',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -786,6 +970,29 @@ const TL = {
     actTaskAssigned:'分配了',actMemberJoined:'加入了群组',
     statusBoard:'状态看板',
     dashboard:'仪表板',groupTasks:'团队任务',openDashboard:'打开仪表板',
+    import:'导入',importTasks:'导入任务',exportHelp:'导出帮助',
+    howToExport:'如何导出数据',choosePlatform:'选择平台',
+    otherCSV:'其他 / CSV',dragDropFile:'将文件拖放到此处',
+    orClickBrowse:'或点击浏览',supportedFormats:'支持: .csv, .xlsx, .xls',
+    source:'来源',autoDetect:'自动检测',generic:'通用',
+    mapColumns:'映射列',detected:'已检测',tasksFound:'找到 {count} 个任务',
+    fileColumn:'文件列',myTasksField:'MyTasks 字段',
+    preview:'预览',importCount:'导入 {count} 个任务',
+    importing:'导入中...',importComplete:'导入完成',
+    tasksImported:'成功导入 {count} 个任务！',
+    importSummary:'摘要',assigneesNotInGroup:'不在该组的被分配者',
+    quickInvite:'邀请',unsupportedFile:'不支持的文件类型',
+    noTasksFound:'文件中未找到任务',importError:'导入失败',
+    dragToMove:'拖动移动',dropHere:'放在这里',statusChanged:'状态已更改',
+    jiraExportTitle:'如何从 Jira 导出',
+    jiraStep1:'前往您的 Jira 项目',jiraStep2:'点击侧边栏中的"Issues"',
+    jiraStep3:'点击"View all issues and filters"',jiraStep4:'应用筛选器选择 issue',
+    jiraStep5:'点击"Export"（右上角）',jiraStep6:'选择"Export Excel CSV (all fields)"',
+    jiraStep7:'保存下载的 CSV 文件',jiraStep8:'回到此处并点击导入',
+    mondayExportTitle:'如何从 Monday.com 导出',
+    mondayStep1:'前往要导出的看板',mondayStep2:'点击右上角的三点菜单 (⋯)',
+    mondayStep3:'点击"更多操作"→"将看板导出为 Excel"',mondayStep4:'在对话框中点击"导出"',
+    mondayStep5:'保存下载的文件',mondayStep6:'回到此处并点击导入',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -869,6 +1076,29 @@ const TL = {
     actTaskAssigned:'に割り当てました',actMemberJoined:'グループに参加しました',
     statusBoard:'ステータスボード',
     dashboard:'ダッシュボード',groupTasks:'グループタスク',openDashboard:'ダッシュボードを開く',
+    import:'インポート',importTasks:'タスクのインポート',exportHelp:'エクスポートヘルプ',
+    howToExport:'データのエクスポート方法',choosePlatform:'プラットフォームを選択',
+    otherCSV:'その他 / CSV',dragDropFile:'ここにファイルをドラッグ＆ドロップ',
+    orClickBrowse:'またはクリックして参照',supportedFormats:'対応形式: .csv, .xlsx, .xls',
+    source:'ソース',autoDetect:'自動検出',generic:'汎用',
+    mapColumns:'列のマッピング',detected:'検出済み',tasksFound:'{count} 件のタスクが見つかりました',
+    fileColumn:'ファイルの列',myTasksField:'MyTasks フィールド',
+    preview:'プレビュー',importCount:'{count} 件のタスクをインポート',
+    importing:'インポート中...',importComplete:'インポート完了',
+    tasksImported:'{count} 件のタスクが正常にインポートされました！',
+    importSummary:'サマリー',assigneesNotInGroup:'グループにいない担当者',
+    quickInvite:'招待',unsupportedFile:'サポートされていないファイル形式',
+    noTasksFound:'ファイルにタスクが見つかりません',importError:'インポートに失敗しました',
+    dragToMove:'ドラッグして移動',dropHere:'ここにドロップ',statusChanged:'ステータスが変更されました',
+    jiraExportTitle:'Jira からのエクスポート方法',
+    jiraStep1:'Jira プロジェクトに移動',jiraStep2:'サイドバーの「Issues」をクリック',
+    jiraStep3:'「View all issues and filters」をクリック',jiraStep4:'フィルターを適用して issue を選択',
+    jiraStep5:'「Export」をクリック（右上）',jiraStep6:'「Export Excel CSV (all fields)」を選択',
+    jiraStep7:'ダウンロードした CSV を保存',jiraStep8:'ここに戻ってインポートをクリック',
+    mondayExportTitle:'Monday.com からのエクスポート方法',
+    mondayStep1:'エクスポートするボードに移動',mondayStep2:'右上の三点メニュー (⋯) をクリック',
+    mondayStep3:'「その他のアクション」→「ボードを Excel にエクスポート」をクリック',mondayStep4:'ダイアログで「エクスポート」をクリック',
+    mondayStep5:'ダウンロードしたファイルを保存',mondayStep6:'ここに戻ってインポートをクリック',
   },
 };
 
@@ -1276,6 +1506,9 @@ function renderGroupBoard() {
 
   document.getElementById('gbInviteBtn').style.display = myRole==='admin' ? '' : 'none';
   document.getElementById('gbSettingsBtn').style.display = myRole==='admin' ? '' : 'none';
+  // Show import row for admins/managers
+  const importRow = document.getElementById('gbImportRow');
+  if (importRow) importRow.style.display = (myRole==='admin'||myRole==='manager') ? '' : 'none';
 
   const assignOpts = myRole==='admin'||myRole==='manager'
     ? activeMembers.map(m => `<option value="${m.userId}"${m.userId===userId?' selected':''}>${m.name}</option>`).join('')
@@ -3067,7 +3300,7 @@ function renderGbDashboard() {
     const isOverdue = task.dueDate && task.dueDate < now && !task.done && task.status !== 'done';
     const priorityColors = {high:'var(--priority-high)',medium:'var(--priority-medium)',low:'var(--priority-low)',none:'var(--text-tertiary)'};
     const pColor = priorityColors[task.priority||'none'];
-    return `<div class="dash-task-card${isOverdue?' dash-task-overdue':''}">
+    return `<div class="dash-task-card kanban-card${isOverdue?' dash-task-overdue':''}" data-task-id="${esc(task.id||'')}">
       <div class="dash-task-title">${esc(task.text||'')}</div>
       <div class="dash-task-meta">
         ${avt}<span class="dash-task-assignee">${esc(assignee?.name||tl.unassigned||'Unassigned')}</span>
@@ -3110,15 +3343,15 @@ function renderGbDashboard() {
     <div class="dash-section">
       <div class="dash-section-title">${tl.statusBoard||'Status Board'}</div>
       <div class="dash-kanban">
-        <div class="dash-col">
+        <div class="dash-col kanban-column" data-status="todo">
           <div class="dash-col-header dash-col-todo">${tl.todo||'To Do'} <span class="dash-col-count">${todoTasks.length}</span></div>
           <div class="dash-col-body">${todoTasks.map(t=>taskMiniCard(t)).join('')||`<div class="dash-empty">${tl.noData||'No tasks'}</div>`}</div>
         </div>
-        <div class="dash-col">
+        <div class="dash-col kanban-column" data-status="in_progress">
           <div class="dash-col-header dash-col-prog">${tl.inProgress||'In Progress'} <span class="dash-col-count">${inProgTasks.length}</span></div>
           <div class="dash-col-body">${inProgTasks.map(t=>taskMiniCard(t)).join('')||`<div class="dash-empty">${tl.noData||'No tasks'}</div>`}</div>
         </div>
-        <div class="dash-col">
+        <div class="dash-col kanban-column" data-status="done">
           <div class="dash-col-header dash-col-done">${tl.taskDone||'Done'} <span class="dash-col-count">${doneTasks.length}</span></div>
           <div class="dash-col-body">${doneTasks.map(t=>taskMiniCard(t)).join('')||`<div class="dash-empty">${tl.noData||'No tasks'}</div>`}</div>
         </div>
@@ -3167,6 +3400,436 @@ async function loadGbActivities() {
   }
 }
 
+// ─── Kanban Drag & Drop ───────────────────────────────────────────────────────
+async function updateTaskStatus(taskId, newStatus) {
+  if (!state.activeGroup) return;
+  const task = (state.activeGroup.tasks || []).find(t => t.id === taskId);
+  if (!task) return;
+  const oldStatus = task.status || (task.done ? 'done' : 'todo');
+  if (oldStatus === newStatus) return;
+  const now = Date.now();
+  task.status = newStatus;
+  if (newStatus === 'in_progress') {
+    task.done = false;
+    task.completedAt = null;
+    if (!task.startedAt) task.startedAt = now;
+  } else if (newStatus === 'done') {
+    task.done = true;
+    task.completedAt = now;
+  } else {
+    task.done = false;
+    task.completedAt = null;
+    task.startedAt = null;
+  }
+  try {
+    await fetch(`/api/groups/${state.activeGroup._id}/tasks/${taskId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus, done: task.done, completedAt: task.completedAt, startedAt: task.startedAt }),
+    });
+  } catch(e) { console.error('updateTaskStatus:', e); }
+}
+
+function setupDragAndDrop() {
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    card.setAttribute('draggable', 'true');
+    card.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', card.dataset.taskId);
+      e.dataTransfer.effectAllowed = 'move';
+      card.classList.add('dragging');
+      requestAnimationFrame(() => { card.style.opacity = '0.4'; });
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      card.style.opacity = '1';
+      document.querySelectorAll('.kanban-column').forEach(c => c.classList.remove('drag-over'));
+    });
+  });
+  document.querySelectorAll('.kanban-column').forEach(col => {
+    col.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      col.classList.add('drag-over');
+    });
+    col.addEventListener('dragleave', e => {
+      if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+    });
+    col.addEventListener('drop', async e => {
+      e.preventDefault();
+      col.classList.remove('drag-over');
+      const taskId = e.dataTransfer.getData('text/plain');
+      const newStatus = col.dataset.status;
+      if (!taskId || !newStatus) return;
+      await updateTaskStatus(taskId, newStatus);
+      renderGbAnalytics();
+      renderGroupTaskList();
+    });
+  });
+}
+
+let _touchDragCard = null, _touchClone = null;
+function setupTouchDrag() {
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    card.addEventListener('touchstart', e => {
+      _touchDragCard = card;
+      _touchClone = card.cloneNode(true);
+      _touchClone.classList.add('touch-drag-clone');
+      _touchClone.style.cssText = `position:fixed;z-index:10000;pointer-events:none;opacity:0.85;transform:rotate(3deg) scale(1.05);width:${card.offsetWidth}px;transition:none;`;
+      document.body.appendChild(_touchClone);
+      card.style.opacity = '0.3';
+      e.preventDefault();
+    }, { passive: false });
+    card.addEventListener('touchmove', e => {
+      if (!_touchClone) return;
+      e.preventDefault();
+      const t = e.touches[0];
+      _touchClone.style.left = (t.clientX - _touchClone.offsetWidth / 2) + 'px';
+      _touchClone.style.top = (t.clientY - 20) + 'px';
+      document.querySelectorAll('.kanban-column').forEach(col => {
+        const r = col.getBoundingClientRect();
+        col.classList.toggle('drag-over', t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom);
+      });
+    }, { passive: false });
+    card.addEventListener('touchend', async e => {
+      if (!_touchDragCard || !_touchClone) return;
+      const t = e.changedTouches[0];
+      let targetCol = null;
+      document.querySelectorAll('.kanban-column').forEach(col => {
+        const r = col.getBoundingClientRect();
+        if (t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom) targetCol = col;
+        col.classList.remove('drag-over');
+      });
+      if (targetCol) {
+        await updateTaskStatus(_touchDragCard.dataset.taskId, targetCol.dataset.status);
+        renderGbAnalytics();
+        renderGroupTaskList();
+      }
+      _touchDragCard.style.opacity = '1';
+      _touchClone.remove();
+      _touchDragCard = null; _touchClone = null;
+    });
+  });
+}
+
+// Called after dashboard HTML is injected into the DOM
+function initKanbanDnd() {
+  setupDragAndDrop();
+  setupTouchDrag();
+}
+
+// ─── Import / Export Help Modals ──────────────────────────────────────────────
+function showExportHelpModal() {
+  const tl = TL[state.lang] || TL.en;
+  let activePlatform = 'jira';
+
+  function platformInstructions(p) {
+    if (p === 'jira') {
+      return `<div class="export-instructions">
+        <strong>${tl.jiraExportTitle||'How to export from Jira'}</strong>
+        <ol style="margin-top:8px">
+          <li>${tl.jiraStep1||'Go to your Jira project'}</li>
+          <li>${tl.jiraStep2||'Click "Issues" in the left sidebar'}</li>
+          <li>${tl.jiraStep3||'Click "View all issues and filters"'}</li>
+          <li>${tl.jiraStep4||'Apply filters to select issues'}</li>
+          <li>${tl.jiraStep5||'Click "Export" (top right)'}</li>
+          <li>${tl.jiraStep6||'Select "Export Excel CSV (all fields)"'}</li>
+          <li>${tl.jiraStep7||'Save the downloaded CSV file'}</li>
+          <li>${tl.jiraStep8||'Come back here and click Import'}</li>
+        </ol>
+        <div class="export-tip">💡 The CSV will include columns like Summary, Status, Priority, Assignee, Created, and more. MyTasks will automatically map these to tasks.</div>
+      </div>`;
+    } else if (p === 'monday') {
+      return `<div class="export-instructions">
+        <strong>${tl.mondayExportTitle||'How to export from Monday.com'}</strong>
+        <ol style="margin-top:8px">
+          <li>${tl.mondayStep1||'Go to the board you want to export'}</li>
+          <li>${tl.mondayStep2||'Click the three-dot menu (⋯) at top right'}</li>
+          <li>${tl.mondayStep3||'Click "More actions" → "Export board to Excel"'}</li>
+          <li>${tl.mondayStep4||'Click "Export" in the dialog'}</li>
+          <li>${tl.mondayStep5||'Save the downloaded file'}</li>
+          <li>${tl.mondayStep6||'Come back here and click Import'}</li>
+        </ol>
+        <div class="export-tip">💡 The Excel file will include your item names, statuses, people columns, and dates. MyTasks will automatically map these to tasks.</div>
+      </div>`;
+    } else {
+      return `<div class="export-instructions">
+        <strong>${tl.otherCSV||'Other / Generic CSV'}</strong>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:8px">Your CSV should have columns for at least:</p>
+        <ul style="padding-left:16px;margin-top:6px">
+          <li style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Task name (required)</li>
+          <li style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Status (optional: "To Do", "In Progress", "Done")</li>
+          <li style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Priority (optional: "High", "Medium", "Low")</li>
+          <li style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Assignee (optional: email or name)</li>
+          <li style="font-size:13px;color:var(--text-secondary)">Due Date (optional: YYYY-MM-DD)</li>
+        </ul>
+        <div class="export-csv-example">Task,Status,Priority,Assignee,Due Date\n"Fix login bug","In Progress","High","john@email.com","2026-04-01"\n"Update docs","To Do","Medium","jane@email.com","2026-04-15"\n"Deploy v2.0","Done","High","john@email.com","2026-03-20"</div>
+      </div>`;
+    }
+  }
+
+  const ov = document.createElement('div');
+  ov.className = 'import-modal-overlay';
+  ov.innerHTML = `<div class="import-modal">
+    <div class="import-modal-header">
+      <span>${tl.howToExport||'How to Export Your Data'}</span>
+      <button class="icon-btn" id="ehClose" style="font-size:18px">×</button>
+    </div>
+    <div class="import-modal-body">
+      <div class="import-label">${tl.choosePlatform||'Choose your platform'}</div>
+      <div class="import-platform-btns">
+        <button class="import-platform-btn active" data-ehp="jira">Jira</button>
+        <button class="import-platform-btn" data-ehp="monday">Monday.com</button>
+        <button class="import-platform-btn" data-ehp="other">${tl.otherCSV||'Other / CSV'}</button>
+      </div>
+      <div id="ehInstructions">${platformInstructions('jira')}</div>
+    </div>
+    <div class="import-modal-footer">
+      <button class="icon-btn" id="ehDoneBtn" style="padding:8px 20px;background:var(--gradient);color:#fff;border-radius:var(--radius-full);border:none;font-size:13px;font-weight:600;cursor:pointer">${tl.done||'Done'}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector('#ehClose').onclick = () => ov.remove();
+  ov.querySelector('#ehDoneBtn').onclick = () => ov.remove();
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  ov.querySelectorAll('[data-ehp]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activePlatform = btn.dataset.ehp;
+      ov.querySelectorAll('[data-ehp]').forEach(b => b.classList.toggle('active', b.dataset.ehp === activePlatform));
+      ov.querySelector('#ehInstructions').innerHTML = platformInstructions(activePlatform);
+    });
+  });
+}
+
+function showImportModal(groupId) {
+  const tl = TL[state.lang] || TL.en;
+  let parsedData = null; // { rows, platform, filename }
+
+  const ov = document.createElement('div');
+  ov.className = 'import-modal-overlay';
+
+  function renderStep1() {
+    return `<div class="import-modal-header">
+      <span>${tl.importTasks||'Import Tasks'}</span>
+      <button class="icon-btn" id="imClose" style="font-size:18px">×</button>
+    </div>
+    <div class="import-modal-body">
+      <div class="import-dropzone" id="imDropzone">
+        <div class="import-dropzone-icon">📁</div>
+        <div>${tl.dragDropFile||'Drag & drop your file here'}</div>
+        <div class="import-dropzone-sub">${tl.orClickBrowse||'or click to browse'}</div>
+        <div class="import-dropzone-sub" style="margin-top:4px">${tl.supportedFormats||'Supports: .csv, .xlsx, .xls'}</div>
+        <input type="file" id="imFileInput" class="import-file-input" accept=".csv,.xlsx,.xls">
+      </div>
+      <div class="import-source-row">
+        <span>${tl.source||'Source'}:</span>
+        <select class="gb-select import-source-select" id="imSourceSelect">
+          <option value="auto">${tl.autoDetect||'Auto-detect'}</option>
+          <option value="jira">Jira</option>
+          <option value="monday">Monday.com</option>
+          <option value="generic">${tl.generic||'Generic CSV'}</option>
+        </select>
+      </div>
+    </div>
+    <div class="import-modal-footer">
+      <button class="icon-btn" id="imCancelBtn" style="padding:8px 16px;border:1.5px solid var(--border-strong);border-radius:var(--radius-full);font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-secondary)">${tl.cancel||'Cancel'}</button>
+    </div>`;
+  }
+
+  function renderStep2(data) {
+    const { rows, platform, filename } = data;
+    const platformLabel = platform === 'jira' ? 'Jira' : platform === 'monday' ? 'Monday.com' : (tl.generic||'Generic');
+    const mappings = [
+      {file:'Summary / Name', field:'Task Title', status:'✓'},
+      {file:'Status', field:'Status', status:'✓'},
+      {file:'Priority', field:'Priority', status:'✓'},
+      {file:'Assignee', field:'Assigned To', status:'✓'},
+      {file:'Due Date', field:'Due Date', status:'✓'},
+      {file:'Description', field:'Description', status:'✓'},
+    ];
+    if (platform === 'jira') mappings.push({file:'Story Points', field:'Estimated Hours', status:'○'});
+    const preview = rows.slice(0,3).map(r => {
+      const norm = Object.fromEntries(Object.entries(r).map(([k,v])=>[k.toLowerCase().trim(),v]));
+      const title = norm.summary||norm.title||norm.name||norm['task name']||norm['item name']||Object.values(r)[0]||'';
+      const status = norm.status||norm.state||'';
+      const prio = norm.priority||norm.urgency||'';
+      return `<tr><td>${esc(title.substring(0,40))}</td><td>${esc(status)}</td><td>${esc(prio)}</td></tr>`;
+    }).join('');
+    return `<div class="import-modal-header">
+      <span>${tl.mapColumns||'Map Columns'}</span>
+      <button class="icon-btn" id="imClose" style="font-size:18px">×</button>
+    </div>
+    <div class="import-modal-body">
+      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">
+        ${tl.detected||'Detected'}: <strong>${platformLabel}</strong> — ${(tl.tasksFound||'{count} tasks found').replace('{count}', rows.length)}
+      </div>
+      <table class="import-mapping-table">
+        <tr><th style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;padding:4px 8px">${tl.fileColumn||'File Column'}</th><th style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;padding:4px 8px">${tl.myTasksField||'MyTasks Field'}</th><th></th></tr>
+        ${mappings.map(m=>`<tr><td>${m.file}</td><td>${m.field}</td><td class="${m.status==='✓'?'import-mapping-check':'import-mapping-opt'}">${m.status}</td></tr>`).join('')}
+      </table>
+      <div class="import-label" style="margin-top:14px">${tl.preview||'Preview'}</div>
+      <table class="import-preview-table">
+        <tr><th>Title</th><th>Status</th><th>Priority</th></tr>
+        ${preview||'<tr><td colspan="3" style="color:var(--text-tertiary)">—</td></tr>'}
+      </table>
+    </div>
+    <div class="import-modal-footer">
+      <button class="icon-btn" id="imBackBtn" style="padding:8px 16px;border:1.5px solid var(--border-strong);border-radius:var(--radius-full);font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--text-secondary)">${tl.cancel||'Cancel'}</button>
+      <button class="icon-btn" id="imConfirmBtn" style="padding:8px 20px;background:var(--gradient);color:#fff;border-radius:var(--radius-full);border:none;font-size:13px;font-weight:600;cursor:pointer">
+        ${(tl.importCount||'Import {count} Tasks').replace('{count}', rows.length)}
+      </button>
+    </div>`;
+  }
+
+  function renderStep3(result) {
+    const tl2 = TL[state.lang] || TL.en;
+    const unmatched = result.unmatchedAssignees || [];
+    return `<div class="import-modal-header">
+      <span>${tl2.importComplete||'Import Complete'}</span>
+      <button class="icon-btn" id="imClose" style="font-size:18px">×</button>
+    </div>
+    <div class="import-modal-body">
+      <div class="import-success-icon">✅</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px">${(tl2.tasksImported||'{count} tasks imported successfully!').replace('{count}',result.count)}</div>
+      <div class="import-label">${tl2.importSummary||'Summary'}</div>
+      <ul class="import-result-summary">
+        <li>${result.counts?.todo||0} ${tl2.tasksTodo||'tasks'} → ${tl2.todo||'To Do'}</li>
+        <li>${result.counts?.in_progress||0} ${tl2.tasks||'tasks'} → ${tl2.inProgress||'In Progress'}</li>
+        <li>${result.counts?.done||0} ${tl2.tasks||'tasks'} → ${tl2.taskDone||'Done'}</li>
+      </ul>
+      ${unmatched.length > 0 ? `
+      <div class="import-label" style="color:#F59E0B">⚠ ${tl2.assigneesNotInGroup||'Assignees not in this group'}</div>
+      <div class="import-unmatched-list">
+        ${unmatched.map(email => `<div class="import-unmatched-item">
+          <span style="font-size:13px">${esc(email)}</span>
+          <button class="import-quick-invite-btn" data-invite-email="${esc(email)}">${tl2.quickInvite||'Invite →'}</button>
+        </div>`).join('')}
+      </div>` : ''}
+    </div>
+    <div class="import-modal-footer">
+      <button class="icon-btn" id="imDoneBtn" style="padding:8px 20px;background:var(--gradient);color:#fff;border-radius:var(--radius-full);border:none;font-size:13px;font-weight:600;cursor:pointer">${tl2.done||'Done'}</button>
+    </div>`;
+  }
+
+  function setStep(html) {
+    ov.querySelector('.import-modal').innerHTML = html;
+    bindClose();
+  }
+
+  function bindClose() {
+    ov.querySelector('#imClose')?.addEventListener('click', () => ov.remove());
+    ov.querySelector('#imCancelBtn')?.addEventListener('click', () => ov.remove());
+    ov.querySelector('#imBackBtn')?.addEventListener('click', () => { parsedData = null; setStep(renderStep1()); bindStep1(); });
+    ov.querySelector('#imDoneBtn')?.addEventListener('click', () => {
+      ov.remove();
+      // Reload group to show imported tasks
+      apiLoadGroup(groupId).then(g => { if(g && !g.error) { state.activeGroup = g; renderGroupBoard(); } });
+    });
+    ov.querySelector('#imConfirmBtn')?.addEventListener('click', async () => {
+      if (!parsedData) return;
+      const btn = ov.querySelector('#imConfirmBtn');
+      btn.textContent = tl.importing||'Importing...'; btn.disabled = true;
+      try {
+        const formData = new FormData();
+        formData.append('file', parsedData.fileObj);
+        const r = await fetch(`/api/groups/${groupId}/import`, { method: 'POST', body: formData });
+        const result = await r.json();
+        if (result.error) {
+          showToast(tl.importError||'Import failed', 'error');
+          btn.textContent = (tl.importCount||'Import {count} Tasks').replace('{count}', parsedData.rows.length);
+          btn.disabled = false;
+          return;
+        }
+        setStep(renderStep3(result));
+        bindClose();
+        // Wire quick-invite buttons
+        ov.querySelectorAll('[data-invite-email]').forEach(invBtn => {
+          invBtn.addEventListener('click', async () => {
+            invBtn.textContent = tl.sending||'Sending...'; invBtn.disabled = true;
+            try {
+              const res = await apiInviteMember(groupId, invBtn.dataset.inviteEmail, 'member');
+              if (res.inviteUrl) { invBtn.textContent = '✓'; showToast(tl.invitationCreated||'Invitation created', 'success'); }
+              else { invBtn.textContent = tl.quickInvite||'Invite'; invBtn.disabled = false; }
+            } catch(e) { invBtn.textContent = tl.quickInvite||'Invite'; invBtn.disabled = false; }
+          });
+        });
+      } catch(e) {
+        showToast(tl.importError||'Import failed', 'error');
+        btn.textContent = (tl.importCount||'Import').replace('{count}', parsedData.rows.length);
+        btn.disabled = false;
+      }
+    });
+  }
+
+  function bindStep1() {
+    const dz = ov.querySelector('#imDropzone');
+    const fi = ov.querySelector('#imFileInput');
+    if (!dz || !fi) return;
+    dz.addEventListener('click', () => fi.click());
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) handleSelectedFile(file);
+    });
+    fi.addEventListener('change', () => { if (fi.files[0]) handleSelectedFile(fi.files[0]); });
+  }
+
+  async function handleSelectedFile(file) {
+    const fname = file.name.toLowerCase();
+    if (!fname.endsWith('.csv') && !fname.endsWith('.xlsx') && !fname.endsWith('.xls')) {
+      showToast(tl.unsupportedFile||'Unsupported file type', 'error');
+      return;
+    }
+    // Parse client-side for preview only (server does real parse)
+    let rows = [];
+    try {
+      if (fname.endsWith('.csv')) {
+        const text = await file.text();
+        rows = parseCSVPreview(text);
+      } else {
+        rows = [{ 'File': file.name, 'Note': 'XLSX preview not available — will be parsed on import' }];
+      }
+    } catch(e) { rows = []; }
+    const overrideSource = ov.querySelector('#imSourceSelect')?.value;
+    const platform = overrideSource && overrideSource !== 'auto'
+      ? overrideSource
+      : (rows.length ? guessPlatformFromRows(rows) : 'generic');
+    parsedData = { rows, platform, filename: file.name, fileObj: file };
+    setStep(renderStep2(parsedData));
+    bindClose();
+  }
+
+  ov.innerHTML = `<div class="import-modal">${renderStep1()}</div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+  bindClose();
+  bindStep1();
+}
+
+function parseCSVPreview(text) {
+  // Minimal CSV parser for client-side preview
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l=>l.trim());
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g,'').trim());
+  return lines.slice(1,51).map(line => {
+    const vals = line.match(/("(?:[^"\\]|\\.)*"|[^,]*)/g)||[];
+    const row = {};
+    headers.forEach((h,i) => { row[h] = (vals[i]||'').replace(/^"|"$/g,'').trim(); });
+    return row;
+  }).filter(r => Object.values(r).some(v=>v));
+}
+
+function guessPlatformFromRows(rows) {
+  if (!rows.length) return 'generic';
+  const keys = Object.keys(rows[0]).map(k=>k.toLowerCase());
+  const jiraFields = ['issue key','issue id','summary','issue type','story points','sprint'];
+  if (jiraFields.some(f => keys.includes(f))) return 'jira';
+  const mondayFields = ['subitems','board','pulse id','item id'];
+  if (mondayFields.some(f => keys.includes(f))) return 'monday';
+  return 'generic';
+}
+
 // ─── Group (Team) Analytics ───────────────────────────────────────────────────
 const MEMBER_COLORS = ['#3B82F6','#EF4444','#22C55E','#F59E0B','#8B5CF6','#EC4899','#14B8A6','#F97316'];
 let gbAnalyticsOpen = false;
@@ -3186,6 +3849,8 @@ function renderGbAnalytics() {
     if (dashEl) {
       dashEl.innerHTML = renderGbDashboard();
       loadGbActivities();
+      // Init drag-and-drop after DOM is rendered
+      requestAnimationFrame(() => initKanbanDnd());
     }
     return;
   }
@@ -3767,6 +4432,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('gbSortSelect').addEventListener('change', e => { state.groupSort=e.target.value; renderGroupTaskList(); });
 
   document.getElementById('gbInviteBtn').addEventListener('click', showInviteModal);
+
+  document.getElementById('gbImportBtn')?.addEventListener('click', () => {
+    if (state.activeGroup) showImportModal(state.activeGroup._id);
+  });
+  document.getElementById('gbExportHelpBtn')?.addEventListener('click', () => {
+    showExportHelpModal();
+  });
+
   document.getElementById('gbSettingsBtn').addEventListener('click', () => {
     if (state.activeGroup?.slug) {
       navigateTo(`/groups/${state.activeGroup.slug}/settings`);

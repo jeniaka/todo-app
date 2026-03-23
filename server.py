@@ -11,6 +11,10 @@ import time
 import urllib.request
 import urllib.parse
 import uuid as _uuid
+import csv
+import io
+import cgi
+from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from http.server import HTTPServer, ThreadingHTTPServer, BaseHTTPRequestHandler
@@ -560,6 +564,145 @@ self.addEventListener('fetch', e => {
 });
 """
 
+# ─── Import / CSV helpers ─────────────────────────────────────────────────────
+def parse_csv_rows(file_content):
+    """Parse CSV bytes/str and return list of dicts."""
+    if isinstance(file_content, bytes):
+        file_content = file_content.decode("utf-8-sig", errors="replace")
+    reader = csv.DictReader(io.StringIO(file_content))
+    return [row for row in reader if any(v.strip() for v in row.values())]
+
+def parse_xlsx_rows(file_bytes):
+    """Parse XLSX bytes and return list of dicts."""
+    try:
+        from openpyxl import load_workbook
+    except ImportError:
+        return []
+    try:
+        wb = load_workbook(io.BytesIO(file_bytes), read_only=True, data_only=True)
+        ws = wb.active
+        rows = list(ws.iter_rows(values_only=True))
+        if not rows:
+            return []
+        headers = [str(h).strip() if h is not None else f"col_{i}" for i, h in enumerate(rows[0])]
+        result = []
+        for row in rows[1:]:
+            if any(cell is not None for cell in row):
+                result.append({headers[i]: (str(row[i]) if row[i] is not None else "") for i in range(len(headers))})
+        wb.close()
+        return result
+    except Exception as e:
+        print(f"[xlsx] parse error: {e}")
+        return []
+
+def detect_platform(headers):
+    """Detect whether rows came from Jira, Monday.com, or a generic CSV."""
+    hl = [h.lower().strip() for h in headers]
+    jira_fields = {"issue key", "issue id", "summary", "issue type", "story points", "sprint"}
+    if jira_fields & set(hl):
+        return "jira"
+    monday_fields = {"subitems", "board", "pulse id", "item id"}
+    if monday_fields & set(hl):
+        return "monday"
+    return "generic"
+
+def map_row_to_task(row, platform):
+    """Map one CSV/XLSX row to a MyTasks task dict."""
+    norm = {k.lower().strip(): v for k, v in row.items()}
+    now_ms = int(time.time() * 1000)
+    task = {
+        "id": secrets.token_hex(8),
+        "text": "",
+        "description": "",
+        "status": "todo",
+        "priority": "none",
+        "assignedTo": None,
+        "assigneeEmail": None,
+        "assigneeName": None,
+        "createdAt": now_ms,
+        "completedAt": None,
+        "startedAt": None,
+        "estimatedHours": None,
+        "dueDate": None,
+        "subtasks": [],
+        "done": False,
+        "importedFrom": platform,
+    }
+    # Title
+    for key in ["summary", "title", "task", "name", "item", "issue", "task name", "item name"]:
+        if key in norm and norm[key].strip():
+            task["text"] = norm[key].strip()[:500]
+            break
+    if not task["text"]:
+        for v in row.values():
+            if v and str(v).strip():
+                task["text"] = str(v).strip()[:500]
+                break
+    if not task["text"]:
+        return None  # skip empty rows
+    # Description
+    for key in ["description", "details", "notes", "comment", "description/steps to reproduce"]:
+        if key in norm and norm[key].strip():
+            task["description"] = norm[key].strip()[:2000]
+            break
+    # Status
+    for key in ["status", "state", "stage", "workflow"]:
+        if key in norm and norm[key].strip():
+            rs = norm[key].strip().lower()
+            if rs in {"done", "complete", "completed", "closed", "resolved", "finished"}:
+                task["status"] = "done"
+                task["done"] = True
+                task["completedAt"] = now_ms
+            elif rs in {"in progress", "in review", "working on it", "active", "started", "doing", "in development"}:
+                task["status"] = "in_progress"
+                task["startedAt"] = now_ms
+            else:
+                task["status"] = "todo"
+            break
+    # Priority
+    for key in ["priority", "urgency", "importance"]:
+        if key in norm and norm[key].strip():
+            rp = norm[key].strip().lower()
+            if rp in {"highest", "critical", "urgent", "high", "blocker"}:
+                task["priority"] = "high"
+            elif rp in {"medium", "normal", "moderate", "mid", "medium/normal"}:
+                task["priority"] = "medium"
+            elif rp in {"low", "minor", "trivial", "lowest"}:
+                task["priority"] = "low"
+            break
+    # Assignee
+    for key in ["assignee", "assigned to", "owner", "person", "people", "responsible"]:
+        if key in norm and norm[key].strip():
+            raw = norm[key].strip()
+            if "@" in raw:
+                task["assigneeEmail"] = raw.lower()
+            else:
+                task["assigneeName"] = raw
+            break
+    # Due date
+    for key in ["due date", "due", "deadline", "target date", "end date"]:
+        if key in norm and norm[key].strip():
+            ds = norm[key].strip()
+            for fmt in ["%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y", "%Y-%m-%dT%H:%M:%S", "%d-%m-%Y", "%B %d, %Y"]:
+                try:
+                    dt = datetime.strptime(ds.split(".")[0].split("+")[0].strip(), fmt)
+                    task["dueDate"] = int(dt.timestamp() * 1000)
+                    break
+                except ValueError:
+                    continue
+            break
+    # Estimated hours / story points
+    for key in ["story points", "estimate", "estimated hours", "time estimate", "original estimate"]:
+        if key in norm and norm[key].strip():
+            try:
+                val = float(norm[key].strip().replace("h","").replace("H",""))
+                task["estimatedHours"] = val
+            except ValueError:
+                pass
+            break
+    return task
+
+
 # ─── Request Handler ──────────────────────────────────────────────────────────
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
@@ -1076,6 +1219,82 @@ class Handler(BaseHTTPRequestHandler):
                 return self.ok("application/json", json.dumps({
                     "token": token, "inviteUrl": invite_url,
                     "emailSent": email_sent, "smtpConfigured": smtp_ok
+                }).encode())
+
+        # POST /api/groups/{id}/import — multipart CSV/XLSX upload
+        if path.startswith("/api/groups/") and path.endswith("/import"):
+            parts_imp = path.split("/")
+            if len(parts_imp) == 5 and parts_imp[4] == "import":
+                if not user: return self.ok("application/json", b'{"error":"unauthorized"}')
+                group_id = parts_imp[3]
+                g = load_group(group_id)
+                if not g: return self.ok("application/json", b'{"error":"not found"}')
+                role = get_member_role(g, user["id"])
+                if role not in ("admin", "manager"):
+                    return self.ok("application/json", b'{"error":"forbidden"}')
+                content_type = self.headers.get("Content-Type", "")
+                rows = []
+                filename = ""
+                if "multipart/form-data" in content_type:
+                    try:
+                        form = cgi.FieldStorage(
+                            fp=self.rfile,
+                            headers=self.headers,
+                            environ={"REQUEST_METHOD": "POST", "CONTENT_TYPE": content_type},
+                        )
+                        file_item = form["file"]
+                        filename = file_item.filename or ""
+                        file_data = file_item.file.read()
+                        if filename.lower().endswith(".csv"):
+                            rows = parse_csv_rows(file_data)
+                        elif filename.lower().endswith((".xlsx", ".xls")):
+                            rows = parse_xlsx_rows(file_data)
+                        else:
+                            return self.ok("application/json", json.dumps({"error": "unsupported_file"}).encode())
+                    except Exception as e:
+                        print(f"[import] parse error: {e}")
+                        return self.ok("application/json", json.dumps({"error": str(e)}).encode())
+                else:
+                    return self.ok("application/json", json.dumps({"error": "multipart required"}).encode())
+                if not rows:
+                    return self.ok("application/json", json.dumps({"error": "no_tasks"}).encode())
+                headers_list = list(rows[0].keys()) if rows else []
+                platform = detect_platform(headers_list)
+                tasks = []
+                assignee_emails = set()
+                assignee_names = set()
+                for row in rows[:2000]:  # cap at 2000 rows
+                    t = map_row_to_task(row, platform)
+                    if t:
+                        tasks.append(t)
+                        if t.get("assigneeEmail"):
+                            assignee_emails.add(t["assigneeEmail"])
+                        elif t.get("assigneeName"):
+                            assignee_names.add(t["assigneeName"])
+                # Find unmatched assignees (emails not in members)
+                member_emails = {m.get("email","").lower() for m in g["members"] if m.get("email")}
+                unmatched = [e for e in assignee_emails if e not in member_emails]
+                # Add tasks to group
+                g["tasks"] = tasks + g.get("tasks", [])
+                save_group(g)
+                record_activity(g["_id"], {
+                    "type": "task_created",
+                    "userId": user["id"],
+                    "userName": user.get("name", ""),
+                    "taskText": f"Imported {len(tasks)} tasks from {platform}",
+                    "timestamp": int(time.time() * 1000),
+                })
+                counts = {
+                    "todo": sum(1 for t in tasks if t["status"] == "todo"),
+                    "in_progress": sum(1 for t in tasks if t["status"] == "in_progress"),
+                    "done": sum(1 for t in tasks if t["status"] == "done"),
+                }
+                return self.ok("application/json", json.dumps({
+                    "ok": True,
+                    "count": len(tasks),
+                    "platform": platform,
+                    "counts": counts,
+                    "unmatchedAssignees": unmatched,
                 }).encode())
 
         # POST /api/notifications/read
