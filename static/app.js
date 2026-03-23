@@ -1249,6 +1249,57 @@ async function apiUpdateGroup(id, data) {
   });
 }
 
+// ─── SSE — real-time group sync ───────────────────────────────────────────────
+let _groupSSE = null;
+let _groupSSEId = null;
+let _groupSSERetryTimer = null;
+
+function connectGroupSSE(groupId) {
+  if (_groupSSE && _groupSSEId === groupId) return; // already connected
+  disconnectGroupSSE();
+  _groupSSEId = groupId;
+
+  function open() {
+    const es = new EventSource(`/api/groups/${groupId}/stream`);
+    _groupSSE = es;
+
+    es.onmessage = async (e) => {
+      let data;
+      try { data = JSON.parse(e.data); } catch { return; }
+      if (data.type === 'connected') return;
+      if (data.type !== 'update') return;
+      // Skip re-fetch for changes we made ourselves (already reflected optimistically)
+      if (data.byUserId === window.__USER__?.id) return;
+      // Another user changed this group — re-fetch and re-render
+      if (!state.activeGroup || state.activeGroup._id !== groupId) return;
+      try {
+        const fresh = await apiLoadGroup(groupId);
+        if (!fresh || fresh.error) return;
+        state.activeGroup = fresh;
+        renderGroupTaskList();
+        renderGbAnalytics();
+      } catch {}
+    };
+
+    es.onerror = () => {
+      es.close();
+      _groupSSE = null;
+      // Auto-reconnect after 4 s if still on same group
+      _groupSSERetryTimer = setTimeout(() => {
+        if (_groupSSEId === groupId && state.activeGroup?._id === groupId) open();
+      }, 4000);
+    };
+  }
+
+  open();
+}
+
+function disconnectGroupSSE() {
+  clearTimeout(_groupSSERetryTimer);
+  if (_groupSSE) { _groupSSE.close(); _groupSSE = null; }
+  _groupSSEId = null;
+}
+
 async function apiDeleteGroup(id) {
   await fetch(`/api/groups/${id}`, { method: 'DELETE' });
 }
@@ -3093,6 +3144,7 @@ async function handleRoute(path) {
   document.getElementById('gtDetailModal')?.remove();
 
   if (path === '/mytasks' || path === '/') {
+    disconnectGroupSSE();
     state.groupsView = false;
     state.activeGroup = null;
     state.chartView = false;
@@ -3109,6 +3161,7 @@ async function handleRoute(path) {
     return;
 
   } else if (path === '/groups') {
+    disconnectGroupSSE();
     state.groupsView = true;
     state.activeGroup = null;
     state.chartView = false;
@@ -3151,6 +3204,7 @@ async function handleRoute(path) {
         state.groupSort = 'newest';
         renderGroupBoard();
         document.title = `${g.name} — ${appName}`;
+        connectGroupSSE(g._id);
         if (settingsMatch) {
           showMembersPanel();
         }

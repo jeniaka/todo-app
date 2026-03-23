@@ -7,6 +7,8 @@ import base64
 import secrets
 import mimetypes
 import time
+import queue
+import threading
 import urllib.request
 import urllib.parse
 import uuid as _uuid
@@ -197,9 +199,35 @@ def load_group(group_id):
     if db is None: return None
     return db["groups"].find_one({"_id": group_id})
 
-def save_group(group):
+# ─── SSE / Real-time push ─────────────────────────────────────────────────────
+_sse_clients: dict = {}   # group_id -> list[queue.Queue]  (pre-encoded SSE frames)
+_sse_lock = threading.Lock()
+
+def sse_broadcast(group_id, by_user_id):
+    """Push an update event to every SSE client watching this group."""
+    msg = (b'data: ' +
+           json.dumps({"type": "update", "groupId": str(group_id), "byUserId": by_user_id}).encode() +
+           b'\n\n')
+    with _sse_lock:
+        clients = list(_sse_clients.get(str(group_id), []))
+    dead = []
+    for q in clients:
+        try:
+            q.put_nowait(msg)
+        except Exception:
+            dead.append(q)
+    if dead:
+        with _sse_lock:
+            bucket = _sse_clients.get(str(group_id), [])
+            for q in dead:
+                try: bucket.remove(q)
+                except ValueError: pass
+
+def save_group(group, changed_by=None):
     if db is None: return
     db["groups"].replace_one({"_id": group["_id"]}, group, upsert=True)
+    if changed_by is not None:
+        sse_broadcast(group["_id"], changed_by)
 
 def get_member_role(group, user_id):
     for m in group.get("members", []):
@@ -630,7 +658,7 @@ class Handler(BaseHTTPRequestHandler):
                                 m["joinedAt"] = int(time.time() * 1000)
                                 m.pop("inviteToken", None)
                                 break
-                        save_group(joined_group)
+                        save_group(joined_group, user["id"])
                 # Determine redirect destination after login
                 redirect_to = "/mytasks"
                 if joined_group and joined_group.get("slug"):
@@ -692,6 +720,47 @@ class Handler(BaseHTTPRequestHandler):
                 if not role: return self.ok("application/json", b'{"error":"forbidden"}')
                 out = dict(g); out["myRole"] = role
                 return self.ok("application/json", json.dumps(out).encode())
+
+            # GET /api/groups/{id}/stream  — Server-Sent Events for real-time sync
+            if len(parts) == 5 and parts[4] == "stream":
+                group_id = parts[3]
+                user = self.get_session()
+                if not user:
+                    self.send_response(401); self.end_headers(); return
+                g = load_group(group_id)
+                if not g:
+                    self.send_response(404); self.end_headers(); return
+                if not get_member_role(g, user["id"]):
+                    self.send_response(403); self.end_headers(); return
+                client_q = queue.Queue()
+                with _sse_lock:
+                    _sse_clients.setdefault(group_id, []).append(client_q)
+                try:
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/event-stream")
+                    self.send_header("Cache-Control", "no-cache")
+                    self.send_header("Connection", "keep-alive")
+                    self.send_header("X-Accel-Buffering", "no")
+                    self.end_headers()
+                    self.wfile.write(b"data: {\"type\":\"connected\"}\n\n")
+                    self.wfile.flush()
+                    while True:
+                        try:
+                            msg = client_q.get(timeout=25)
+                            self.wfile.write(msg)
+                            self.wfile.flush()
+                        except queue.Empty:
+                            # heartbeat keeps proxies/load-balancers from closing the connection
+                            self.wfile.write(b": ping\n\n")
+                            self.wfile.flush()
+                except (BrokenPipeError, ConnectionResetError, OSError):
+                    pass
+                finally:
+                    with _sse_lock:
+                        bucket = _sse_clients.get(group_id, [])
+                        try: bucket.remove(client_q)
+                        except ValueError: pass
+                return
 
             # GET /api/groups/{id}/activities
             if len(parts) == 5 and parts[4] == "activities":
@@ -757,7 +826,7 @@ class Handler(BaseHTTPRequestHandler):
                     m["joinedAt"] = int(time.time() * 1000)
                     m.pop("inviteToken", None)
                     break
-            save_group(g)
+            save_group(g, user["id"])
             create_notification(g["createdBy"], "member_joined", g["_id"], g["name"], from_user=user.get("name",""))
             record_activity(g["_id"], {
                 "type": "member_joined",
@@ -969,7 +1038,7 @@ class Handler(BaseHTTPRequestHandler):
                     "subtasks": [],
                 }
                 g["tasks"].insert(0, task)
-                save_group(g)
+                save_group(g, user["id"])
                 if assigned_to and assigned_to != user["id"]:
                     create_notification(assigned_to, "task_assigned", group_id, g["name"],
                         task_text=task["text"], from_user=user.get("name",""))
@@ -1027,7 +1096,7 @@ class Handler(BaseHTTPRequestHandler):
                     "joinedAt": None,
                     "inviteToken": token,
                 })
-                save_group(g)
+                save_group(g, user["id"])
                 host = self.headers.get("Host","")
                 is_local = host.startswith("localhost") or host.startswith("127.")
                 scheme = "http" if is_local else "https"
@@ -1105,7 +1174,7 @@ class Handler(BaseHTTPRequestHandler):
                 unmatched = [e for e in assignee_emails if e not in member_emails]
                 # Add tasks to group
                 g["tasks"] = tasks + g.get("tasks", [])
-                save_group(g)
+                save_group(g, user["id"])
                 record_activity(g["_id"], {
                     "type": "task_created",
                     "userId": user["id"],
@@ -1157,7 +1226,7 @@ class Handler(BaseHTTPRequestHandler):
             if "name" in body: g["name"] = body["name"]
             if "description" in body: g["description"] = body["description"]
             if "color" in body: g["color"] = body["color"]
-            save_group(g)
+            save_group(g, user["id"])
             return self.ok("application/json", b'{"ok":true}')
 
         # PUT /api/groups/{id}/tasks/{taskId}
@@ -1225,7 +1294,7 @@ class Handler(BaseHTTPRequestHandler):
                                 activity_to_record = {"type": "task_assigned", "taskText": t["text"],
                                     "targetUser": target_member.get("name","") if target_member else ""}
                     break
-            save_group(g)
+            save_group(g, user["id"])
             if activity_to_record:
                 activity_to_record.update({
                     "userId": user["id"],
@@ -1246,7 +1315,7 @@ class Handler(BaseHTTPRequestHandler):
                 if m.get("userId") == target_id:
                     m["role"] = body.get("role", m["role"])
                     break
-            save_group(g)
+            save_group(g, user["id"])
             return self.ok("application/json", b'{"ok":true}')
 
         self.send_response(404); self.end_headers()
@@ -1277,7 +1346,7 @@ class Handler(BaseHTTPRequestHandler):
             if task:
                 if role in ("admin","manager") or task.get("createdBy")==user["id"]:
                     g["tasks"] = [t for t in g["tasks"] if t["id"]!=parts[5]]
-            save_group(g)
+            save_group(g, user["id"])
             return self.ok("application/json", b'{"ok":true}')
 
         # DELETE /api/groups/{id}/members/{userId|email}
@@ -1295,7 +1364,7 @@ class Handler(BaseHTTPRequestHandler):
                 and m.get("email","").lower() != target_id.lower()]
             for t in g["tasks"]:
                 if t.get("assignedTo") == target_id: t["assignedTo"] = None
-            save_group(g)
+            save_group(g, user["id"])
             print(f"[remove-member] removed target={target_id} from group={g['_id']}")
             return self.ok("application/json", b'{"ok":true}')
 
