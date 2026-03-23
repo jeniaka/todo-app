@@ -1667,8 +1667,10 @@ function showInviteModal() {
            <p class="invite-status-sub">${(tl.invitationSentDesc||'An email has been sent to {email} from noreply@mytasks.bar').replace('{email}','<strong>'+emailVal+'</strong>')}</p>`;
         el.querySelector('#invLinkRow').style.display = 'none';
       } else {
+        const noSmtp = !res.smtpConfigured;
         el.querySelector('#invStatusMsg').innerHTML =
-          `<div class="invite-status-ok">🔗 ${tl.invitationCreated||'Invitation created'}</div>`;
+          `<div class="invite-status-ok">🔗 ${tl.invitationCreated||'Invitation created'}</div>
+           <p class="invite-status-sub" style="color:var(--priority-medium)">${noSmtp ? '⚠️ Email not configured on server — share the link below manually.' : '⚠️ Email could not be sent — share the link below manually.'}</p>`;
         el.querySelector('#invLinkRow').style.display = '';
         el.querySelector('#invLinkBox').textContent = inviteUrl;
       }

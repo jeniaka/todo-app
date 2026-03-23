@@ -1055,7 +1055,9 @@ class Handler(BaseHTTPRequestHandler):
                 scheme = "http" if is_local else "https"
                 invite_url = f"{scheme}://{host}/invite/{token}"
                 email_sent = False
-                if smtp_configured():
+                smtp_ok = smtp_configured()
+                print(f"[invite] smtp_configured={smtp_ok}, target={email}, group={g['name']}")
+                if smtp_ok:
                     html = build_invite_email(
                         inviter_name=user.get("name", "Someone"),
                         inviter_picture=user.get("picture", ""),
@@ -1068,8 +1070,12 @@ class Handler(BaseHTTPRequestHandler):
                         subject=f'{user.get("name","Someone")} invited you to "{g["name"]}" on MyTasks',
                         html_body=html,
                     )
+                    print(f"[invite] email_sent={email_sent}")
+                else:
+                    print(f"[invite] SMTP not configured — SMTP_HOST={repr(SMTP_HOST)} SMTP_USER={repr(SMTP_USER)} SMTP_PASS={'set' if SMTP_PASS else 'NOT SET'}")
                 return self.ok("application/json", json.dumps({
-                    "token": token, "inviteUrl": invite_url, "emailSent": email_sent
+                    "token": token, "inviteUrl": invite_url,
+                    "emailSent": email_sent, "smtpConfigured": smtp_ok
                 }).encode())
 
         # POST /api/notifications/read
