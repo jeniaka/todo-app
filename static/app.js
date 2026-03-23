@@ -113,6 +113,15 @@ const TL = {
     status:'Status',tasksCompleted:'Tasks this week',avgCompletionTime:'Avg time',
     overdueRate:'Overdue rate',onTimeRate:'On-time rate',onTrack:'On Track',
     needsAttention:'Needs Attention',atRisk:'At Risk',
+    total:'Total',tasks:'tasks',
+    tasksDone:'Tasks Done',tasksInProgress:'In Progress',tasksTodo:'To Do',
+    completionRate:'Completion Rate',overdueCount:'Overdue',
+    memberWorkload:'Member Workload',
+    recentActivity:'Recent Activity',
+    actTaskCreated:'created',actTaskCompleted:'completed',actTaskStarted:'started',
+    actTaskAssigned:'assigned',actMemberJoined:'joined the group',
+    statusBoard:'Status Board',
+    dashboard:'Dashboard',groupTasks:'Group Tasks',openDashboard:'Open Dashboard',
   },
   he: {
     appTitle:'המשימות שלי',add:'הוסף',filterAll:'הכל',filterActive:'פעיל',filterDone:'הושלם',
@@ -187,6 +196,15 @@ const TL = {
     status:'סטטוס',tasksCompleted:'משימות השבוע',avgCompletionTime:'זמן ממוצע',
     overdueRate:'שיעור איחור',onTimeRate:'שיעור בזמן',onTrack:'במסלול',
     needsAttention:'דורש תשומת לב',atRisk:'בסיכון',
+    total:'סה"כ',tasks:'משימות',
+    tasksDone:'משימות שהושלמו',tasksInProgress:'בביצוע',tasksTodo:'לביצוע',
+    completionRate:'אחוז השלמה',overdueCount:'באיחור',
+    memberWorkload:'עומס עבודה לפי חבר',
+    recentActivity:'פעילות אחרונה',
+    actTaskCreated:'יצר',actTaskCompleted:'השלים',actTaskStarted:'התחיל',
+    actTaskAssigned:'הקצה',actMemberJoined:'הצטרף לקבוצה',
+    statusBoard:'לוח סטטוס',
+    dashboard:'לוח בקרה',groupTasks:'משימות קבוצה',openDashboard:'פתח לוח בקרה',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -261,6 +279,15 @@ const TL = {
     status:'الحالة',tasksCompleted:'مهام هذا الأسبوع',avgCompletionTime:'متوسط الوقت',
     overdueRate:'معدل التأخر',onTimeRate:'معدل الالتزام',onTrack:'على المسار',
     needsAttention:'يحتاج انتباه',atRisk:'في خطر',
+    total:'المجموع',tasks:'مهام',
+    tasksDone:'المهام المنجزة',tasksInProgress:'قيد التنفيذ',tasksTodo:'للتنفيذ',
+    completionRate:'معدل الإنجاز',overdueCount:'متأخرة',
+    memberWorkload:'حمل عمل العضو',
+    recentActivity:'النشاط الأخير',
+    actTaskCreated:'أنشأ',actTaskCompleted:'أكمل',actTaskStarted:'بدأ',
+    actTaskAssigned:'كلف',actMemberJoined:'انضم إلى المجموعة',
+    statusBoard:'لوحة الحالة',
+    dashboard:'لوحة التحكم',groupTasks:'مهام المجموعة',openDashboard:'فتح لوحة التحكم',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -335,6 +362,15 @@ const TL = {
     status:'Estado',tasksCompleted:'Tareas esta semana',avgCompletionTime:'Tiempo medio',
     overdueRate:'Tasa de retraso',onTimeRate:'Tasa a tiempo',onTrack:'En camino',
     needsAttention:'Necesita atención',atRisk:'En riesgo',
+    total:'Total',tasks:'tareas',
+    tasksDone:'Tareas completadas',tasksInProgress:'En progreso',tasksTodo:'Por hacer',
+    completionRate:'Tasa de finalización',overdueCount:'Atrasadas',
+    memberWorkload:'Carga de trabajo',
+    recentActivity:'Actividad reciente',
+    actTaskCreated:'creó',actTaskCompleted:'completó',actTaskStarted:'comenzó',
+    actTaskAssigned:'asignó',actMemberJoined:'se unió al grupo',
+    statusBoard:'Tablero de estado',
+    dashboard:'Panel',groupTasks:'Tareas de grupo',openDashboard:'Abrir panel',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -409,6 +445,15 @@ const TL = {
     status:'Statut',tasksCompleted:'Tâches cette semaine',avgCompletionTime:'Temps moyen',
     overdueRate:'Taux de retard',onTimeRate:'Taux à temps',onTrack:'Dans les délais',
     needsAttention:'Attention requise',atRisk:'À risque',
+    total:'Total',tasks:'tâches',
+    tasksDone:'Tâches terminées',tasksInProgress:'En cours',tasksTodo:'À faire',
+    completionRate:'Taux d\'achèvement',overdueCount:'En retard',
+    memberWorkload:'Charge de travail',
+    recentActivity:'Activité récente',
+    actTaskCreated:'a créé',actTaskCompleted:'a terminé',actTaskStarted:'a commencé',
+    actTaskAssigned:'a assigné',actMemberJoined:'a rejoint le groupe',
+    statusBoard:'Tableau de statut',
+    dashboard:'Tableau de bord',groupTasks:'Tâches de groupe',openDashboard:'Ouvrir le tableau de bord',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -483,6 +528,15 @@ const TL = {
     status:'Status',tasksCompleted:'Aufgaben diese Woche',avgCompletionTime:'Durchschn. Zeit',
     overdueRate:'Überfälligkeitsrate',onTimeRate:'Pünktlichkeitsrate',onTrack:'Im Plan',
     needsAttention:'Aufmerksamkeit nötig',atRisk:'Gefährdet',
+    total:'Gesamt',tasks:'Aufgaben',
+    tasksDone:'Erledigte Aufgaben',tasksInProgress:'In Bearbeitung',tasksTodo:'Zu erledigen',
+    completionRate:'Abschlussrate',overdueCount:'Überfällig',
+    memberWorkload:'Arbeitsbelastung',
+    recentActivity:'Letzte Aktivität',
+    actTaskCreated:'erstellt',actTaskCompleted:'abgeschlossen',actTaskStarted:'begonnen',
+    actTaskAssigned:'zugewiesen',actMemberJoined:'ist beigetreten',
+    statusBoard:'Statusboard',
+    dashboard:'Dashboard',groupTasks:'Gruppenaufgaben',openDashboard:'Dashboard öffnen',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -557,6 +611,15 @@ const TL = {
     status:'Статус',tasksCompleted:'Задачи за неделю',avgCompletionTime:'Среднее время',
     overdueRate:'Просроченность',onTimeRate:'Своевременность',onTrack:'В срок',
     needsAttention:'Требует внимания',atRisk:'Под угрозой',
+    total:'Всего',tasks:'задач',
+    tasksDone:'Выполненные задачи',tasksInProgress:'В процессе',tasksTodo:'К выполнению',
+    completionRate:'Процент выполнения',overdueCount:'Просроченные',
+    memberWorkload:'Нагрузка участника',
+    recentActivity:'Недавняя активность',
+    actTaskCreated:'создал',actTaskCompleted:'завершил',actTaskStarted:'начал',
+    actTaskAssigned:'назначил',actMemberJoined:'присоединился к группе',
+    statusBoard:'Доска статусов',
+    dashboard:'Панель управления',groupTasks:'Групповые задачи',openDashboard:'Открыть панель',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -631,6 +694,15 @@ const TL = {
     status:'Status',tasksCompleted:'Tarefas esta semana',avgCompletionTime:'Tempo médio',
     overdueRate:'Taxa de atraso',onTimeRate:'Taxa no prazo',onTrack:'No caminho',
     needsAttention:'Precisa atenção',atRisk:'Em risco',
+    total:'Total',tasks:'tarefas',
+    tasksDone:'Tarefas concluídas',tasksInProgress:'Em andamento',tasksTodo:'A fazer',
+    completionRate:'Taxa de conclusão',overdueCount:'Atrasadas',
+    memberWorkload:'Carga de trabalho',
+    recentActivity:'Atividade recente',
+    actTaskCreated:'criou',actTaskCompleted:'concluiu',actTaskStarted:'iniciou',
+    actTaskAssigned:'atribuiu',actMemberJoined:'entrou no grupo',
+    statusBoard:'Quadro de status',
+    dashboard:'Painel',groupTasks:'Tarefas do grupo',openDashboard:'Abrir painel',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -705,6 +777,15 @@ const TL = {
     status:'状态',tasksCompleted:'本周任务',avgCompletionTime:'平均时间',
     overdueRate:'逾期率',onTimeRate:'准时率',onTrack:'按计划',
     needsAttention:'需要关注',atRisk:'有风险',
+    total:'总计',tasks:'任务',
+    tasksDone:'已完成任务',tasksInProgress:'进行中',tasksTodo:'待办',
+    completionRate:'完成率',overdueCount:'逾期',
+    memberWorkload:'成员工作量',
+    recentActivity:'最近活动',
+    actTaskCreated:'创建了',actTaskCompleted:'完成了',actTaskStarted:'开始了',
+    actTaskAssigned:'分配了',actMemberJoined:'加入了群组',
+    statusBoard:'状态看板',
+    dashboard:'仪表板',groupTasks:'团队任务',openDashboard:'打开仪表板',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -779,6 +860,15 @@ const TL = {
     status:'ステータス',tasksCompleted:'今週のタスク',avgCompletionTime:'平均時間',
     overdueRate:'遅延率',onTimeRate:'時間遵守率',onTrack:'順調',
     needsAttention:'要注意',atRisk:'リスクあり',
+    total:'合計',tasks:'タスク',
+    tasksDone:'完了タスク',tasksInProgress:'進行中',tasksTodo:'未着手',
+    completionRate:'完了率',overdueCount:'期限超過',
+    memberWorkload:'メンバー作業量',
+    recentActivity:'最近のアクティビティ',
+    actTaskCreated:'を作成しました',actTaskCompleted:'を完了しました',actTaskStarted:'を開始しました',
+    actTaskAssigned:'に割り当てました',actMemberJoined:'グループに参加しました',
+    statusBoard:'ステータスボード',
+    dashboard:'ダッシュボード',groupTasks:'グループタスク',openDashboard:'ダッシュボードを開く',
   },
 };
 
@@ -1833,6 +1923,15 @@ function applyLanguage(code) {
   updatePageTitle();
   // Update language list checkmarks
   renderLangList();
+  // Update nav toggle title
+  updateNavToggle();
+  // Re-render charts if open (labels change with language)
+  if (inlineAnalyticsOpen) {
+    setTimeout(renderInlineAnalytics, 0);
+  }
+  if (gbAnalyticsOpen && state.activeGroup) {
+    setTimeout(renderGbAnalytics, 0);
+  }
 }
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
@@ -2682,6 +2781,22 @@ function checkWeeklyReport() {
 }
 
 // ─── Router ───────────────────────────────────────────────────────────────────
+function updateNavToggle() {
+  const btn = document.getElementById('navToggle');
+  if (!btn) return;
+  const tl = TL[state.lang] || TL.en;
+  const onGroups = window.location.pathname.startsWith('/groups');
+  if (onGroups) {
+    btn.title = tl.personalTasks || 'My Tasks';
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    btn.onclick = () => navigateTo('/mytasks');
+  } else {
+    btn.title = tl.groups || 'Groups';
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+    btn.onclick = () => navigateTo('/groups');
+  }
+}
+
 function navigateTo(path, replace = false) {
   if (replace) {
     history.replaceState({ path }, '', path);
@@ -2689,6 +2804,7 @@ function navigateTo(path, replace = false) {
     history.pushState({ path }, '', path);
   }
   handleRoute(path);
+  updateNavToggle();
 }
 
 async function handleRoute(path) {
@@ -2774,9 +2890,9 @@ async function handleRoute(path) {
 
 function updateActiveNavigation(path) {
   const chartBtn = document.getElementById('chartBtn');
-  const groupsBtn = document.getElementById('groupsBtn');
+  const navToggle = document.getElementById('navToggle');
   if (chartBtn) chartBtn.classList.toggle('nav-active', path === '/analytics');
-  if (groupsBtn) groupsBtn.classList.toggle('nav-active', path === '/groups' || path.startsWith('/groups/'));
+  if (navToggle) navToggle.classList.toggle('nav-active', path === '/groups' || path.startsWith('/groups/'));
 }
 
 function updatePageTitle() {
@@ -2826,13 +2942,14 @@ function renderInlineAnalytics() {
   const inProg = todos.filter(t => getTaskStatus(t) === 'in_progress').length;
   const pending = total - done - inProg;
 
+  const tl = TL[state.lang] || TL.en;
   const statsEl = document.getElementById('inlineStatsGrid');
   if (statsEl) {
     statsEl.innerHTML = `
-      <span>${total} total</span>
-      <span class="done-stat">${done} done</span>
-      <span class="prog-stat">${inProg} in progress</span>
-      <span class="pend-stat">${pending} todo</span>
+      <span>${total} ${tl.total||'total'}</span>
+      <span class="done-stat">${done} ${tl.taskDone||'done'}</span>
+      <span class="prog-stat">${inProg} ${tl.inProgress||'in progress'}</span>
+      <span class="pend-stat">${pending} ${tl.todo||'todo'}</span>
     `;
   }
 
@@ -2844,7 +2961,7 @@ function renderInlineAnalytics() {
     inlineChartInstance = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ['Done', 'In Progress', 'Todo'],
+        labels: [tl.taskDone||'Done', tl.inProgress||'In Progress', tl.todo||'Todo'],
         datasets: [{ data: [done, inProg, pending], backgroundColor: ['#22C55E','#3B82F6','#9CA3AF'] }]
       },
       options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
@@ -2855,8 +2972,8 @@ function renderInlineAnalytics() {
     inlineChartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['High', 'Medium', 'Low', 'None'],
-        datasets: [{ label: 'Tasks', data: [pCounts.high, pCounts.medium, pCounts.low, pCounts.none],
+        labels: [tl.priorityHigh||'High', tl.priorityMedium||'Medium', tl.priorityLow||'Low', tl.priorityNone||'None'],
+        datasets: [{ label: tl.tasks||'Tasks', data: [pCounts.high, pCounts.medium, pCounts.low, pCounts.none],
           backgroundColor: ['#EF4444','#F59E0B','#6366F1','#9CA3AF'] }]
       },
       options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
@@ -2864,20 +2981,188 @@ function renderInlineAnalytics() {
   }
 }
 
+// ─── Group Dashboard (Jira-style) ────────────────────────────────────────────
+function renderGbDashboard() {
+  const g = state.activeGroup;
+  const tl = TL[state.lang] || TL.en;
+  const now = Date.now();
+  const tasks = g.tasks || [];
+
+  const done = tasks.filter(t => t.done || t.status === 'done').length;
+  const inProg = tasks.filter(t => t.status === 'in_progress').length;
+  const total = tasks.length;
+  const overdueArr = tasks.filter(t => t.dueDate && t.dueDate < now && !t.done && t.status !== 'done');
+  const todoArr = tasks.filter(t => !t.done && t.status !== 'done' && t.status !== 'in_progress');
+
+  const donePct = total ? Math.round(done/total*100) : 0;
+  const inProgPct = total ? Math.round(inProg/total*100) : 0;
+  const overduePct = total ? Math.round(overdueArr.length/total*100) : 0;
+
+  const members = (g.members||[]).filter(m=>m.status==='active');
+
+  function memberRow(m) {
+    const mt = tasks.filter(t=>t.assignedTo===m.userId);
+    const md = mt.filter(t=>t.done||t.status==='done').length;
+    const mi = mt.filter(t=>t.status==='in_progress').length;
+    const pct = mt.length ? Math.round(md/mt.length*100) : 0;
+    const status = pct>=60?'🟢':pct>=30?'🟡':'🔴';
+    const avatar = m.picture
+      ? `<img class="gm-avatar" src="${m.picture}" style="width:28px;height:28px">`
+      : `<div class="gm-avatar gm-avatar-fb" style="width:28px;height:28px;font-size:11px">${(m.name||'?')[0].toUpperCase()}</div>`;
+    const doneW = mt.length ? (md/mt.length*100) : 0;
+    const inProgW = mt.length ? (mi/mt.length*100) : 0;
+    return `<div class="dash-member-row">
+      <div class="dash-member-info">${avatar}<span class="dash-member-name">${esc(m.name||'')}</span></div>
+      <div class="dash-bar-wrap">
+        <div class="dash-bar-bg">
+          <div class="dash-bar-done" style="width:${doneW}%"></div>
+          <div class="dash-bar-prog" style="width:${inProgW}%;margin-left:${doneW}%"></div>
+        </div>
+      </div>
+      <span class="dash-member-frac">${mt.length} ${tl.tasks||'tasks'}</span>
+      <span class="dash-member-pct">${pct}%</span>
+      <span>${status}</span>
+    </div>`;
+  }
+
+  function taskMiniCard(task) {
+    const assignee = members.find(m=>m.userId===task.assignedTo);
+    const avt = assignee?.picture
+      ? `<img class="gm-avatar" src="${assignee.picture}" style="width:20px;height:20px">`
+      : assignee ? `<div class="gm-avatar gm-avatar-fb" style="width:20px;height:20px;font-size:9px">${(assignee.name||'?')[0].toUpperCase()}</div>` : '';
+    const isOverdue = task.dueDate && task.dueDate < now && !task.done && task.status !== 'done';
+    const priorityColors = {high:'var(--priority-high)',medium:'var(--priority-medium)',low:'var(--priority-low)',none:'var(--text-tertiary)'};
+    const pColor = priorityColors[task.priority||'none'];
+    return `<div class="dash-task-card${isOverdue?' dash-task-overdue':''}">
+      <div class="dash-task-title">${esc(task.text||'')}</div>
+      <div class="dash-task-meta">
+        ${avt}<span class="dash-task-assignee">${esc(assignee?.name||tl.unassigned||'Unassigned')}</span>
+        <span class="dash-priority-dot" style="background:${pColor}"></span>
+      </div>
+    </div>`;
+  }
+
+  const todoTasks = tasks.filter(t=>!t.done&&t.status!=='done'&&t.status!=='in_progress');
+  const inProgTasks = tasks.filter(t=>t.status==='in_progress');
+  const doneTasks = tasks.filter(t=>t.done||t.status==='done');
+
+  return `<div class="gb-dashboard">
+    <div class="dash-cards">
+      <div class="dash-card">
+        <div class="dash-card-num">${total}</div>
+        <div class="dash-card-label">${tl.total||'Total'}</div>
+      </div>
+      <div class="dash-card dash-card-done">
+        <div class="dash-card-num">${done}</div>
+        <div class="dash-card-label">${tl.taskDone||'Done'}</div>
+        <div class="dash-card-pct">${donePct}%</div>
+      </div>
+      <div class="dash-card dash-card-prog">
+        <div class="dash-card-num">${inProg}</div>
+        <div class="dash-card-label">${tl.inProgress||'In Progress'}</div>
+        <div class="dash-card-pct">${inProgPct}%</div>
+      </div>
+      <div class="dash-card dash-card-over">
+        <div class="dash-card-num">${overdueArr.length}</div>
+        <div class="dash-card-label">${tl.overdueCount||'Overdue'}</div>
+        <div class="dash-card-pct">${overduePct}%</div>
+      </div>
+    </div>
+    ${members.length > 0 ? `
+    <div class="dash-section">
+      <div class="dash-section-title">${tl.memberWorkload||'Member Workload'}</div>
+      <div class="dash-members">${members.map(m=>memberRow(m)).join('')}</div>
+    </div>` : ''}
+    <div class="dash-section">
+      <div class="dash-section-title">${tl.statusBoard||'Status Board'}</div>
+      <div class="dash-kanban">
+        <div class="dash-col">
+          <div class="dash-col-header dash-col-todo">${tl.todo||'To Do'} <span class="dash-col-count">${todoTasks.length}</span></div>
+          <div class="dash-col-body">${todoTasks.map(t=>taskMiniCard(t)).join('')||`<div class="dash-empty">${tl.noData||'No tasks'}</div>`}</div>
+        </div>
+        <div class="dash-col">
+          <div class="dash-col-header dash-col-prog">${tl.inProgress||'In Progress'} <span class="dash-col-count">${inProgTasks.length}</span></div>
+          <div class="dash-col-body">${inProgTasks.map(t=>taskMiniCard(t)).join('')||`<div class="dash-empty">${tl.noData||'No tasks'}</div>`}</div>
+        </div>
+        <div class="dash-col">
+          <div class="dash-col-header dash-col-done">${tl.taskDone||'Done'} <span class="dash-col-count">${doneTasks.length}</span></div>
+          <div class="dash-col-body">${doneTasks.map(t=>taskMiniCard(t)).join('')||`<div class="dash-empty">${tl.noData||'No tasks'}</div>`}</div>
+        </div>
+      </div>
+    </div>
+    <div class="dash-section" id="gbActivityFeed">
+      <div class="dash-section-title">${tl.recentActivity||'Recent Activity'}</div>
+      <div class="dash-activity-list" id="gbActivityList">
+        <div class="dash-empty">${tl.noData||'Loading...'}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function loadGbActivities() {
+  const g = state.activeGroup;
+  const tl = TL[state.lang] || TL.en;
+  const listEl = document.getElementById('gbActivityList');
+  if (!listEl || !g) return;
+  try {
+    const r = await fetch(`/api/groups/${g._id}/activities`);
+    const acts = await r.json();
+    if (!Array.isArray(acts) || !acts.length) {
+      listEl.innerHTML = `<div class="dash-empty">${tl.noData||'No activity yet'}</div>`;
+      return;
+    }
+    listEl.innerHTML = acts.slice(0,10).map(a => {
+      const timeStr = relativeTime(a.timestamp);
+      const verb = {
+        task_created: tl.actTaskCreated||'created',
+        task_completed: tl.actTaskCompleted||'completed',
+        task_started: tl.actTaskStarted||'started',
+        task_assigned: tl.actTaskAssigned||'assigned',
+        member_joined: tl.actMemberJoined||'joined the group',
+      }[a.type] || a.type;
+      const taskPart = a.taskText ? ` "${esc(a.taskText)}"` : '';
+      const targetPart = a.targetUser ? ` → ${esc(a.targetUser)}` : '';
+      return `<div class="dash-activity-item">
+        <span class="dash-activity-dot"></span>
+        <span class="dash-activity-text"><strong>${esc(a.userName||'')}</strong> ${verb}${taskPart}${targetPart}</span>
+        <span class="dash-activity-time">${timeStr}</span>
+      </div>`;
+    }).join('');
+  } catch(_) {
+    listEl.innerHTML = `<div class="dash-empty">${tl.noData||'No activity yet'}</div>`;
+  }
+}
+
 // ─── Group (Team) Analytics ───────────────────────────────────────────────────
 const MEMBER_COLORS = ['#3B82F6','#EF4444','#22C55E','#F59E0B','#8B5CF6','#EC4899','#14B8A6','#F97316'];
 let gbAnalyticsOpen = false;
 let gbChartInstance = null;
-let gbChartTab = 'overview';
+let gbChartTab = 'dashboard';
 
 function renderGbAnalytics() {
   if (!gbAnalyticsOpen || !state.activeGroup) return;
   const panel = document.getElementById('gbAnalyticsPanel');
   if (!panel || panel.style.display === 'none') return;
+  const tl = TL[state.lang] || TL.en;
+
+  if (gbChartTab === 'dashboard') {
+    const dashEl = document.getElementById('gbAnalyticsInfo');
+    const canvasWrap = panel.querySelector('.chart-container-inline');
+    if (canvasWrap) canvasWrap.style.display = 'none';
+    if (dashEl) {
+      dashEl.innerHTML = renderGbDashboard();
+      loadGbActivities();
+    }
+    return;
+  }
+
   const g = state.activeGroup;
   const tasks = g.tasks || [];
   const members = g.members.filter(m => m.status === 'active');
   const now = Date.now();
+
+  const canvasWrap = panel.querySelector('.chart-container-inline');
+  if (canvasWrap) canvasWrap.style.display = '';
 
   if (gbChartInstance) { gbChartInstance.destroy(); gbChartInstance = null; }
   const ctx = document.getElementById('gbChart')?.getContext('2d');
@@ -2892,10 +3177,10 @@ function renderGbAnalytics() {
     const overdue = tasks.filter(t => t.dueDate && t.dueDate < now && getTaskStatus(t) !== 'done').length;
     gbChartInstance = new Chart(ctx, {
       type: 'doughnut',
-      data: { labels: ['Done','In Progress','Todo'], datasets: [{ data: [done, inProg, todo], backgroundColor: ['#22C55E','#3B82F6','#9CA3AF'] }] },
+      data: { labels: [tl.taskDone||'Done', tl.inProgress||'In Progress', tl.todo||'Todo'], datasets: [{ data: [done, inProg, todo], backgroundColor: ['#22C55E','#3B82F6','#9CA3AF'] }] },
       options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
     });
-    if (infoEl) infoEl.innerHTML = `<div class="analytics-stats-row"><span>Total: ${tasks.length}</span><span class="done-stat">Done: ${done}</span><span class="prog-stat">In Progress: ${inProg}</span><span style="color:#EF4444">Overdue: ${overdue}</span></div>`;
+    if (infoEl) infoEl.innerHTML = `<div class="analytics-stats-row"><span>${tl.total||'Total'}: ${tasks.length}</span><span class="done-stat">${tl.taskDone||'Done'}: ${done}</span><span class="prog-stat">${tl.inProgress||'In Progress'}: ${inProg}</span><span style="color:#EF4444">${tl.overdueCount||'Overdue'}: ${overdue}</span></div>`;
 
   } else if (gbChartTab === 'members') {
     const labels = members.map(m => m.name.split(' ')[0]);
@@ -2905,12 +3190,13 @@ function renderGbAnalytics() {
     gbChartInstance = new Chart(ctx, {
       type: 'bar',
       data: { labels, datasets: [
-        { label: 'Done', data: doneCounts, backgroundColor: '#22C55E' },
-        { label: 'In Progress', data: progCounts, backgroundColor: '#3B82F6' },
-        { label: 'Todo', data: todoCounts, backgroundColor: '#9CA3AF' }
+        { label: tl.taskDone||'Done', data: doneCounts, backgroundColor: '#22C55E' },
+        { label: tl.inProgress||'In Progress', data: progCounts, backgroundColor: '#3B82F6' },
+        { label: tl.todo||'Todo', data: todoCounts, backgroundColor: '#9CA3AF' }
       ]},
       options: { responsive: true, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { position: 'bottom' } } }
     });
+    if (infoEl) infoEl.innerHTML = '';
 
   } else if (gbChartTab === 'priority') {
     const priorities = ['high','medium','low','none'];
@@ -2921,9 +3207,10 @@ function renderGbAnalytics() {
     }));
     gbChartInstance = new Chart(ctx, {
       type: 'bar',
-      data: { labels: ['High','Medium','Low','None'], datasets },
+      data: { labels: [tl.priorityHigh||'High', tl.priorityMedium||'Medium', tl.priorityLow||'Low', tl.priorityNone||'None'], datasets },
       options: { responsive: true, scales: { x: { stacked: false }, y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { position: 'bottom' } } }
     });
+    if (infoEl) infoEl.innerHTML = '';
 
   } else if (gbChartTab === 'time') {
     const labels = members.map(m => m.name.split(' ')[0]);
@@ -2935,10 +3222,10 @@ function renderGbAnalytics() {
     });
     gbChartInstance = new Chart(ctx, {
       type: 'bar',
-      data: { labels, datasets: [{ label: 'Avg Hours to Complete', data: avgTimes, backgroundColor: MEMBER_COLORS }] },
+      data: { labels, datasets: [{ label: tl.avgTime||'Avg Hours', data: avgTimes, backgroundColor: MEMBER_COLORS }] },
       options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
     });
-    if (infoEl) infoEl.innerHTML = labels.map((l, i) => `<span>${l}: ${avgTimes[i] ? avgTimes[i]+'h avg' : 'no data'}</span>`).join(' · ');
+    if (infoEl) infoEl.innerHTML = labels.map((l, i) => `<span>${l}: ${avgTimes[i] ? avgTimes[i]+'h' : tl.noData||'no data'}</span>`).join(' · ');
 
   } else if (gbChartTab === 'performance') {
     const weekAgo = now - 7 * 24 * 3600000;
@@ -2957,13 +3244,13 @@ function renderGbAnalytics() {
       type: 'bar',
       data: {
         labels: memberStats.map(s => s.name),
-        datasets: [{ label: 'Tasks Completed This Week', data: memberStats.map(s => s.completedThisWeek), backgroundColor: memberStats.map(s => s.color) }]
+        datasets: [{ label: tl.tasksCompleted||'Tasks This Week', data: memberStats.map(s => s.completedThisWeek), backgroundColor: memberStats.map(s => s.color) }]
       },
       options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
     });
     if (infoEl) {
       infoEl.innerHTML = `<div class="perf-table">${memberStats.map(s =>
-        `<div class="perf-row"><span>${s.emoji} ${s.name}</span><span>Done: ${s.completedThisWeek}</span><span>Overdue: ${s.overdueRate}%</span><span>On-time: ${s.onTimeRate}%</span></div>`
+        `<div class="perf-row"><span>${s.emoji} ${s.name}</span><span>${tl.taskDone||'Done'}: ${s.completedThisWeek}</span><span>${tl.overdueCount||'Overdue'}: ${s.overdueRate}%</span><span>${tl.onTimeRate||'On-time'}: ${s.onTimeRate}%</span></div>`
       ).join('')}</div>`;
     }
   }
@@ -3354,7 +3641,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }, 60000);
 
   // ── Groups ────────────────────────────────────────────────────────────────
-  document.getElementById('groupsBtn').addEventListener('click', () => navigateTo('/groups'));
+  // navToggle is dynamically managed by updateNavToggle()
+  updateNavToggle();
 
   document.getElementById('gbBackBtn').addEventListener('click', () => navigateTo('/groups'));
 

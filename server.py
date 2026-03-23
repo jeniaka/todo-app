@@ -383,6 +383,16 @@ def create_notification(user_id, notif_type, group_id, group_name, task_text=Non
         "read": False,
     })
 
+def record_activity(group_id, activity):
+    if db is None: return
+    try:
+        db["groups"].update_one(
+            {"_id": group_id},
+            {"$push": {"activities": {"$each": [activity], "$slice": -50}}}
+        )
+    except Exception as e:
+        print(f"⚠ record_activity failed: {e}")
+
 # ─── Anthropic AI ─────────────────────────────────────────────────────────────
 def ai_suggest_next(todos):
     if not ANTHROPIC_API_KEY:
@@ -705,6 +715,18 @@ class Handler(BaseHTTPRequestHandler):
                 out = dict(g); out["myRole"] = role
                 return self.ok("application/json", json.dumps(out).encode())
 
+            # GET /api/groups/{id}/activities
+            if len(parts) == 5 and parts[4] == "activities":
+                group_id = parts[3]
+                user = self.get_session()
+                if not user: return self.ok("application/json", b'{"error":"unauthorized"}')
+                g = load_group(group_id)
+                if not g: return self.ok("application/json", b'{"error":"not found"}')
+                role = get_member_role(g, user["id"])
+                if not role: return self.ok("application/json", b'{"error":"forbidden"}')
+                activities = list(reversed(g.get("activities", [])))[:20]
+                return self.ok("application/json", json.dumps(activities).encode())
+
             # /api/groups/{id}
             if len(parts) == 4:
                 group_id = parts[3]
@@ -756,6 +778,12 @@ class Handler(BaseHTTPRequestHandler):
                     break
             save_group(g)
             create_notification(g["createdBy"], "member_joined", g["_id"], g["name"], from_user=user.get("name",""))
+            record_activity(g["_id"], {
+                "type": "member_joined",
+                "userId": user["id"],
+                "userName": user.get("name", ""),
+                "timestamp": int(time.time() * 1000),
+            })
             # Email the group admin (creator) that someone joined
             if smtp_configured() and g.get("createdBy"):
                 admin_member = next((m for m in g["members"] if m.get("userId") == g["createdBy"]), None)
@@ -988,6 +1016,14 @@ class Handler(BaseHTTPRequestHandler):
                                 subject=f'New task: "{task["text"]}" assigned to you in {g["name"]}',
                                 html_body=html,
                             )
+                # Record activity
+                record_activity(g["_id"], {
+                    "type": "task_created",
+                    "userId": user["id"],
+                    "userName": user.get("name", ""),
+                    "taskText": task["text"],
+                    "timestamp": int(time.time() * 1000),
+                })
                 return self.ok("application/json", json.dumps(task).encode())
 
             # POST /api/groups/{id}/invite
@@ -1076,6 +1112,7 @@ class Handler(BaseHTTPRequestHandler):
             if not g: return self.ok("application/json", b'{"error":"not found"}')
             role = get_member_role(g, user["id"])
             if not role: return self.ok("application/json", b'{"error":"forbidden"}')
+            activity_to_record = None
             for t in g["tasks"]:
                 if t["id"] == parts[5]:
                     if "text" in body: t["text"] = body["text"]
@@ -1087,16 +1124,21 @@ class Handler(BaseHTTPRequestHandler):
                     if "startedAt" in body: t["startedAt"] = body["startedAt"]
                     if "overdueNotified" in body: t["overdueNotified"] = body["overdueNotified"]
                     if "status" in body:
+                        old_status = t.get("status", "todo")
                         t["status"] = body["status"]
                         if body["status"] == "done":
                             t["done"] = True
                             if not t.get("completedAt"):
                                 t["completedAt"] = int(time.time() * 1000)
+                            if old_status != "done":
+                                activity_to_record = {"type": "task_completed", "taskText": t["text"]}
                         elif body["status"] == "in_progress":
                             t["done"] = False
                             t["completedAt"] = None
                             if not t.get("startedAt"):
                                 t["startedAt"] = int(time.time() * 1000)
+                            if old_status != "in_progress":
+                                activity_to_record = {"type": "task_started", "taskText": t["text"]}
                         elif body["status"] == "todo":
                             t["done"] = False
                             t["completedAt"] = None
@@ -1106,6 +1148,8 @@ class Handler(BaseHTTPRequestHandler):
                         if body["done"]:
                             t["completedAt"] = int(time.time() * 1000)
                             t["status"] = "done"
+                            if not activity_to_record:
+                                activity_to_record = {"type": "task_completed", "taskText": t["text"]}
                         else:
                             t["completedAt"] = None
                             if t.get("status") == "done":
@@ -1121,8 +1165,20 @@ class Handler(BaseHTTPRequestHandler):
                         if body["assignedTo"] and body["assignedTo"] != user["id"] and body["assignedTo"] != old:
                             create_notification(body["assignedTo"],"task_assigned",g["_id"],g["name"],
                                 task_text=t["text"],from_user=user.get("name",""))
+                            # Find target user name
+                            target_member = next((m for m in g["members"] if m.get("userId") == body["assignedTo"]), None)
+                            if not activity_to_record:
+                                activity_to_record = {"type": "task_assigned", "taskText": t["text"],
+                                    "targetUser": target_member.get("name","") if target_member else ""}
                     break
             save_group(g)
+            if activity_to_record:
+                activity_to_record.update({
+                    "userId": user["id"],
+                    "userName": user.get("name", ""),
+                    "timestamp": int(time.time() * 1000),
+                })
+                record_activity(g["_id"], activity_to_record)
             return self.ok("application/json", b'{"ok":true}')
 
         # PUT /api/groups/{id}/members/{userId}

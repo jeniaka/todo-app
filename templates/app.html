@@ -37,8 +37,8 @@
       </svg>
     </button>
 
-    <!-- Groups button -->
-    <button class="icon-btn" id="groupsBtn" title="Groups" aria-label="Groups">
+    <!-- Dynamic nav toggle (Groups <-> My Tasks) -->
+    <button class="icon-btn" id="navToggle" title="Groups" aria-label="Groups">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
         <circle cx="9" cy="7" r="4"/>
@@ -219,8 +219,8 @@
     </button>
     <div class="analytics-panel" id="analyticsPanel" style="display:none">
       <div class="chart-tabs" id="inlineChartTabs">
-        <button class="chart-tab active" data-chart="pie">Pie</button>
-        <button class="chart-tab" data-chart="bar">By Priority</button>
+        <button class="chart-tab active" data-chart="pie" data-i18n="chartPie">Pie</button>
+        <button class="chart-tab" data-chart="bar" data-i18n="byPriority">By Priority</button>
       </div>
       <div class="chart-container-inline">
         <canvas id="inlineChart" height="200"></canvas>
@@ -337,11 +337,12 @@
       </button>
       <div class="analytics-panel" id="gbAnalyticsPanel" style="display:none">
         <div class="chart-tabs" id="gbChartTabs">
-          <button class="chart-tab active" data-gbtab="overview">Overview</button>
-          <button class="chart-tab" data-gbtab="members">By Member</button>
-          <button class="chart-tab" data-gbtab="priority">By Priority</button>
-          <button class="chart-tab" data-gbtab="time">Time</button>
-          <button class="chart-tab" data-gbtab="performance">Performance</button>
+          <button class="chart-tab active" data-gbtab="dashboard" data-i18n="dashboard">Dashboard</button>
+          <button class="chart-tab" data-gbtab="overview" data-i18n="overview">Overview</button>
+          <button class="chart-tab" data-gbtab="members" data-i18n="byMember">By Member</button>
+          <button class="chart-tab" data-gbtab="priority" data-i18n="byPriority">By Priority</button>
+          <button class="chart-tab" data-gbtab="time" data-i18n="timeAnalysis">Time</button>
+          <button class="chart-tab" data-gbtab="performance" data-i18n="performance">Performance</button>
         </div>
         <div class="chart-container-inline">
           <canvas id="gbChart" height="220"></canvas>
