@@ -1571,12 +1571,19 @@ body{
   touch-action: none;
   user-select: none;
 }
-.kanban-card:active,.kanban-card.dragging { cursor: grabbing; }
+.kanban-card:active { cursor: grabbing; }
+.kanban-card.dragging {
+  cursor: grabbing;
+  transform: rotate(2deg) scale(1.04);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.22);
+  opacity: 0.88;
+  z-index: 100;
+}
 .kanban-column.drag-over {
   background: var(--accent-soft);
   outline: 2px dashed var(--accent);
   border-radius: var(--radius-md);
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, outline 0.15s ease;
 }
 .touch-drag-clone {
   box-shadow: 0 12px 40px rgba(0,0,0,0.3);
@@ -1781,4 +1788,20 @@ body{
 button:focus:not(:focus-visible),
 a:focus:not(:focus-visible) {
   outline: none;
+}
+
+/* ─── Priority flash ─────────────────────────────────────────────────────── */
+@keyframes priorityFlash {
+  0%   { box-shadow: 0 0 0 3px rgba(99,102,241,0.5); }
+  100% { box-shadow: var(--shadow-sm); }
+}
+.priority-updated { animation: priorityFlash 0.45s ease forwards; }
+
+/* ─── Respect reduced motion ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

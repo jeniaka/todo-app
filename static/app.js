@@ -1641,6 +1641,14 @@ function renderGroupTaskList() {
         message: `"${task?.text}"`,
         confirmText: tl.yes || 'Yes',
         onConfirm: async () => {
+          // Animate row out before removing
+          const row = document.querySelector(`.group-task-row[data-id="${taskId}"]`);
+          if (row) {
+            row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            row.style.opacity = '0';
+            row.style.transform = 'translateX(30px)';
+            await new Promise(r => setTimeout(r, 300));
+          }
           g.tasks = g.tasks.filter(tk => tk.id !== taskId);
           renderGroupTaskList();
           await apiDeleteGroupTask(g._id, taskId);
@@ -4016,10 +4024,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('addForm').addEventListener('submit', async e => {
     e.preventDefault();
     const inp = document.getElementById('addInput');
+    const text = inp.value;
+    if (!text.trim()) return;
     if (isListening && recognition) recognition.stop();
-    await addTodo(inp.value);
-    inp.value = '';
+    inp.value = '';    // clear immediately — don't wait for API
     inp.focus();
+    await addTodo(text);
   });
 
   // ── Priority picker (inline dropdown, opens on input focus) ──────────────
@@ -4112,6 +4122,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       todo.priority = p;
       renderDrawer(todo);
       render();
+      // Flash the updated card
+      const card = document.querySelector(`.task-card[data-id="${todo.id}"]`);
+      if (card) {
+        card.classList.remove('priority-updated');
+        void card.offsetWidth; // force reflow
+        card.classList.add('priority-updated');
+        card.addEventListener('animationend', () => card.classList.remove('priority-updated'), { once: true });
+      }
       await apiSave();
     });
   });
@@ -4146,6 +4164,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       onConfirm: async () => {
         const id = state.activeDrawer;
         closeDrawer();
+        // Animate card out before removing from state
+        const card = document.querySelector(`.task-card[data-id="${id}"]`);
+        if (card) {
+          card.classList.add('removing');
+          await new Promise(r => setTimeout(r, 380));
+        }
         state.todos = state.todos.filter(x => x.id !== id);
         render();
         await apiSave();
@@ -4344,8 +4368,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('gbBackBtn').addEventListener('click', () => navigateTo('/groups'));
 
-  // "Personal tasks" button — goes back to mainContent from groups list
-  document.getElementById('groupsBackBtn').addEventListener('click', () => navigateTo('/mytasks'));
 
 
 
