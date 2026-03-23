@@ -2889,9 +2889,7 @@ async function handleRoute(path) {
 }
 
 function updateActiveNavigation(path) {
-  const chartBtn = document.getElementById('chartBtn');
   const navToggle = document.getElementById('navToggle');
-  if (chartBtn) chartBtn.classList.toggle('nav-active', path === '/analytics');
   if (navToggle) navToggle.classList.toggle('nav-active', path === '/groups' || path.startsWith('/groups/'));
 }
 
@@ -3555,15 +3553,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // ── Charts (toggle inline analytics instead of navigating) ───────────────
-  const chartBtn = document.getElementById('chartBtn');
-  if (chartBtn) chartBtn.addEventListener('click', () => {
-    const toggle = document.getElementById('analyticsToggle');
-    if (toggle) {
-      toggle.click();
-    }
-  });
-
   const chartsBackBtn = document.getElementById('chartsBackBtn');
   if (chartsBackBtn) chartsBackBtn.addEventListener('click', closeCharts);
 
@@ -3649,8 +3638,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // "Personal tasks" button — goes back to mainContent from groups list
   document.getElementById('groupsBackBtn').addEventListener('click', () => navigateTo('/mytasks'));
 
-  // "Personal tasks" button — goes back to mainContent from group board
-  document.getElementById('gbPersonalBtn').addEventListener('click', () => navigateTo('/mytasks'));
+
 
   document.getElementById('newGroupBtn').addEventListener('click', showCreateGroupModal);
 
