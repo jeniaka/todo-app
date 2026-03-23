@@ -2,164 +2,80 @@
 
 import os
 import json
-import smtplib
-import traceback
 import datetime
 import urllib.request
 import urllib.error
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
-# ─── Email Config ─────────────────────────────────────────────────────────────
-# Preferred: Brevo HTTP API (works on Render free tier — port 443, never blocked)
-BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
+# ─── Config ───────────────────────────────────────────────────────────────────
+SMTP_FROM = os.environ.get("SMTP_FROM", "noreply@mytasks.bar")
 
-# Fallback: SMTP (may be blocked on some hosting providers)
-SMTP_HOST  = os.environ.get("SMTP_HOST", "")
-SMTP_PORT  = int(os.environ.get("SMTP_PORT", "587"))
-SMTP_USER  = os.environ.get("SMTP_USER", "")
-SMTP_PASS  = os.environ.get("SMTP_PASS", "")
-SMTP_FROM  = os.environ.get("SMTP_FROM", "noreply@mytasks.bar")
-SMTP_DEBUG = os.environ.get("SMTP_DEBUG", "").lower() in ("1", "true", "yes")
-
-BREVO_API_URL = "https://api.brevo.com/v3/smtp/email"
+# Keep these for backwards-compat imports in server.py (values unused)
+SMTP_HOST = os.environ.get("SMTP_HOST", "")
+SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
+SMTP_USER = os.environ.get("SMTP_USER", "")
+SMTP_PASS = os.environ.get("SMTP_PASS", "")
+SMTP_DEBUG = False
 
 
 def smtp_configured():
-    """True if any email method is available."""
-    return bool(BREVO_API_KEY or (SMTP_HOST and SMTP_USER and SMTP_PASS))
+    return bool(os.environ.get("BREVO_API_KEY", ""))
 
 
 def smtp_status():
-    """Return email configuration state (safe to expose in API responses)."""
+    api_key = os.environ.get("BREVO_API_KEY", "")
     return {
-        "email_configured": smtp_configured(),
-        "method": "brevo_api" if BREVO_API_KEY else ("smtp" if SMTP_HOST else "none"),
-        "BREVO_API_KEY_SET": bool(BREVO_API_KEY),
-        "SMTP_HOST": SMTP_HOST,
-        "SMTP_PORT": SMTP_PORT,
-        "SMTP_USER": (SMTP_USER[:3] + "***") if SMTP_USER else "",
+        "email_configured": bool(api_key),
+        "method": "brevo_api" if api_key else "none",
+        "BREVO_API_KEY_SET": bool(api_key),
+        "BREVO_API_KEY_PREFIX": api_key[:6] + "***" if api_key else "",
         "SMTP_FROM": SMTP_FROM,
-        "SMTP_PASS_SET": bool(SMTP_PASS),
-        "SMTP_DEBUG": SMTP_DEBUG,
     }
 
 
 def print_smtp_status():
-    """Print email configuration to stdout at startup."""
+    api_key = os.environ.get("BREVO_API_KEY", "")
     print("─── Email Configuration ───")
-    if BREVO_API_KEY:
-        print("  ✓ Method: Brevo HTTP API (port 443)")
-        print(f"  ✓ From:   {SMTP_FROM}")
-        print(f"  ✓ API key: {BREVO_API_KEY[:6]}***")
-    elif SMTP_HOST and SMTP_USER and SMTP_PASS:
-        mode = "SSL" if SMTP_PORT == 465 else "STARTTLS"
-        print(f"  ✓ Method: SMTP {mode} — {SMTP_HOST}:{SMTP_PORT}")
-        print(f"  ✓ From:   {SMTP_FROM}")
-        print(f"  ✓ User:   {SMTP_USER}")
-        if SMTP_USER and SMTP_FROM and SMTP_USER != SMTP_FROM:
-            print(f"  ⚠ SMTP_USER != SMTP_FROM — some providers require these to match")
+    if api_key:
+        print("  ✓ Brevo HTTP API (port 443)")
+        print(f"  ✓ From:    {SMTP_FROM}")
+        print(f"  ✓ API key: {api_key[:6]}***")
     else:
-        print("  ⚠ Email not configured — invitation emails disabled")
-        print("  ⚠ Set BREVO_API_KEY (recommended) or SMTP_HOST+SMTP_USER+SMTP_PASS")
+        print("  ⚠ BREVO_API_KEY not set — invitation emails disabled")
     print("────────────────────────────")
 
 
-def _send_via_brevo_api(to_email, subject, html_body):
-    """Send using Brevo's REST API over HTTPS (works on all hosts)."""
-    payload = json.dumps({
-        "sender":      {"name": "MyTasks", "email": SMTP_FROM},
-        "to":          [{"email": to_email}],
-        "subject":     subject,
-        "htmlContent": html_body,
-    }).encode()
-    req = urllib.request.Request(
-        BREVO_API_URL,
-        data=payload,
-        headers={
-            "api-key":      BREVO_API_KEY,
-            "Content-Type": "application/json",
-            "Accept":       "application/json",
-        },
-    )
+def send_email(to_email, subject, html_body):
+    """Send via Brevo HTTP API. Returns (True, "") or (False, error_message)."""
+    api_key = os.environ.get("BREVO_API_KEY", "")
+    if not api_key:
+        return False, "BREVO_API_KEY not set"
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            print(f"✓ Email sent to {to_email} via Brevo API (status {resp.status})")
+        payload = json.dumps({
+            "sender":      {"name": "MyTasks", "email": SMTP_FROM},
+            "to":          [{"email": to_email}],
+            "subject":     subject,
+            "htmlContent": html_body,
+        }).encode()
+        req = urllib.request.Request(
+            "https://api.brevo.com/v3/smtp/email",
+            data=payload,
+            headers={
+                "api-key":      api_key,
+                "Content-Type": "application/json",
+                "Accept":       "application/json",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            print(f"✓ Email sent to {to_email}")
             return True, ""
     except urllib.error.HTTPError as e:
-        body = e.read().decode(errors="replace")
-        err = f"Brevo API HTTP {e.code}: {body[:200]}"
-        print(f"✗ {err}")
+        err = f"API error {e.code}: {e.read().decode(errors='replace')[:200]}"
+        print(f"✗ Brevo {err}")
         return False, err
     except Exception as e:
-        err = f"Brevo API error: {type(e).__name__}: {e}"
-        print(f"✗ {err}")
+        err = str(e)
+        print(f"✗ Email error: {err}")
         return False, err
-
-
-def _send_via_smtp(to_email, subject, html_body):
-    """Send via SMTP with auto-detection of SSL (port 465) vs STARTTLS."""
-    try:
-        msg = MIMEMultipart("alternative")
-        msg["Subject"]  = subject
-        msg["From"]     = f"MyTasks <{SMTP_FROM}>"
-        msg["To"]       = to_email
-        msg["Reply-To"] = SMTP_FROM
-        msg.attach(MIMEText(html_body, "html", "utf-8"))
-        if SMTP_PORT == 465:
-            ctx = __import__("ssl").create_default_context()
-            with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=10, context=ctx) as srv:
-                if SMTP_DEBUG: srv.set_debuglevel(2)
-                srv.login(SMTP_USER, SMTP_PASS)
-                srv.send_message(msg)
-        else:
-            with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=10) as srv:
-                if SMTP_DEBUG: srv.set_debuglevel(2)
-                srv.ehlo()
-                srv.starttls()
-                srv.ehlo()
-                srv.login(SMTP_USER, SMTP_PASS)
-                srv.send_message(msg)
-        print(f"✓ Email sent to {to_email} via SMTP")
-        return True, ""
-    except smtplib.SMTPAuthenticationError as e:
-        err = f"Auth failed ({e.smtp_code}): {e.smtp_error.decode() if isinstance(e.smtp_error, bytes) else e.smtp_error}"
-        print(f"✗ SMTP AUTH ERROR to {to_email}: {err}")
-        return False, err
-    except smtplib.SMTPSenderRefused as e:
-        err = f"Sender refused ({e.smtp_code}): {e.sender}"
-        print(f"✗ SMTP SENDER REFUSED: {err}")
-        return False, err
-    except smtplib.SMTPRecipientsRefused as e:
-        err = f"Recipients refused: {list(e.recipients.keys())}"
-        print(f"✗ SMTP RECIPIENTS REFUSED: {err}")
-        return False, err
-    except smtplib.SMTPException as e:
-        err = f"SMTP error: {type(e).__name__}: {e}"
-        print(f"✗ {err}")
-        return False, err
-    except OSError as e:
-        err = f"Network error connecting to {SMTP_HOST}:{SMTP_PORT}: {e}"
-        print(f"✗ {err}")
-        return False, err
-    except Exception as e:
-        err = f"{type(e).__name__}: {e}"
-        print(f"✗ Unexpected email error to {to_email}: {err}")
-        traceback.print_exc()
-        return False, err
-
-
-def send_email(to_email, subject, html_body):
-    """Send an HTML email. Uses Brevo API if BREVO_API_KEY is set, else SMTP.
-    Returns (True, "") on success or (False, error_message) on failure.
-    """
-    if not smtp_configured():
-        msg = "Email not configured (set BREVO_API_KEY or SMTP credentials)"
-        print(f"⚠ {msg}")
-        return False, msg
-    if BREVO_API_KEY:
-        return _send_via_brevo_api(to_email, subject, html_body)
-    return _send_via_smtp(to_email, subject, html_body)
 
 
 # ─── Email Templates ──────────────────────────────────────────────────────────
