@@ -4497,6 +4497,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadNotifications();
   setInterval(loadNotifications, 30000);
 
+  // Trigger overdue-email check 5s after load (non-blocking, fire-and-forget)
+  setTimeout(() => fetch('/api/check-overdue', { method: 'POST' }).catch(() => {}), 5000);
+
   // Mark body as ready (prevents language flash)
   document.body.classList.add('lang-ready');
 
