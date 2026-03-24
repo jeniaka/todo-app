@@ -180,11 +180,7 @@
         <div class="time-row">
           <label>Due date:</label>
           <input type="date" id="dueDateInput">
-          <div class="time-input-24h">
-            <input type="number" id="dueTimeHH" min="0" max="23" placeholder="HH" style="width:30px">
-            <span class="time-separator">:</span>
-            <input type="number" id="dueTimeMM" min="0" max="59" placeholder="MM" step="5" style="width:30px">
-          </div>
+          <button class="time-picker-trigger" id="dueTimePicker" type="button">Set time</button>
         </div>
       </div>
       <div class="add-dropdown-footer">
@@ -318,11 +314,7 @@
               <label data-i18n="dueDate">Due date</label>
               <div style="display:flex;align-items:center;gap:4px">
                 <input type="date" id="gbDueDateInput" style="font-size:12px;padding:3px 6px;border:1.5px solid var(--border-strong);border-radius:6px;background:var(--bg-secondary);color:var(--text-primary)">
-                <div class="time-input-24h">
-                  <input type="number" id="gbDueTimeHH" min="0" max="23" placeholder="HH" style="width:30px">
-                  <span class="time-separator">:</span>
-                  <input type="number" id="gbDueTimeMM" min="0" max="59" placeholder="MM" step="5" style="width:30px">
-                </div>
+                <button class="time-picker-trigger" id="gbDuePicker" type="button">Set time</button>
               </div>
             </div>
             <div class="add-more-row">
@@ -501,11 +493,7 @@
         <div class="time-row-detail">
           <span class="time-label" data-i18n="dueDate">Due date:</span>
           <input type="date" id="drawerDueDate">
-          <div class="time-input-24h">
-            <input type="number" id="drawerDueTimeHH" min="0" max="23" placeholder="HH" style="width:30px">
-            <span class="time-separator">:</span>
-            <input type="number" id="drawerDueTimeMM" min="0" max="59" placeholder="MM" step="5" style="width:30px">
-          </div>
+          <button class="time-picker-trigger" id="drawerDuePicker" type="button">Set time</button>
         </div>
         <div id="drawerTimeInfo"></div>
       </div>

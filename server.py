@@ -37,7 +37,13 @@ MONGODB_URI        = os.environ.get("MONGODB_URI", "")
 GOOGLE_CLIENT_ID   = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 REDIRECT_URI       = os.environ.get("REDIRECT_URI", f"http://localhost:{PORT}/auth/callback")
-SESSION_SECRET     = os.environ.get("SESSION_SECRET", secrets.token_hex(32))
+SESSION_SECRET     = os.environ.get("SESSION_SECRET", "")
+if not SESSION_SECRET:
+    SESSION_SECRET = secrets.token_hex(32)
+    print("WARNING: SESSION_SECRET not set — sessions will be LOST on every restart/deploy")
+    print("         Set SESSION_SECRET in your environment variables to fix this.")
+else:
+    print(f"OK: SESSION_SECRET loaded ({len(SESSION_SECRET)} chars)")
 ANTHROPIC_API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
 
 def check_and_send_overdue_emails(user):
@@ -333,9 +339,15 @@ def verify_session(token):
     try:
         payload, sig = token.rsplit(".", 1)
         if hmac.compare_digest(sign(payload), sig):
-            return json.loads(base64.urlsafe_b64decode(payload))
-    except Exception:
-        pass
+            data = json.loads(base64.urlsafe_b64decode(payload))
+            if not data.get("id") or not data.get("email"):
+                print(f"verify_session: missing required fields in payload")
+                return None
+            return data
+    except ValueError as e:
+        print(f"verify_session: malformed token — {e}")
+    except Exception as e:
+        print(f"verify_session: unexpected error — {e}")
     return None
 
 def create_state():
@@ -420,10 +432,24 @@ MANIFEST = json.dumps({
 }).encode()
 
 SERVICE_WORKER = b"""
-const CACHE = 'tasks-v3';
-self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/login', '/static/style.css', '/static/app.js']))));
+const CACHE = 'tasks-v5';
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/static/style.css', '/static/app.js'])));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(
+      keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+    ))
+  );
+  self.clients.claim();
+});
 self.addEventListener('fetch', e => {
-  if (e.request.url.includes('/api/') || e.request.url.includes('/auth/')) return;
+  const url = e.request.url;
+  if (url.includes('/api/') || url.includes('/auth/') ||
+      url.includes('/login') || url.includes('/verify/') ||
+      url.includes('/invite/')) return;
   e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
 """
@@ -573,7 +599,11 @@ class Handler(BaseHTTPRequestHandler):
         print(f"  {self.address_string()} — {fmt % args}")
 
     def get_session(self):
-        cookies = SimpleCookie(self.headers.get("Cookie", ""))
+        try:
+            cookies = SimpleCookie(self.headers.get("Cookie", ""))
+        except Exception as e:
+            print(f"get_session: cookie parse error — {e}")
+            return None
         if "session" in cookies:
             return verify_session(cookies["session"].value)
         return None
@@ -883,6 +913,19 @@ class Handler(BaseHTTPRequestHandler):
             group_slug = g.get("slug","")
             redirect_target = f"/groups/{group_slug}" if group_slug else "/groups"
             return self.redirect(redirect_target)
+
+        if path == "/api/session-info":
+            user = self.get_session()
+            if not user:
+                return self.ok("application/json", json.dumps({"authenticated": False}).encode())
+            info = {
+                "authenticated": True,
+                "id": user.get("id"),
+                "email": user.get("email"),
+                "name": user.get("name"),
+                "secret_set": bool(os.environ.get("SESSION_SECRET")),
+            }
+            return self.ok("application/json", json.dumps(info).encode())
 
         if path == "/api/settings":
             user = self.get_session()

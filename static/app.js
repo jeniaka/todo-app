@@ -146,6 +146,7 @@ const TL = {
     clearCompletedGroup:'Clear completed',
     confirmClearCompletedGroup:'Remove all completed tasks from the group?',
     micPermissionDenied:'Microphone access denied',
+    setTime:'Set time',set:'Set',clear:'Clear',startRecording:'Start recording',stopRecording:'Stop recording',
     jiraExportTitle:'How to export from Jira',
     jiraStep1:'Go to your Jira project',jiraStep2:'Click "Issues" in the left sidebar',
     jiraStep3:'Click "View all issues and filters"',jiraStep4:'Apply filters to select issues',
@@ -266,6 +267,7 @@ const TL = {
     clearCompletedGroup:'נקה שהושלמו',confirmClearCompletedGroup:'להסיר את כל המשימות שהושלמו מהקבוצה?',
     showMore:'הצג עוד',showLess:'הצג פחות',subtasksBlockDone:'יש להשלים את כל המשימות המשנה תחילה',
     micPermissionDenied:'הגישה למיקרופון נדחתה',estimate:'הערכה',
+    setTime:'הגדר שעה',set:'הגדר',clear:'נקה',startRecording:'התחל הקלטה',stopRecording:'עצור הקלטה',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -377,6 +379,7 @@ const TL = {
     clearCompletedGroup:'مسح المكتملة',confirmClearCompletedGroup:'إزالة جميع المهام المكتملة من المجموعة؟',
     showMore:'عرض المزيد',showLess:'عرض أقل',subtasksBlockDone:'أكمل جميع المهام الفرعية أولاً',
     micPermissionDenied:'تم رفض الوصول إلى الميكروفون',estimate:'التقدير',
+    setTime:'تعيين الوقت',set:'تعيين',clear:'مسح',startRecording:'بدء التسجيل',stopRecording:'إيقاف التسجيل',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -488,6 +491,7 @@ const TL = {
     clearCompletedGroup:'Borrar completadas',confirmClearCompletedGroup:'¿Eliminar todas las tareas completadas del grupo?',
     showMore:'Ver más',showLess:'Ver menos',subtasksBlockDone:'Completa todas las subtareas primero',
     micPermissionDenied:'Acceso al micrófono denegado',estimate:'Estimación',
+    setTime:'Establecer hora',set:'Establecer',clear:'Borrar',startRecording:'Iniciar grabación',stopRecording:'Detener grabación',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -599,6 +603,7 @@ const TL = {
     clearCompletedGroup:'Effacer terminées',confirmClearCompletedGroup:'Supprimer toutes les tâches terminées du groupe ?',
     showMore:'Voir plus',showLess:'Voir moins',subtasksBlockDone:'Terminez d\'abord toutes les sous-tâches',
     micPermissionDenied:'Accès au microphone refusé',estimate:'Estimation',
+    setTime:'Définir l\'heure',set:'Définir',clear:'Effacer',startRecording:'Commencer l\'enregistrement',stopRecording:'Arrêter l\'enregistrement',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -710,6 +715,7 @@ const TL = {
     clearCompletedGroup:'Abgeschlossene löschen',confirmClearCompletedGroup:'Alle abgeschlossenen Aufgaben aus der Gruppe entfernen?',
     showMore:'Mehr anzeigen',showLess:'Weniger anzeigen',subtasksBlockDone:'Erst alle Unteraufgaben abschließen',
     micPermissionDenied:'Mikrofonzugriff verweigert',estimate:'Schätzung',
+    setTime:'Uhrzeit einstellen',set:'Einstellen',clear:'Löschen',startRecording:'Aufnahme starten',stopRecording:'Aufnahme stoppen',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -821,6 +827,7 @@ const TL = {
     clearCompletedGroup:'Очистить завершённые',confirmClearCompletedGroup:'Удалить все завершённые задачи из группы?',
     showMore:'Показать ещё',showLess:'Показать меньше',subtasksBlockDone:'Сначала завершите все подзадачи',
     micPermissionDenied:'Доступ к микрофону запрещён',estimate:'Оценка',
+    setTime:'Установить время',set:'Установить',clear:'Очистить',startRecording:'Начать запись',stopRecording:'Остановить запись',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -932,6 +939,7 @@ const TL = {
     clearCompletedGroup:'Limpar concluídas',confirmClearCompletedGroup:'Remover todas as tarefas concluídas do grupo?',
     showMore:'Ver mais',showLess:'Ver menos',subtasksBlockDone:'Complete todas as subtarefas primeiro',
     micPermissionDenied:'Acesso ao microfone negado',estimate:'Estimativa',
+    setTime:'Definir hora',set:'Definir',clear:'Limpar',startRecording:'Iniciar gravação',stopRecording:'Parar gravação',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -1043,6 +1051,7 @@ const TL = {
     clearCompletedGroup:'清除已完成',confirmClearCompletedGroup:'从组中删除所有已完成的任务？',
     showMore:'显示更多',showLess:'显示更少',subtasksBlockDone:'请先完成所有子任务',
     micPermissionDenied:'麦克风访问被拒绝',estimate:'预估',
+    setTime:'设置时间',set:'设置',clear:'清除',startRecording:'开始录音',stopRecording:'停止录音',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -1154,6 +1163,7 @@ const TL = {
     clearCompletedGroup:'完了をクリア',confirmClearCompletedGroup:'グループから完了タスクをすべて削除しますか？',
     showMore:'もっと見る',showLess:'折りたたむ',subtasksBlockDone:'先にすべてのサブタスクを完了してください',
     micPermissionDenied:'マイクへのアクセスが拒否されました',estimate:'見積もり',
+    setTime:'時間を設定',set:'設定',clear:'クリア',startRecording:'録音開始',stopRecording:'録音停止',
   },
 };
 
@@ -1839,7 +1849,10 @@ function showGroupTaskDetail(task) {
     <div class="confirm-card modal-wide" style="max-height:85vh;overflow-y:auto">
       <div class="confirm-title" style="margin-bottom:12px">${tl.groupTaskDetails||'Task Details'}</div>
       <textarea class="modal-input" id="gtdTitle" rows="2" style="resize:none;font-weight:600"${!canEdit?' readonly':''}>${esc(task.text)}</textarea>
-      <textarea class="modal-input" id="gtdNotes" rows="3" placeholder="${tl.groupTaskNotes||'Notes…'}"${!canEdit?' readonly':''}>${esc(task.description||'')}</textarea>
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <textarea class="modal-input" id="gtdNotes" rows="3" placeholder="${tl.groupTaskNotes||'Notes…'}"${!canEdit?' readonly':''}>${esc(task.description||'')}</textarea>
+        ${canEdit && SpeechRecognition ? `<button class="mic-button" id="gtdMicBtn" type="button" aria-label="${tl.startRecording||'Start recording'}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>` : ''}
+      </div>
       <div style="margin:8px 0">
         <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:6px">${tl.priority||'Priority'}</label>
         <div class="add-p-row" id="gtdPriority">
@@ -1871,11 +1884,7 @@ function showGroupTaskDetail(task) {
           <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:6px">${tl.dueDate||'Due date'}</label>
           <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
             <input type="date" id="gtdDueDateInput" style="font-size:12px;padding:4px 6px;border:1.5px solid var(--border-strong);border-radius:6px;background:var(--bg-secondary);color:var(--text-primary)"${!canEdit?' disabled':''} value="${task.dueDate ? new Date(task.dueDate).toISOString().slice(0,10) : ''}">
-            <div class="time-input-24h">
-              <input type="number" id="gtdDueTimeHH" min="0" max="23" placeholder="HH" style="width:30px"${!canEdit?' disabled':''} value="${task.dueDate ? String(new Date(task.dueDate).getHours()).padStart(2,'0') : ''}">
-              <span class="time-separator">:</span>
-              <input type="number" id="gtdDueTimeMM" min="0" max="59" placeholder="MM" step="5" style="width:30px"${!canEdit?' disabled':''} value="${task.dueDate ? String(new Date(task.dueDate).getMinutes()).padStart(2,'0') : ''}">
-            </div>
+            ${canEdit ? `<button class="time-picker-trigger" id="gtdDuePicker" type="button" data-value="${task.dueDate ? String(new Date(task.dueDate).getHours()).padStart(2,'0')+':'+String(new Date(task.dueDate).getMinutes()).padStart(2,'0') : ''}">${task.dueDate ? String(new Date(task.dueDate).getHours()).padStart(2,'0')+':'+String(new Date(task.dueDate).getMinutes()).padStart(2,'0') : (tl.setTime||'Set time')}</button>` : (task.dueDate ? `<span style="font-size:12px;color:var(--text-secondary)">${String(new Date(task.dueDate).getHours()).padStart(2,'0')}:${String(new Date(task.dueDate).getMinutes()).padStart(2,'0')}</span>` : '')}
           </div>
         </div>
       </div>
@@ -1944,6 +1953,46 @@ function showGroupTaskDetail(task) {
 
   wireSubEvents();
 
+  // Time picker trigger for group task detail
+  if (canEdit) {
+    setupTimePickerTrigger(el.querySelector('#gtdDuePicker'), null);
+  }
+
+  // Mic button for group task detail notes
+  const gtdMicBtn = el.querySelector('#gtdMicBtn');
+  if (gtdMicBtn && SpeechRecognition) {
+    gtdMicBtn.addEventListener('click', () => {
+      if (!recognition) initSpeech();
+      const textarea = el.querySelector('#gtdNotes');
+      let finalText = textarea.value;
+      recognition.onresult = ev => {
+        let interim = '';
+        for (let i = ev.resultIndex; i < ev.results.length; i++) {
+          if (ev.results[i].isFinal) finalText += ev.results[i][0].transcript + ' ';
+          else interim += ev.results[i][0].transcript;
+        }
+        textarea.value = finalText + interim;
+      };
+      recognition.onend = () => {
+        isListening = false;
+        gtdMicBtn.classList.remove('recording');
+        textarea.value = finalText.trim();
+      };
+      recognition.onerror = ev => {
+        isListening = false;
+        gtdMicBtn.classList.remove('recording');
+        if (ev.error === 'not-allowed') showToast(t('micPermissionDenied') || 'Microphone access denied', 'error');
+      };
+      if (isListening) { recognition.stop(); return; }
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
+      try { recognition.start(); } catch(_) { initSpeech(); recognition.start(); }
+      isListening = true;
+      gtdMicBtn.classList.add('recording');
+    });
+  }
+
   // Priority pills
   el.querySelectorAll('[data-gtdp]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1995,8 +2044,8 @@ function showGroupTaskDetail(task) {
     const gtdDD = el.querySelector('#gtdDueDateInput');
     let newDueDate = null;
     if (gtdDD?.value) {
-      const hh = (el.querySelector('#gtdDueTimeHH')?.value || '0').padStart(2,'0');
-      const mm = (el.querySelector('#gtdDueTimeMM')?.value || '0').padStart(2,'0');
+      const gtdTimeVal = el.querySelector('#gtdDuePicker')?.dataset.value || '';
+      const [hh, mm] = gtdTimeVal ? gtdTimeVal.split(':') : ['00', '00'];
       newDueDate = new Date(`${gtdDD.value}T${hh}:${mm}`).getTime();
     }
     const newNotifyDone = el.querySelector('#gtdNotifyDone')?.checked || false;
@@ -2356,6 +2405,11 @@ function applyI18n() {
   // More options toggle
   const mot = document.getElementById('moreOptionsToggle');
   if (mot) mot.textContent = (mot.textContent.startsWith('▼') ? '▼' : '▶') + ' ' + t('moreOptions');
+  // Time picker trigger labels (only update if no value set)
+  ['dueTimePicker', 'drawerDuePicker', 'gbDuePicker'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn && !btn.dataset.value) btn.textContent = t('setTime') || 'Set time';
+  });
   updateBadge();
 }
 
@@ -2870,6 +2924,166 @@ function toggleSpeech() {
   try { recognition.start(); } catch (_) { initSpeech(); recognition.start(); }
 }
 
+// ─── Visual Time Picker ────────────────────────────────────────────────────────
+function scrollToSelected(wheel) {
+  const selected = wheel.querySelector('.time-wheel-item.selected');
+  if (selected) {
+    setTimeout(() => selected.scrollIntoView({ block: 'center', behavior: 'auto' }), 50);
+  }
+}
+
+function createScrollWheel(values, selectedIndex) {
+  const wheel = document.createElement('div');
+  wheel.className = 'time-wheel';
+  const idx = Math.min(Math.max(selectedIndex, 0), values.length - 1);
+  wheel.dataset.selected = values[idx];
+
+  const list = document.createElement('div');
+  list.className = 'time-wheel-list';
+
+  const padItem = () => {
+    const d = document.createElement('div');
+    d.className = 'time-wheel-item time-wheel-pad';
+    return d;
+  };
+  list.appendChild(padItem());
+  list.appendChild(padItem());
+
+  values.forEach((val, i) => {
+    const item = document.createElement('div');
+    item.className = 'time-wheel-item';
+    if (i === idx) item.classList.add('selected');
+    item.textContent = val;
+    item.dataset.value = val;
+    item.addEventListener('click', () => {
+      list.querySelectorAll('.time-wheel-item').forEach(el => el.classList.remove('selected'));
+      item.classList.add('selected');
+      wheel.dataset.selected = val;
+      item.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+    list.appendChild(item);
+  });
+
+  list.appendChild(padItem());
+  list.appendChild(padItem());
+  wheel.appendChild(list);
+
+  // Snap on scroll end
+  let snapTimer;
+  list.addEventListener('scroll', () => {
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => {
+      const containerRect = list.getBoundingClientRect();
+      const centerY = containerRect.top + containerRect.height / 2;
+      let closestItem = null, closestDist = Infinity;
+      list.querySelectorAll('.time-wheel-item:not(.time-wheel-pad)').forEach(item => {
+        const r = item.getBoundingClientRect();
+        const dist = Math.abs((r.top + r.height / 2) - centerY);
+        if (dist < closestDist) { closestDist = dist; closestItem = item; }
+      });
+      if (closestItem) {
+        list.querySelectorAll('.time-wheel-item').forEach(el => el.classList.remove('selected'));
+        closestItem.classList.add('selected');
+        wheel.dataset.selected = closestItem.dataset.value;
+        closestItem.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+    }, 100);
+  });
+
+  return wheel;
+}
+
+function createTimePicker(currentHours, currentMinutes, onSelect) {
+  const overlay = document.createElement('div');
+  overlay.className = 'time-picker-overlay';
+
+  const picker = document.createElement('div');
+  picker.className = 'time-picker';
+
+  const title = document.createElement('div');
+  title.className = 'time-picker-title';
+  title.textContent = t('setTime') || 'Set Time';
+  picker.appendChild(title);
+
+  const wheelsContainer = document.createElement('div');
+  wheelsContainer.className = 'time-picker-wheels';
+
+  const hourValues = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
+  const hoursWheel = createScrollWheel(hourValues, currentHours != null ? currentHours : 12);
+
+  const sep = document.createElement('div');
+  sep.className = 'time-picker-separator';
+  sep.textContent = ':';
+
+  const minValues = Array.from({ length: 12 }, (_, i) => (i * 5).toString().padStart(2, '0'));
+  const closestMinIdx = Math.round((currentMinutes != null ? currentMinutes : 0) / 5);
+  const minutesWheel = createScrollWheel(minValues, closestMinIdx);
+
+  wheelsContainer.appendChild(hoursWheel);
+  wheelsContainer.appendChild(sep);
+  wheelsContainer.appendChild(minutesWheel);
+  picker.appendChild(wheelsContainer);
+
+  const labels = document.createElement('div');
+  labels.className = 'time-picker-labels';
+  labels.innerHTML = '<span>HH</span><span>MM</span>';
+  picker.appendChild(labels);
+
+  const buttons = document.createElement('div');
+  buttons.className = 'time-picker-buttons';
+
+  const clearBtn = document.createElement('button');
+  clearBtn.className = 'btn-secondary';
+  clearBtn.textContent = t('clear') || 'Clear';
+  clearBtn.onclick = () => { onSelect(null, null); overlay.remove(); };
+
+  const setBtn = document.createElement('button');
+  setBtn.className = 'btn-primary';
+  setBtn.textContent = t('set') || 'Set';
+  setBtn.onclick = () => {
+    const h = parseInt(hoursWheel.dataset.selected, 10);
+    const m = parseInt(minutesWheel.dataset.selected, 10);
+    onSelect(h, m);
+    overlay.remove();
+  };
+
+  buttons.appendChild(clearBtn);
+  buttons.appendChild(setBtn);
+  picker.appendChild(buttons);
+  overlay.appendChild(picker);
+
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.addEventListener('keydown', function escHandler(e) {
+    if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', escHandler); }
+  });
+
+  document.body.appendChild(overlay);
+  scrollToSelected(hoursWheel);
+  scrollToSelected(minutesWheel);
+}
+
+function setupTimePickerTrigger(btn, onTimeChange) {
+  if (!btn) return;
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    const val = btn.dataset.value || '';
+    const [h, m] = val ? val.split(':').map(Number) : [null, null];
+    createTimePicker(h, m, (hours, minutes) => {
+      if (hours === null) {
+        btn.textContent = t('setTime') || 'Set time';
+        btn.dataset.value = '';
+        btn.classList.remove('has-value');
+      } else {
+        const s = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}`;
+        btn.textContent = s;
+        btn.dataset.value = s;
+        btn.classList.add('has-value');
+      }
+      onTimeChange && onTimeChange();
+    });
+  });
+}
+
 // ─── Add task ─────────────────────────────────────────────────────────────────
 async function addTodo(text) {
   if (!text.trim()) return;
@@ -2880,8 +3094,8 @@ async function addTodo(text) {
   let estimatedHours = estimateEl && estimateEl.value ? parseFloat(estimateEl.value) : null;
   let dueDate = null;
   if (dueDateEl && dueDateEl.value) {
-    const hh = (document.getElementById('dueTimeHH')?.value || '0').padStart(2,'0');
-    const mm = (document.getElementById('dueTimeMM')?.value || '0').padStart(2,'0');
+    const timeVal = document.getElementById('dueTimePicker')?.dataset.value || '';
+    const [hh, mm] = timeVal ? timeVal.split(':') : ['00', '00'];
     dueDate = new Date(`${dueDateEl.value}T${hh}:${mm}`).getTime();
   }
   const todo = migrateTodo({
@@ -2895,10 +3109,12 @@ async function addTodo(text) {
   if (notifyCheck) notifyCheck.checked = false;
   if (estimateEl) estimateEl.value = '';
   if (dueDateEl) dueDateEl.value = '';
-  const dueTimeHHEl = document.getElementById('dueTimeHH');
-  const dueTimeMMEl = document.getElementById('dueTimeMM');
-  if (dueTimeHHEl) dueTimeHHEl.value = '';
-  if (dueTimeMMEl) dueTimeMMEl.value = '';
+  const dueTimePickerEl = document.getElementById('dueTimePicker');
+  if (dueTimePickerEl) {
+    dueTimePickerEl.textContent = t('setTime') || 'Set time';
+    dueTimePickerEl.dataset.value = '';
+    dueTimePickerEl.classList.remove('has-value');
+  }
   state.todos.unshift(todo);
   resetPriorityPicker();
   render();
@@ -2986,17 +3202,23 @@ function renderDrawer(todoOrId) {
   const drawerEst = document.getElementById('drawerEstimate');
   if (drawerEst) drawerEst.value = todo.estimatedHours != null ? String(todo.estimatedHours) : '';
   const drawerDD = document.getElementById('drawerDueDate');
-  const drawerDTHH = document.getElementById('drawerDueTimeHH');
-  const drawerDTMM = document.getElementById('drawerDueTimeMM');
+  const drawerTimePicker = document.getElementById('drawerDuePicker');
   if (drawerDD && todo.dueDate) {
     const d = new Date(todo.dueDate);
     drawerDD.value = d.toISOString().slice(0, 10);
-    if (drawerDTHH) drawerDTHH.value = String(d.getHours()).padStart(2,'0');
-    if (drawerDTMM) drawerDTMM.value = String(d.getMinutes()).padStart(2,'0');
+    if (drawerTimePicker) {
+      const s = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      drawerTimePicker.textContent = s;
+      drawerTimePicker.dataset.value = s;
+      drawerTimePicker.classList.add('has-value');
+    }
   } else {
     if (drawerDD) drawerDD.value = '';
-    if (drawerDTHH) drawerDTHH.value = '';
-    if (drawerDTMM) drawerDTMM.value = '';
+    if (drawerTimePicker) {
+      drawerTimePicker.textContent = t('setTime') || 'Set time';
+      drawerTimePicker.dataset.value = '';
+      drawerTimePicker.classList.remove('has-value');
+    }
   }
 
   // Time info block
@@ -3087,8 +3309,7 @@ function flushDrawerSave() {
   const statusEl = document.getElementById('drawerStatus');
   const estEl    = document.getElementById('drawerEstimate');
   const ddEl     = document.getElementById('drawerDueDate');
-  const dtElHH   = document.getElementById('drawerDueTimeHH');
-  const dtElMM   = document.getElementById('drawerDueTimeMM');
+  const drawerPickerEl = document.getElementById('drawerDuePicker');
   if (titleEl) todo.text        = titleEl.value.trim() || todo.text;
   if (descEl)  todo.description = descEl.value;
   if (statusEl && statusEl.value) {
@@ -3111,8 +3332,8 @@ function flushDrawerSave() {
   }
   if (estEl) todo.estimatedHours = estEl.value ? parseFloat(estEl.value) : null;
   if (ddEl && ddEl.value) {
-    const hh = (dtElHH?.value || '0').padStart(2,'0');
-    const mm = (dtElMM?.value || '0').padStart(2,'0');
+    const timeVal = drawerPickerEl?.dataset.value || '';
+    const [hh, mm] = timeVal ? timeVal.split(':') : ['00', '00'];
     todo.dueDate = new Date(`${ddEl.value}T${hh}:${mm}`).getTime();
   } else if (ddEl) {
     todo.dueDate = null;
@@ -4310,12 +4531,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ── 24h time input padding ────────────────────────────────────────────────
-  ['dueTimeHH','dueTimeMM'].forEach(id => {
-    document.getElementById(id)?.addEventListener('blur', e => {
-      if (e.target.value) e.target.value = e.target.value.padStart(2,'0');
-    });
-  });
+  // ── Time picker trigger (personal task creation) ──────────────────────────
+  setupTimePickerTrigger(document.getElementById('dueTimePicker'), null);
 
   // ── Filters ───────────────────────────────────────────────────────────────
   document.querySelectorAll('.filter-btn[data-filter]').forEach(b =>
@@ -4440,14 +4657,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Estimate / due date change
   document.getElementById('drawerEstimate')?.addEventListener('change', scheduleDrawerSave);
   document.getElementById('drawerDueDate')?.addEventListener('change', scheduleDrawerSave);
-  document.getElementById('drawerDueTimeHH')?.addEventListener('change', scheduleDrawerSave);
-  document.getElementById('drawerDueTimeMM')?.addEventListener('change', scheduleDrawerSave);
-  // Pad on blur
-  ['drawerDueTimeHH','drawerDueTimeMM'].forEach(id => {
-    document.getElementById(id)?.addEventListener('blur', e => {
-      if (e.target.value) e.target.value = e.target.value.padStart(2,'0');
-    });
-  });
+  setupTimePickerTrigger(document.getElementById('drawerDuePicker'), scheduleDrawerSave);
 
   document.getElementById('drawerDeleteBtn').addEventListener('click', () => {
     const tl = TL[state.lang] || TL.en;
@@ -4719,6 +4929,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // Time picker trigger for group add form
+  setupTimePickerTrigger(document.getElementById('gbDuePicker'), null);
+
   // Submit handler — fixed and robust
   document.getElementById('gbAddForm').addEventListener('submit', async e => {
     e.preventDefault();
@@ -4733,8 +4946,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const gbDD = document.getElementById('gbDueDateInput');
     let dueDate = null;
     if (gbDD?.value) {
-      const hh = (document.getElementById('gbDueTimeHH')?.value || '0').padStart(2,'0');
-      const mm = (document.getElementById('gbDueTimeMM')?.value || '0').padStart(2,'0');
+      const gbTimeVal = document.getElementById('gbDuePicker')?.dataset.value || '';
+      const [hh, mm] = gbTimeVal ? gbTimeVal.split(':') : ['00', '00'];
       dueDate = new Date(`${gbDD.value}T${hh}:${mm}`).getTime();
     }
     const notifyOnDone = document.getElementById('gbNotifyDone')?.checked || false;
@@ -4751,10 +4964,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('[data-gbp]').forEach(b => b.classList.toggle('active', b.dataset.gbp === 'low'));
         if (estimateEl) estimateEl.value = '';
         if (gbDD) gbDD.value = '';
-        const gbHH = document.getElementById('gbDueTimeHH');
-        const gbMM = document.getElementById('gbDueTimeMM');
-        if (gbHH) gbHH.value = '';
-        if (gbMM) gbMM.value = '';
+        const gbTimePicker = document.getElementById('gbDuePicker');
+        if (gbTimePicker) {
+          gbTimePicker.textContent = t('setTime') || 'Set time';
+          gbTimePicker.dataset.value = '';
+          gbTimePicker.classList.remove('has-value');
+        }
         if (document.getElementById('gbNotifyDone')) document.getElementById('gbNotifyDone').checked = false;
         renderGroupTaskList();
       } else {
