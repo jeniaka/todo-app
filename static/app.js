@@ -140,6 +140,11 @@ const TL = {
     notifyWhenDone:'Notify me when done',
     estimate:'Estimate',
     showMore:'Show more',showLess:'Show less',
+    est2hours:'2 hours',est4hours:'4 hours',est1day:'1 day',
+    est3days:'3 days',est1week:'1 week',est2weeks:'2 weeks',
+    hours:'hours',day:'day',days:'days',week:'week',weeks:'weeks',
+    clearCompletedGroup:'Clear completed',
+    confirmClearCompletedGroup:'Remove all completed tasks from the group?',
     jiraExportTitle:'How to export from Jira',
     jiraStep1:'Go to your Jira project',jiraStep2:'Click "Issues" in the left sidebar',
     jiraStep3:'Click "View all issues and filters"',jiraStep4:'Apply filters to select issues',
@@ -255,6 +260,9 @@ const TL = {
     mondayStep1:'עבור ללוח שברצונך לייצא',mondayStep2:'לחץ על תפריט שלוש הנקודות (⋯) למעלה מימין',
     mondayStep3:'לחץ על "More actions" ← "Export board to Excel"',mondayStep4:'לחץ על "Export" בדיאלוג',
     mondayStep5:'שמור את הקובץ שהורד',mondayStep6:'חזור לכאן ולחץ על ייבוא',
+    est2hours:'2 שעות',est4hours:'4 שעות',est1day:'יום',est3days:'3 ימים',est1week:'שבוע',est2weeks:'שבועיים',
+    hours:'שעות',day:'יום',days:'ימים',week:'שבוע',weeks:'שבועות',
+    clearCompletedGroup:'נקה שהושלמו',confirmClearCompletedGroup:'להסיר את כל המשימות שהושלמו מהקבוצה?',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -361,6 +369,9 @@ const TL = {
     mondayStep1:'انتقل إلى اللوح الذي تريد تصديره',mondayStep2:'انقر على قائمة النقاط الثلاث (⋯) أعلى اليمين',
     mondayStep3:'انقر على "More actions" ← "Export board to Excel"',mondayStep4:'انقر على "Export" في مربع الحوار',
     mondayStep5:'احفظ الملف الذي تم تنزيله',mondayStep6:'ارجع هنا وانقر على استيراد',
+    est2hours:'ساعتان',est4hours:'4 ساعات',est1day:'يوم',est3days:'3 أيام',est1week:'أسبوع',est2weeks:'أسبوعان',
+    hours:'ساعات',day:'يوم',days:'أيام',week:'أسبوع',weeks:'أسابيع',
+    clearCompletedGroup:'مسح المكتملة',confirmClearCompletedGroup:'إزالة جميع المهام المكتملة من المجموعة؟',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -467,6 +478,9 @@ const TL = {
     mondayStep1:'Ve al tablero que quieres exportar',mondayStep2:'Haz clic en el menú de tres puntos (⋯) arriba a la derecha',
     mondayStep3:'Haz clic en "More actions" → "Export board to Excel"',mondayStep4:'Haz clic en "Export" en el diálogo',
     mondayStep5:'Guarda el archivo descargado',mondayStep6:'Vuelve aquí y haz clic en Importar',
+    est2hours:'2 horas',est4hours:'4 horas',est1day:'1 día',est3days:'3 días',est1week:'1 semana',est2weeks:'2 semanas',
+    hours:'horas',day:'día',days:'días',week:'semana',weeks:'semanas',
+    clearCompletedGroup:'Borrar completadas',confirmClearCompletedGroup:'¿Eliminar todas las tareas completadas del grupo?',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -573,6 +587,9 @@ const TL = {
     mondayStep1:'Allez sur le tableau à exporter',mondayStep2:'Cliquez sur le menu trois points (⋯) en haut à droite',
     mondayStep3:'Cliquez sur "More actions" → "Export board to Excel"',mondayStep4:'Cliquez sur "Export" dans le dialogue',
     mondayStep5:'Enregistrez le fichier téléchargé',mondayStep6:'Revenez ici et cliquez sur Importer',
+    est2hours:'2 heures',est4hours:'4 heures',est1day:'1 jour',est3days:'3 jours',est1week:'1 semaine',est2weeks:'2 semaines',
+    hours:'heures',day:'jour',days:'jours',week:'semaine',weeks:'semaines',
+    clearCompletedGroup:'Effacer terminées',confirmClearCompletedGroup:'Supprimer toutes les tâches terminées du groupe ?',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -679,6 +696,9 @@ const TL = {
     mondayStep1:'Gehen Sie zum zu exportierenden Board',mondayStep2:'Klicken Sie auf das Drei-Punkte-Menü (⋯) oben rechts',
     mondayStep3:'Klicken Sie auf "Weitere Aktionen" → "Board nach Excel exportieren"',mondayStep4:'Klicken Sie auf "Exportieren"',
     mondayStep5:'Speichern Sie die heruntergeladene Datei',mondayStep6:'Kommen Sie zurück und klicken Sie auf Importieren',
+    est2hours:'2 Stunden',est4hours:'4 Stunden',est1day:'1 Tag',est3days:'3 Tage',est1week:'1 Woche',est2weeks:'2 Wochen',
+    hours:'Stunden',day:'Tag',days:'Tage',week:'Woche',weeks:'Wochen',
+    clearCompletedGroup:'Abgeschlossene löschen',confirmClearCompletedGroup:'Alle abgeschlossenen Aufgaben aus der Gruppe entfernen?',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -785,6 +805,9 @@ const TL = {
     mondayStep1:'Перейдите на нужную доску',mondayStep2:'Нажмите на меню из трёх точек (⋯) вверху справа',
     mondayStep3:'Нажмите "Дополнительные действия" → "Экспортировать в Excel"',mondayStep4:'Нажмите "Экспортировать"',
     mondayStep5:'Сохраните скачанный файл',mondayStep6:'Вернитесь и нажмите Импорт',
+    est2hours:'2 часа',est4hours:'4 часа',est1day:'1 день',est3days:'3 дня',est1week:'1 неделя',est2weeks:'2 недели',
+    hours:'часов',day:'день',days:'дней',week:'неделя',weeks:'недели',
+    clearCompletedGroup:'Очистить завершённые',confirmClearCompletedGroup:'Удалить все завершённые задачи из группы?',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -891,6 +914,9 @@ const TL = {
     mondayStep1:'Vá ao quadro que deseja exportar',mondayStep2:'Clique no menu de três pontos (⋯) no canto superior direito',
     mondayStep3:'Clique em "More actions" → "Export board to Excel"',mondayStep4:'Clique em "Export" no diálogo',
     mondayStep5:'Salve o arquivo baixado',mondayStep6:'Volte aqui e clique em Importar',
+    est2hours:'2 horas',est4hours:'4 horas',est1day:'1 dia',est3days:'3 dias',est1week:'1 semana',est2weeks:'2 semanas',
+    hours:'horas',day:'dia',days:'dias',week:'semana',weeks:'semanas',
+    clearCompletedGroup:'Limpar concluídas',confirmClearCompletedGroup:'Remover todas as tarefas concluídas do grupo?',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -997,6 +1023,9 @@ const TL = {
     mondayStep1:'前往要导出的看板',mondayStep2:'点击右上角的三点菜单 (⋯)',
     mondayStep3:'点击"更多操作"→"将看板导出为 Excel"',mondayStep4:'在对话框中点击"导出"',
     mondayStep5:'保存下载的文件',mondayStep6:'回到此处并点击导入',
+    est2hours:'2小时',est4hours:'4小时',est1day:'1天',est3days:'3天',est1week:'1周',est2weeks:'2周',
+    hours:'小时',day:'天',days:'天',week:'周',weeks:'周',
+    clearCompletedGroup:'清除已完成',confirmClearCompletedGroup:'从组中删除所有已完成的任务？',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -1103,6 +1132,9 @@ const TL = {
     mondayStep1:'エクスポートするボードに移動',mondayStep2:'右上の三点メニュー (⋯) をクリック',
     mondayStep3:'「その他のアクション」→「ボードを Excel にエクスポート」をクリック',mondayStep4:'ダイアログで「エクスポート」をクリック',
     mondayStep5:'ダウンロードしたファイルを保存',mondayStep6:'ここに戻ってインポートをクリック',
+    est2hours:'2時間',est4hours:'4時間',est1day:'1日',est3days:'3日',est1week:'1週間',est2weeks:'2週間',
+    hours:'時間',day:'日',days:'日',week:'週間',weeks:'週間',
+    clearCompletedGroup:'完了をクリア',confirmClearCompletedGroup:'グループから完了タスクをすべて削除しますか？',
   },
 };
 
@@ -1741,6 +1773,16 @@ function renderGroupTaskList() {
       if (task) showGroupTaskDetail(task);
     });
   });
+
+  // Update stats / clear completed row
+  const doneCount = g.tasks.filter(tk => getTaskStatus(tk) === 'done').length;
+  const statsRow = document.getElementById('gbStatsRow');
+  const canClear = myRole === 'admin' || myRole === 'manager';
+  if (statsRow) {
+    statsRow.style.display = (doneCount > 0 && canClear) ? '' : 'none';
+    const cnt = document.getElementById('gbStatsCount');
+    if (cnt) cnt.textContent = `${doneCount} ${tl.tasksDone || 'done'}`;
+  }
 }
 
 function updateGbFilterBtns() {
@@ -1798,17 +1840,24 @@ function showGroupTaskDetail(task) {
           <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:6px">${tl.estimate||'Estimate'}</label>
           <select class="gb-select" id="gtdEstimate" style="width:100%"${!canEdit?' disabled':''}>
             <option value="">—</option>
-            <option value="0.25"${task.estimatedHours===0.25?' selected':''}>15m</option>
-            <option value="0.5"${task.estimatedHours===0.5?' selected':''}>30m</option>
-            <option value="1"${task.estimatedHours===1?' selected':''}>1h</option>
-            <option value="2"${task.estimatedHours===2?' selected':''}>2h</option>
-            <option value="4"${task.estimatedHours===4?' selected':''}>4h</option>
-            <option value="8"${task.estimatedHours===8?' selected':''}>8h</option>
+            <option value="2"${task.estimatedHours===2?' selected':''}>2 ${tl.hours||'hours'}</option>
+            <option value="4"${task.estimatedHours===4?' selected':''}>4 ${tl.hours||'hours'}</option>
+            <option value="8"${task.estimatedHours===8?' selected':''}>1 ${tl.day||'day'}</option>
+            <option value="24"${task.estimatedHours===24?' selected':''}>3 ${tl.days||'days'}</option>
+            <option value="40"${task.estimatedHours===40?' selected':''}>1 ${tl.week||'week'}</option>
+            <option value="80"${task.estimatedHours===80?' selected':''}>2 ${tl.weeks||'weeks'}</option>
           </select>
         </div>
         <div style="flex:1">
           <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:6px">${tl.dueDate||'Due date'}</label>
-          <input type="datetime-local" class="modal-input" id="gtdDueDate" style="padding:6px 8px;font-size:12px"${!canEdit?' disabled':''} value="${task.dueDate ? new Date(task.dueDate).toISOString().slice(0,16) : ''}">
+          <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+            <input type="date" id="gtdDueDateInput" style="font-size:12px;padding:4px 6px;border:1.5px solid var(--border-strong);border-radius:6px;background:var(--bg-secondary);color:var(--text-primary)"${!canEdit?' disabled':''} value="${task.dueDate ? new Date(task.dueDate).toISOString().slice(0,10) : ''}">
+            <div class="time-input-24h">
+              <input type="number" id="gtdDueTimeHH" min="0" max="23" placeholder="HH" style="width:30px"${!canEdit?' disabled':''} value="${task.dueDate ? String(new Date(task.dueDate).getHours()).padStart(2,'0') : ''}">
+              <span class="time-separator">:</span>
+              <input type="number" id="gtdDueTimeMM" min="0" max="59" placeholder="MM" step="5" style="width:30px"${!canEdit?' disabled':''} value="${task.dueDate ? String(new Date(task.dueDate).getMinutes()).padStart(2,'0') : ''}">
+            </div>
+          </div>
         </div>
       </div>
       <div style="margin:8px 0;display:flex;align-items:center;gap:8px">
@@ -1924,8 +1973,13 @@ function showGroupTaskDetail(task) {
     const newNotes = el.querySelector('#gtdNotes').value.trim();
     const newAssign = el.querySelector('#gtdAssign').value || null;
     const newEstimate = el.querySelector('#gtdEstimate')?.value ? parseFloat(el.querySelector('#gtdEstimate').value) : null;
-    const newDueDateVal = el.querySelector('#gtdDueDate')?.value;
-    const newDueDate = newDueDateVal ? new Date(newDueDateVal).getTime() : null;
+    const gtdDD = el.querySelector('#gtdDueDateInput');
+    let newDueDate = null;
+    if (gtdDD?.value) {
+      const hh = (el.querySelector('#gtdDueTimeHH')?.value || '0').padStart(2,'0');
+      const mm = (el.querySelector('#gtdDueTimeMM')?.value || '0').padStart(2,'0');
+      newDueDate = new Date(`${gtdDD.value}T${hh}:${mm}`).getTime();
+    }
     const newNotifyDone = el.querySelector('#gtdNotifyDone')?.checked || false;
     if (!newText) { el.querySelector('#gtdTitle').focus(); return; }
     const updates = {text: newText, description: newNotes, priority: localPriority, assignedTo: newAssign, subtasks: localSubtasks, estimatedHours: newEstimate, dueDate: newDueDate, notifyOnDone: newNotifyDone};
@@ -2350,6 +2404,18 @@ function subBarHTML(todo) {
   </div>`;
 }
 
+function formatEstimate(hours) {
+  if (!hours) return '';
+  if (hours <= 4) return `${hours}h`;
+  if (hours === 8) return (TL[state.lang]||TL.en).est1day || '1 day';
+  if (hours === 24) return (TL[state.lang]||TL.en).est3days || '3 days';
+  if (hours === 40) return (TL[state.lang]||TL.en).est1week || '1 week';
+  if (hours === 80) return (TL[state.lang]||TL.en).est2weeks || '2 weeks';
+  if (hours < 8) return `${hours}h`;
+  const days = Math.round(hours / 8);
+  return `${days}d`;
+}
+
 function formatDueBadge(todo) {
   const status = getTaskStatus(todo);
   if (status === 'done') {
@@ -2357,8 +2423,9 @@ function formatDueBadge(todo) {
       const actualMs = todo.completedAt - (todo.startedAt || todo.createdAt);
       const actualH = actualMs / 3600000;
       const diff = actualH - todo.estimatedHours;
-      if (diff > 0.5) return `<span class="due-badge" style="color:#F59E0B">Done in ${formatDuration(actualMs)} (est ${todo.estimatedHours}h)</span>`;
-      if (diff < -0.5) return `<span class="due-badge" style="color:#22C55E">Done in ${formatDuration(actualMs)} (est ${todo.estimatedHours}h)</span>`;
+      const estLabel = formatEstimate(todo.estimatedHours);
+      if (diff > 0.5) return `<span class="due-badge" style="color:#F59E0B">Done in ${formatDuration(actualMs)} (est ${estLabel})</span>`;
+      if (diff < -0.5) return `<span class="due-badge" style="color:#22C55E">Done in ${formatDuration(actualMs)} (est ${estLabel})</span>`;
       return `<span class="due-badge" style="color:#22C55E">Done in ${formatDuration(actualMs)}</span>`;
     }
     return '';
@@ -2366,7 +2433,7 @@ function formatDueBadge(todo) {
   const now = Date.now();
   let html = '';
   if (todo.estimatedHours) {
-    html += `<span class="time-badge">⏱ ${todo.estimatedHours >= 1 ? todo.estimatedHours + 'h' : Math.round(todo.estimatedHours * 60) + 'm'}</span>`;
+    html += `<span class="time-badge">⏱ ${formatEstimate(todo.estimatedHours)}</span>`;
   }
   if (todo.dueDate) {
     const diff = todo.dueDate - now;
@@ -2743,7 +2810,7 @@ function initSpeech() {
     isListening = false;
     updateMicBtn(false);
     if (e.error !== 'no-speech' && e.error !== 'aborted') {
-      showToast('🎤 ' + e.error);
+      showToast('🎤 ' + e.error, 'warning');
     }
   };
 }
@@ -2762,7 +2829,7 @@ function updateSubMicBtn(listening) {
 
 function toggleSpeech() {
   if (!SpeechRecognition) {
-    showToast('🎤 Speech not supported in this browser');
+    showToast('🎤 Speech not supported in this browser', 'warning');
     return;
   }
   if (!recognition) initSpeech();
@@ -2783,12 +2850,12 @@ async function addTodo(text) {
   const notifyOnDone = notifyCheck ? notifyCheck.checked : false;
   const estimateEl = document.getElementById('estimateSelect');
   const dueDateEl = document.getElementById('dueDateInput');
-  const dueTimeEl = document.getElementById('dueTimeInput');
   let estimatedHours = estimateEl && estimateEl.value ? parseFloat(estimateEl.value) : null;
   let dueDate = null;
   if (dueDateEl && dueDateEl.value) {
-    const timeStr = dueTimeEl && dueTimeEl.value ? dueTimeEl.value : '00:00';
-    dueDate = new Date(`${dueDateEl.value}T${timeStr}`).getTime();
+    const hh = (document.getElementById('dueTimeHH')?.value || '0').padStart(2,'0');
+    const mm = (document.getElementById('dueTimeMM')?.value || '0').padStart(2,'0');
+    dueDate = new Date(`${dueDateEl.value}T${hh}:${mm}`).getTime();
   }
   const todo = migrateTodo({
     id: Date.now(), text: text.trim(), done: false,
@@ -2801,7 +2868,10 @@ async function addTodo(text) {
   if (notifyCheck) notifyCheck.checked = false;
   if (estimateEl) estimateEl.value = '';
   if (dueDateEl) dueDateEl.value = '';
-  if (dueTimeEl) dueTimeEl.value = '';
+  const dueTimeHHEl = document.getElementById('dueTimeHH');
+  const dueTimeMMEl = document.getElementById('dueTimeMM');
+  if (dueTimeHHEl) dueTimeHHEl.value = '';
+  if (dueTimeMMEl) dueTimeMMEl.value = '';
   state.todos.unshift(todo);
   resetPriorityPicker();
   render();
@@ -2889,14 +2959,17 @@ function renderDrawer(todoOrId) {
   const drawerEst = document.getElementById('drawerEstimate');
   if (drawerEst) drawerEst.value = todo.estimatedHours != null ? String(todo.estimatedHours) : '';
   const drawerDD = document.getElementById('drawerDueDate');
-  const drawerDT = document.getElementById('drawerDueTime');
+  const drawerDTHH = document.getElementById('drawerDueTimeHH');
+  const drawerDTMM = document.getElementById('drawerDueTimeMM');
   if (drawerDD && todo.dueDate) {
     const d = new Date(todo.dueDate);
     drawerDD.value = d.toISOString().slice(0, 10);
-    if (drawerDT) drawerDT.value = d.toTimeString().slice(0, 5);
+    if (drawerDTHH) drawerDTHH.value = String(d.getHours()).padStart(2,'0');
+    if (drawerDTMM) drawerDTMM.value = String(d.getMinutes()).padStart(2,'0');
   } else {
     if (drawerDD) drawerDD.value = '';
-    if (drawerDT) drawerDT.value = '';
+    if (drawerDTHH) drawerDTHH.value = '';
+    if (drawerDTMM) drawerDTMM.value = '';
   }
 
   // Time info block
@@ -2987,7 +3060,8 @@ function flushDrawerSave() {
   const statusEl = document.getElementById('drawerStatus');
   const estEl    = document.getElementById('drawerEstimate');
   const ddEl     = document.getElementById('drawerDueDate');
-  const dtEl     = document.getElementById('drawerDueTime');
+  const dtElHH   = document.getElementById('drawerDueTimeHH');
+  const dtElMM   = document.getElementById('drawerDueTimeMM');
   if (titleEl) todo.text        = titleEl.value.trim() || todo.text;
   if (descEl)  todo.description = descEl.value;
   if (statusEl && statusEl.value) {
@@ -3010,8 +3084,9 @@ function flushDrawerSave() {
   }
   if (estEl) todo.estimatedHours = estEl.value ? parseFloat(estEl.value) : null;
   if (ddEl && ddEl.value) {
-    const timeStr = dtEl && dtEl.value ? dtEl.value : '00:00';
-    todo.dueDate = new Date(`${ddEl.value}T${timeStr}`).getTime();
+    const hh = (dtElHH?.value || '0').padStart(2,'0');
+    const mm = (dtElMM?.value || '0').padStart(2,'0');
+    todo.dueDate = new Date(`${ddEl.value}T${hh}:${mm}`).getTime();
   } else if (ddEl) {
     todo.dueDate = null;
   }
@@ -3144,7 +3219,7 @@ function checkDailyDigest() {
   if (hour < 9) return;
   localStorage.setItem('dailyDigestShown', today);
   const open   = state.todos.filter(x => getTaskStatus(x) !== 'done').length;
-  showToast(`📋 ${open} tasks today`);
+  showToast(`📋 ${open} tasks today`, 'info');
 }
 
 function checkWeeklyReport() {
@@ -3156,7 +3231,7 @@ function checkWeeklyReport() {
   if (localStorage.getItem('weeklyReportShown') === week) return;
   localStorage.setItem('weeklyReportShown', week);
   const done = state.todos.filter(x => x.done).length;
-  showToast(`📊 ${done} tasks completed this week`);
+  showToast(`📊 ${done} tasks completed this week`, 'info');
 }
 
 // ─── Router ───────────────────────────────────────────────────────────────────
@@ -4208,6 +4283,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // ── 24h time input padding ────────────────────────────────────────────────
+  ['dueTimeHH','dueTimeMM'].forEach(id => {
+    document.getElementById(id)?.addEventListener('blur', e => {
+      if (e.target.value) e.target.value = e.target.value.padStart(2,'0');
+    });
+  });
+
   // ── Filters ───────────────────────────────────────────────────────────────
   document.querySelectorAll('.filter-btn[data-filter]').forEach(b =>
     b.addEventListener('click', () => setFilter(b.dataset.filter))
@@ -4291,7 +4373,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Estimate / due date change
   document.getElementById('drawerEstimate')?.addEventListener('change', scheduleDrawerSave);
   document.getElementById('drawerDueDate')?.addEventListener('change', scheduleDrawerSave);
-  document.getElementById('drawerDueTime')?.addEventListener('change', scheduleDrawerSave);
+  document.getElementById('drawerDueTimeHH')?.addEventListener('change', scheduleDrawerSave);
+  document.getElementById('drawerDueTimeMM')?.addEventListener('change', scheduleDrawerSave);
+  // Pad on blur
+  ['drawerDueTimeHH','drawerDueTimeMM'].forEach(id => {
+    document.getElementById(id)?.addEventListener('blur', e => {
+      if (e.target.value) e.target.value = e.target.value.padStart(2,'0');
+    });
+  });
 
   document.getElementById('drawerDeleteBtn').addEventListener('click', () => {
     const tl = TL[state.lang] || TL.en;
@@ -4574,8 +4663,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const priority = state.gbNewPriority || 'low';
     const estimateEl = document.getElementById('gbEstimate');
     const estimatedHours = estimateEl?.value ? parseFloat(estimateEl.value) : null;
-    const dueDateEl = document.getElementById('gbDueDate');
-    const dueDate = dueDateEl?.value ? new Date(dueDateEl.value).getTime() : null;
+    const gbDD = document.getElementById('gbDueDateInput');
+    let dueDate = null;
+    if (gbDD?.value) {
+      const hh = (document.getElementById('gbDueTimeHH')?.value || '0').padStart(2,'0');
+      const mm = (document.getElementById('gbDueTimeMM')?.value || '0').padStart(2,'0');
+      dueDate = new Date(`${gbDD.value}T${hh}:${mm}`).getTime();
+    }
     const notifyOnDone = document.getElementById('gbNotifyDone')?.checked || false;
     const submitBtn = document.getElementById('gbAddSubmit');
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '…'; }
@@ -4589,7 +4683,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         state.gbNewPriority = 'low';
         document.querySelectorAll('[data-gbp]').forEach(b => b.classList.toggle('active', b.dataset.gbp === 'low'));
         if (estimateEl) estimateEl.value = '';
-        if (dueDateEl) dueDateEl.value = '';
+        if (gbDD) gbDD.value = '';
+        const gbHH = document.getElementById('gbDueTimeHH');
+        const gbMM = document.getElementById('gbDueTimeMM');
+        if (gbHH) gbHH.value = '';
+        if (gbMM) gbMM.value = '';
         if (document.getElementById('gbNotifyDone')) document.getElementById('gbNotifyDone').checked = false;
         renderGroupTaskList();
       } else {
@@ -4633,6 +4731,31 @@ document.addEventListener('DOMContentLoaded', async () => {
       onConfirm: async () => {
         await apiDeleteGroup(g._id);
         navigateTo('/groups');
+      }
+    });
+  });
+
+  // ── Clear completed group tasks ───────────────────────────────────────────
+  document.getElementById('gbClearDoneBtn')?.addEventListener('click', () => {
+    const g = state.activeGroup;
+    const tl = TL[state.lang]||TL.en;
+    const myRole2 = g?.myRole;
+    if (myRole2 !== 'admin' && myRole2 !== 'manager') {
+      showToast(tl.permissionDenied||'Permission denied', 'error'); return;
+    }
+    confirmAction({
+      title: tl.clearCompletedGroup||'Clear completed',
+      message: tl.confirmClearCompletedGroup||'Remove all completed tasks from the group?',
+      confirmText: tl.yes||'Yes',
+      onConfirm: async () => {
+        // Animate done cards out
+        document.querySelectorAll('#gbTaskList .task-card.done-card').forEach(card => card.classList.add('removing'));
+        await new Promise(r => setTimeout(r, 420));
+        g.tasks = g.tasks.filter(tk => getTaskStatus(tk) !== 'done');
+        renderGroupTaskList();
+        renderGbAnalytics();
+        showToast(tl.clearCompletedGroup||'Completed tasks cleared', 'success');
+        await fetch(`/api/groups/${g._id}/tasks/clear-completed`, {method:'POST'});
       }
     });
   });

@@ -1074,6 +1074,19 @@ class Handler(BaseHTTPRequestHandler):
                 })
                 return self.ok("application/json", json.dumps(task).encode())
 
+            # POST /api/groups/{id}/tasks/clear-completed
+            if len(parts) == 6 and parts[4] == "tasks" and parts[5] == "clear-completed":
+                group_id = parts[3]
+                g = load_group(group_id)
+                if not g: return self.ok("application/json", b'{"error":"not found"}')
+                role = get_member_role(g, user["id"])
+                if role not in ("admin", "manager"):
+                    return self.ok("application/json", b'{"error":"forbidden"}')
+                g["tasks"] = [t for t in g.get("tasks", [])
+                              if t.get("status", "todo") != "done" and not t.get("done")]
+                save_group(g, user["id"])
+                return self.ok("application/json", b'{"ok":true}')
+
             # POST /api/groups/{id}/invite
             if len(parts) == 5 and parts[4] == "invite":
                 group_id = parts[3]

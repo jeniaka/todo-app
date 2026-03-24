@@ -305,16 +305,37 @@ body{
 .toast{
   position:fixed;inset-block-end:calc(28px + env(safe-area-inset-bottom));
   inset-inline-start:50%;transform:translateX(-50%) translateY(20px);
-  z-index:600;
-  background:var(--text-primary);color:var(--text-inverse);
-  padding:10px 20px;border-radius:var(--radius-full);
-  font-size:13px;font-weight:500;white-space:nowrap;
-  box-shadow:var(--shadow-lg);
-  opacity:0;pointer-events:none;
+  z-index:9999;
+  background:#1E293B;color:#FFFFFF;
+  padding:12px 24px;border-radius:12px;
+  font-size:14px;font-weight:500;
+  box-shadow:0 8px 30px rgba(0,0,0,0.35);
+  opacity:0;pointer-events:none;max-width:90vw;text-align:center;
   transition:opacity var(--duration-normal) var(--ease-out),transform var(--duration-normal) var(--ease-out);
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.toast-success{background:#DCFCE7;color:#14532D;border:1px solid #86EFAC}
+.toast.toast-success{background:#166534;color:#FFFFFF;border:1px solid #22C55E}
+.toast.toast-error{background:#991B1B;color:#FFFFFF;border:1px solid #EF4444}
+.toast.toast-warning{background:#92400E;color:#FFFFFF;border:1px solid #F59E0B}
+.toast.toast-info{background:#1E3A5F;color:#FFFFFF;border:1px solid #3B82F6}
+[dir=rtl] .toast{inset-inline-start:auto;inset-inline-end:50%;transform:translateX(50%) translateY(20px)}
+[dir=rtl] .toast.show{transform:translateX(50%) translateY(0)}
+
+/* ─── Custom 24h time input ──────────────────────────────────────────────── */
+.time-input-24h{
+  display:inline-flex;align-items:center;gap:3px;
+  background:var(--bg-secondary);border-radius:var(--radius-sm);
+  padding:3px 7px;border:1.5px solid var(--border-strong);
+}
+.time-input-24h input[type=number]{
+  background:transparent;border:none;outline:none;
+  color:var(--text-primary);font-size:15px;font-family:var(--font-body);
+  width:30px;text-align:center;padding:0;
+  -moz-appearance:textfield;
+}
+.time-input-24h input[type=number]::-webkit-outer-spin-button,
+.time-input-24h input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.time-separator{color:var(--text-tertiary);font-size:16px;font-weight:700;line-height:1}
 
 /* ─── Main layout ─────────────────────────────────────────────────────────── */
 .main{max-width:var(--max-w);margin-inline:auto;padding-inline:20px}
