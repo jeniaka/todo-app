@@ -145,6 +145,7 @@ const TL = {
     hours:'hours',day:'day',days:'days',week:'week',weeks:'weeks',
     clearCompletedGroup:'Clear completed',
     confirmClearCompletedGroup:'Remove all completed tasks from the group?',
+    micPermissionDenied:'Microphone access denied',
     jiraExportTitle:'How to export from Jira',
     jiraStep1:'Go to your Jira project',jiraStep2:'Click "Issues" in the left sidebar',
     jiraStep3:'Click "View all issues and filters"',jiraStep4:'Apply filters to select issues',
@@ -263,6 +264,8 @@ const TL = {
     est2hours:'2 שעות',est4hours:'4 שעות',est1day:'יום',est3days:'3 ימים',est1week:'שבוע',est2weeks:'שבועיים',
     hours:'שעות',day:'יום',days:'ימים',week:'שבוע',weeks:'שבועות',
     clearCompletedGroup:'נקה שהושלמו',confirmClearCompletedGroup:'להסיר את כל המשימות שהושלמו מהקבוצה?',
+    showMore:'הצג עוד',showLess:'הצג פחות',subtasksBlockDone:'יש להשלים את כל המשימות המשנה תחילה',
+    micPermissionDenied:'הגישה למיקרופון נדחתה',estimate:'הערכה',
   },
   ar: {
     appTitle:'مهامي',add:'إضافة',filterAll:'الكل',filterActive:'نشط',filterDone:'مكتمل',
@@ -372,6 +375,8 @@ const TL = {
     est2hours:'ساعتان',est4hours:'4 ساعات',est1day:'يوم',est3days:'3 أيام',est1week:'أسبوع',est2weeks:'أسبوعان',
     hours:'ساعات',day:'يوم',days:'أيام',week:'أسبوع',weeks:'أسابيع',
     clearCompletedGroup:'مسح المكتملة',confirmClearCompletedGroup:'إزالة جميع المهام المكتملة من المجموعة؟',
+    showMore:'عرض المزيد',showLess:'عرض أقل',subtasksBlockDone:'أكمل جميع المهام الفرعية أولاً',
+    micPermissionDenied:'تم رفض الوصول إلى الميكروفون',estimate:'التقدير',
   },
   es: {
     appTitle:'Mis Tareas',add:'Agregar',filterAll:'Todo',filterActive:'Activo',filterDone:'Hecho',
@@ -481,6 +486,8 @@ const TL = {
     est2hours:'2 horas',est4hours:'4 horas',est1day:'1 día',est3days:'3 días',est1week:'1 semana',est2weeks:'2 semanas',
     hours:'horas',day:'día',days:'días',week:'semana',weeks:'semanas',
     clearCompletedGroup:'Borrar completadas',confirmClearCompletedGroup:'¿Eliminar todas las tareas completadas del grupo?',
+    showMore:'Ver más',showLess:'Ver menos',subtasksBlockDone:'Completa todas las subtareas primero',
+    micPermissionDenied:'Acceso al micrófono denegado',estimate:'Estimación',
   },
   fr: {
     appTitle:'Mes Tâches',add:'Ajouter',filterAll:'Tout',filterActive:'Actif',filterDone:'Fait',
@@ -590,6 +597,8 @@ const TL = {
     est2hours:'2 heures',est4hours:'4 heures',est1day:'1 jour',est3days:'3 jours',est1week:'1 semaine',est2weeks:'2 semaines',
     hours:'heures',day:'jour',days:'jours',week:'semaine',weeks:'semaines',
     clearCompletedGroup:'Effacer terminées',confirmClearCompletedGroup:'Supprimer toutes les tâches terminées du groupe ?',
+    showMore:'Voir plus',showLess:'Voir moins',subtasksBlockDone:'Terminez d\'abord toutes les sous-tâches',
+    micPermissionDenied:'Accès au microphone refusé',estimate:'Estimation',
   },
   de: {
     appTitle:'Meine Aufgaben',add:'Hinzufügen',filterAll:'Alle',filterActive:'Aktiv',filterDone:'Erledigt',
@@ -699,6 +708,8 @@ const TL = {
     est2hours:'2 Stunden',est4hours:'4 Stunden',est1day:'1 Tag',est3days:'3 Tage',est1week:'1 Woche',est2weeks:'2 Wochen',
     hours:'Stunden',day:'Tag',days:'Tage',week:'Woche',weeks:'Wochen',
     clearCompletedGroup:'Abgeschlossene löschen',confirmClearCompletedGroup:'Alle abgeschlossenen Aufgaben aus der Gruppe entfernen?',
+    showMore:'Mehr anzeigen',showLess:'Weniger anzeigen',subtasksBlockDone:'Erst alle Unteraufgaben abschließen',
+    micPermissionDenied:'Mikrofonzugriff verweigert',estimate:'Schätzung',
   },
   ru: {
     appTitle:'Мои Задачи',add:'Добавить',filterAll:'Все',filterActive:'Активные',filterDone:'Готово',
@@ -808,6 +819,8 @@ const TL = {
     est2hours:'2 часа',est4hours:'4 часа',est1day:'1 день',est3days:'3 дня',est1week:'1 неделя',est2weeks:'2 недели',
     hours:'часов',day:'день',days:'дней',week:'неделя',weeks:'недели',
     clearCompletedGroup:'Очистить завершённые',confirmClearCompletedGroup:'Удалить все завершённые задачи из группы?',
+    showMore:'Показать ещё',showLess:'Показать меньше',subtasksBlockDone:'Сначала завершите все подзадачи',
+    micPermissionDenied:'Доступ к микрофону запрещён',estimate:'Оценка',
   },
   pt: {
     appTitle:'Minhas Tarefas',add:'Adicionar',filterAll:'Todos',filterActive:'Ativo',filterDone:'Feito',
@@ -917,6 +930,8 @@ const TL = {
     est2hours:'2 horas',est4hours:'4 horas',est1day:'1 dia',est3days:'3 dias',est1week:'1 semana',est2weeks:'2 semanas',
     hours:'horas',day:'dia',days:'dias',week:'semana',weeks:'semanas',
     clearCompletedGroup:'Limpar concluídas',confirmClearCompletedGroup:'Remover todas as tarefas concluídas do grupo?',
+    showMore:'Ver mais',showLess:'Ver menos',subtasksBlockDone:'Complete todas as subtarefas primeiro',
+    micPermissionDenied:'Acesso ao microfone negado',estimate:'Estimativa',
   },
   zh: {
     appTitle:'我的任务',add:'添加',filterAll:'全部',filterActive:'进行中',filterDone:'已完成',
@@ -1026,6 +1041,8 @@ const TL = {
     est2hours:'2小时',est4hours:'4小时',est1day:'1天',est3days:'3天',est1week:'1周',est2weeks:'2周',
     hours:'小时',day:'天',days:'天',week:'周',weeks:'周',
     clearCompletedGroup:'清除已完成',confirmClearCompletedGroup:'从组中删除所有已完成的任务？',
+    showMore:'显示更多',showLess:'显示更少',subtasksBlockDone:'请先完成所有子任务',
+    micPermissionDenied:'麦克风访问被拒绝',estimate:'预估',
   },
   ja: {
     appTitle:'マイタスク',add:'追加',filterAll:'すべて',filterActive:'進行中',filterDone:'完了',
@@ -1135,6 +1152,8 @@ const TL = {
     est2hours:'2時間',est4hours:'4時間',est1day:'1日',est3days:'3日',est1week:'1週間',est2weeks:'2週間',
     hours:'時間',day:'日',days:'日',week:'週間',weeks:'週間',
     clearCompletedGroup:'完了をクリア',confirmClearCompletedGroup:'グループから完了タスクをすべて削除しますか？',
+    showMore:'もっと見る',showLess:'折りたたむ',subtasksBlockDone:'先にすべてのサブタスクを完了してください',
+    micPermissionDenied:'マイクへのアクセスが拒否されました',estimate:'見積もり',
   },
 };
 
@@ -2325,10 +2344,18 @@ function applyI18n() {
     const key = el.dataset.i18nPlaceholder;
     el.placeholder = t(key);
   });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.dataset.i18nTitle;
+    const val = t(key);
+    if (typeof val === 'string') el.title = val;
+  });
   // Page title
   if (document.getElementById('pageTitle')) {
     document.getElementById('pageTitle').textContent = t('appTitle');
   }
+  // More options toggle
+  const mot = document.getElementById('moreOptionsToggle');
+  if (mot) mot.textContent = (mot.textContent.startsWith('▼') ? '▼' : '▶') + ' ' + t('moreOptions');
   updateBadge();
 }
 
@@ -4279,7 +4306,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     moreOptionsToggle.addEventListener('click', () => {
       const open = moreOptions.style.display !== 'none';
       moreOptions.style.display = open ? 'none' : '';
-      moreOptionsToggle.textContent = (open ? '▶' : '▼') + ' More options';
+      moreOptionsToggle.textContent = (open ? '▶' : '▼') + ' ' + t('moreOptions');
     });
   }
 
@@ -4333,6 +4360,46 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('drawerClose').addEventListener('click', closeDrawer);
   document.getElementById('drawerTitle').addEventListener('input', scheduleDrawerSave);
   document.getElementById('drawerDesc').addEventListener('input', scheduleDrawerSave);
+
+  // ── Description mic button (speech-to-text for notes field) ───────────────
+  const descMicBtn = document.getElementById('descMicBtn');
+  if (descMicBtn) {
+    if (!SpeechRecognition) { descMicBtn.style.display = 'none'; }
+    else {
+      descMicBtn.addEventListener('click', () => {
+        if (!recognition) initSpeech();
+        const textarea = document.getElementById('drawerDesc');
+        let finalText = textarea.value;
+        recognition.onresult = ev => {
+          let interim = '';
+          for (let i = ev.resultIndex; i < ev.results.length; i++) {
+            if (ev.results[i].isFinal) finalText += ev.results[i][0].transcript + ' ';
+            else interim += ev.results[i][0].transcript;
+          }
+          textarea.value = finalText + interim;
+          scheduleDrawerSave();
+        };
+        recognition.onend = () => {
+          isListening = false;
+          descMicBtn.classList.remove('recording');
+          textarea.value = finalText.trim();
+          scheduleDrawerSave();
+        };
+        recognition.onerror = ev => {
+          isListening = false;
+          descMicBtn.classList.remove('recording');
+          if (ev.error === 'not-allowed') showToast(t('micPermissionDenied') || 'Microphone access denied', 'error');
+        };
+        if (isListening) { recognition.stop(); return; }
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
+        try { recognition.start(); } catch(_) { initSpeech(); recognition.start(); }
+        isListening = true;
+        descMicBtn.classList.add('recording');
+      });
+    }
+  }
 
   // Priority chips
   ['none','low','medium','high'].forEach(p => {

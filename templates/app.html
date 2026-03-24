@@ -14,12 +14,12 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#FAFAF8" id="themeColor">
+  <meta name="theme-color" content="#161920" id="themeColor">
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/static/icon-192.png">
   <title id="pageTitle">My Tasks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -344,9 +344,9 @@
         <button class="filter-btn" id="gbFilterMine" data-i18n="myTasksFilter">Mine</button>
       </div>
       <select class="gb-select" id="gbSortSelect">
-        <option value="newest">Newest</option>
-        <option value="priority">Priority</option>
-        <option value="assignee">Assignee</option>
+        <option value="newest" data-i18n="sortNewest">Newest</option>
+        <option value="priority" data-i18n="sortPriority">Priority</option>
+        <option value="assignee" data-i18n="sortAssignee">Assignee</option>
       </select>
     </div>
 
@@ -449,7 +449,16 @@
     <!-- Description -->
     <div class="drawer-section">
       <label class="drawer-label" id="descLabel" data-i18n="description">Notes</label>
-      <textarea class="drawer-desc" id="drawerDesc" rows="3"></textarea>
+      <div class="drawer-desc-wrap">
+        <textarea class="drawer-desc" id="drawerDesc" rows="3"></textarea>
+        <button class="mic-button" id="descMicBtn" type="button" aria-label="Voice input">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- Status -->
