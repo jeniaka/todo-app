@@ -217,6 +217,27 @@ def build_overdue_email(task_text, due_date_ms, group_name):
     )
 
 
+def build_verification_email(name, verify_url):
+    body = f"""
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-size:40px;margin-bottom:12px;">✉️</div>
+      <p style="margin:0;font-size:15px;color:#6B6B6B;">
+        Hi <strong style="color:#1A1A1A;">{name}</strong>, welcome to MyTasks!
+      </p>
+    </div>
+    <p style="margin:0 0 20px 0;font-size:14px;color:#6B6B6B;text-align:center;line-height:1.6;">
+      Please verify your email address to activate your account.
+      This link expires in <strong style="color:#1A1A1A;">24 hours</strong>.
+    </p>"""
+    return build_email(
+        title="Verify your MyTasks email",
+        body_html=body,
+        cta_text="Verify Email",
+        cta_url=verify_url,
+        footer_note="If you didn't create a MyTasks account, you can safely ignore this email.",
+    )
+
+
 def build_member_joined_email(member_name, member_picture, group_name, app_url):
     avatar_html = ""
     if member_picture:

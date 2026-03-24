@@ -2,3 +2,4 @@ pymongo==4.7.3
 certifi
 anthropic
 openpyxl
+bcrypt

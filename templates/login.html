@@ -16,24 +16,586 @@
   </div>
 
   <div class="login-wrap">
-    <div class="login-card">
+    <div class="login-card" id="loginCard">
       <div class="login-logo-mark">✦</div>
       <h1 class="login-title">My Tasks</h1>
-      <p class="login-subtitle">Simple, beautiful task management.</p>
+      <p class="login-subtitle" id="loginSubtitle">Simple, beautiful task management.</p>
 
-      <a class="google-btn" href="/auth/google">
+      <!-- Alert banner (success/error) -->
+      <div class="auth-alert" id="authAlert" style="display:none"></div>
+
+      <!-- Google OAuth -->
+      <a class="google-btn" href="/auth/google" id="googleBtn">
         <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
           <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
           <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
           <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
         </svg>
-        Continue with Google
+        <span id="googleBtnText">Continue with Google</span>
       </a>
 
-      <p class="login-footer">Your tasks are private and secure.</p>
+      <!-- Or divider -->
+      <div class="auth-divider"><span id="orText">or</span></div>
+
+      <!-- Email/Password form -->
+      <form class="auth-form" id="authForm" autocomplete="on" novalidate>
+
+        <!-- Name (register only) -->
+        <div class="auth-field" id="nameField" style="display:none">
+          <label class="auth-label" for="authName" id="lblName">Full name</label>
+          <input class="auth-input" type="text" id="authName" name="name"
+            autocomplete="name" placeholder="Jane Smith" maxlength="80"/>
+        </div>
+
+        <!-- Email -->
+        <div class="auth-field">
+          <label class="auth-label" for="authEmail" id="lblEmail">Email address</label>
+          <input class="auth-input" type="email" id="authEmail" name="email"
+            autocomplete="email" placeholder="you@example.com" maxlength="120"/>
+        </div>
+
+        <!-- Password -->
+        <div class="auth-field">
+          <label class="auth-label" for="authPw" id="lblPw">Password</label>
+          <div class="auth-pw-wrap">
+            <input class="auth-input" type="password" id="authPw" name="password"
+              autocomplete="current-password" placeholder="••••••••" maxlength="128"/>
+            <button type="button" class="auth-eye" id="eyeBtn" tabindex="-1" aria-label="Toggle password">
+              <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Password strength (register only) -->
+        <div class="auth-strength" id="strengthBlock" style="display:none">
+          <div class="auth-strength-bar">
+            <div class="auth-strength-fill" id="strengthFill"></div>
+          </div>
+          <span class="auth-strength-label" id="strengthLabel"></span>
+          <ul class="auth-pw-reqs" id="pwReqs">
+            <li id="req-len">  <span class="req-dot"></span> <span id="reqLenText">At least 8 characters</span></li>
+            <li id="req-up">   <span class="req-dot"></span> <span id="reqUpText">Uppercase letter</span></li>
+            <li id="req-low">  <span class="req-dot"></span> <span id="reqLowText">Lowercase letter</span></li>
+            <li id="req-num">  <span class="req-dot"></span> <span id="reqNumText">Number</span></li>
+            <li id="req-sp">   <span class="req-dot"></span> <span id="reqSpText">Special character</span></li>
+          </ul>
+        </div>
+
+        <!-- Confirm password (register only) -->
+        <div class="auth-field" id="confirmField" style="display:none">
+          <label class="auth-label" for="authConfirm" id="lblConfirm">Confirm password</label>
+          <div class="auth-pw-wrap">
+            <input class="auth-input" type="password" id="authConfirm" name="confirm"
+              autocomplete="new-password" placeholder="••••••••" maxlength="128"/>
+            <button type="button" class="auth-eye" id="eyeBtn2" tabindex="-1" aria-label="Toggle confirm password">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <p class="auth-mismatch" id="mismatchMsg" style="display:none"></p>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="auth-submit" id="authSubmit" disabled>
+          <span id="submitText">Sign in</span>
+          <span class="auth-spinner" id="authSpinner" style="display:none"></span>
+        </button>
+
+      </form>
+
+      <!-- Toggle mode -->
+      <p class="auth-toggle-row">
+        <span id="toggleHint">Don't have an account?</span>
+        <button type="button" class="auth-toggle-btn" id="toggleBtn">Create one</button>
+      </p>
+
+      <p class="login-footer" id="loginFooter">Your tasks are private and secure.</p>
     </div>
   </div>
+
+<script>
+// ── i18n ──────────────────────────────────────────────────────────────────────
+const TL = {
+  en:{ googleBtn:"Continue with Google", or:"or", signIn:"Sign in", signUp:"Create account",
+    lblName:"Full name", lblEmail:"Email address", lblPw:"Password", lblConfirm:"Confirm password",
+    namePh:"Jane Smith", emailPh:"you@example.com",
+    signInBtn:"Sign in", signUpBtn:"Create account",
+    haveAccount:"Already have an account?", noAccount:"Don't have an account?",
+    signInLink:"Sign in", signUpLink:"Create one",
+    reqLen:"At least 8 characters", reqUp:"Uppercase letter", reqLow:"Lowercase letter",
+    reqNum:"Number", reqSp:"Special character",
+    weak:"Weak", medium:"Medium", strong:"Strong",
+    mismatch:"Passwords don't match",
+    errMissing:"Please fill in all fields.", errEmail:"Invalid email address.",
+    errWeak:"Password is too weak.", errTaken:"This email is already registered.",
+    errCreds:"Incorrect email or password.", errNotVerified:"Please verify your email before signing in.",
+    errDb:"Service unavailable. Please try again later.",
+    verifiedOk:"Email verified! You can now sign in.",
+    checkEmail:"Check your email — we sent a verification link to",
+    resend:"Resend email", tokenExpired:"Verification link expired. Please register again.",
+    invalidToken:"Invalid verification link.",
+    subtitle:"Simple, beautiful task management." },
+  he:{ googleBtn:"המשך עם Google", or:"או", signIn:"כניסה", signUp:"יצירת חשבון",
+    lblName:"שם מלא", lblEmail:"כתובת אימייל", lblPw:"סיסמה", lblConfirm:"אימות סיסמה",
+    namePh:"ישראל ישראלי", emailPh:"you@example.com",
+    signInBtn:"כניסה", signUpBtn:"יצירת חשבון",
+    haveAccount:"כבר יש לך חשבון?", noAccount:"אין לך חשבון?",
+    signInLink:"כנס", signUpLink:"צור חשבון",
+    reqLen:"לפחות 8 תווים", reqUp:"אות גדולה", reqLow:"אות קטנה",
+    reqNum:"מספר", reqSp:"תו מיוחד",
+    weak:"חלשה", medium:"בינונית", strong:"חזקה",
+    mismatch:"הסיסמאות אינן תואמות",
+    errMissing:"אנא מלא את כל השדות.", errEmail:"כתובת אימייל לא תקינה.",
+    errWeak:"הסיסמה חלשה מדי.", errTaken:"האימייל הזה כבר רשום.",
+    errCreds:"אימייל או סיסמה שגויים.", errNotVerified:"יש לאמת את האימייל לפני הכניסה.",
+    errDb:"השירות אינו זמין. נסה שוב מאוחר יותר.",
+    verifiedOk:"האימייל אומת! ניתן להתחבר.", checkEmail:"בדוק את תיבת הדואר שלך — שלחנו קישור אימות ל-",
+    resend:"שלח שוב", tokenExpired:"קישור האימות פג תוקף. יש להירשם מחדש.",
+    invalidToken:"קישור אימות לא תקין.",
+    subtitle:"ניהול משימות פשוט ויפה." },
+  ar:{ googleBtn:"المتابعة مع Google", or:"أو", signIn:"تسجيل الدخول", signUp:"إنشاء حساب",
+    lblName:"الاسم الكامل", lblEmail:"البريد الإلكتروني", lblPw:"كلمة المرور", lblConfirm:"تأكيد كلمة المرور",
+    namePh:"محمد أحمد", emailPh:"you@example.com",
+    signInBtn:"تسجيل الدخول", signUpBtn:"إنشاء حساب",
+    haveAccount:"هل لديك حساب؟", noAccount:"ليس لديك حساب؟",
+    signInLink:"تسجيل الدخول", signUpLink:"إنشاء حساب",
+    reqLen:"8 أحرف على الأقل", reqUp:"حرف كبير", reqLow:"حرف صغير",
+    reqNum:"رقم", reqSp:"رمز خاص",
+    weak:"ضعيفة", medium:"متوسطة", strong:"قوية",
+    mismatch:"كلمتا المرور غير متطابقتين",
+    errMissing:"يرجى ملء جميع الحقول.", errEmail:"عنوان البريد الإلكتروني غير صالح.",
+    errWeak:"كلمة المرور ضعيفة جداً.", errTaken:"هذا البريد الإلكتروني مسجل بالفعل.",
+    errCreds:"البريد الإلكتروني أو كلمة المرور غير صحيحة.", errNotVerified:"يرجى التحقق من بريدك الإلكتروني قبل تسجيل الدخول.",
+    errDb:"الخدمة غير متاحة. يرجى المحاولة مرة أخرى.",
+    verifiedOk:"تم التحقق! يمكنك الآن تسجيل الدخول.", checkEmail:"تحقق من بريدك — أرسلنا رابط تحقق إلى",
+    resend:"إعادة الإرسال", tokenExpired:"انتهت صلاحية رابط التحقق.", invalidToken:"رابط التحقق غير صالح.",
+    subtitle:"إدارة المهام بسيطة وجميلة." },
+  es:{ googleBtn:"Continuar con Google", or:"o", signIn:"Iniciar sesión", signUp:"Crear cuenta",
+    lblName:"Nombre completo", lblEmail:"Correo electrónico", lblPw:"Contraseña", lblConfirm:"Confirmar contraseña",
+    namePh:"Juan García", emailPh:"tú@ejemplo.com",
+    signInBtn:"Iniciar sesión", signUpBtn:"Crear cuenta",
+    haveAccount:"¿Ya tienes una cuenta?", noAccount:"¿No tienes una cuenta?",
+    signInLink:"Inicia sesión", signUpLink:"Créala",
+    reqLen:"Al menos 8 caracteres", reqUp:"Letra mayúscula", reqLow:"Letra minúscula",
+    reqNum:"Número", reqSp:"Carácter especial",
+    weak:"Débil", medium:"Media", strong:"Fuerte",
+    mismatch:"Las contraseñas no coinciden",
+    errMissing:"Por favor completa todos los campos.", errEmail:"Correo electrónico inválido.",
+    errWeak:"La contraseña es demasiado débil.", errTaken:"Este correo ya está registrado.",
+    errCreds:"Correo o contraseña incorrectos.", errNotVerified:"Verifica tu correo antes de iniciar sesión.",
+    errDb:"Servicio no disponible. Inténtalo más tarde.",
+    verifiedOk:"¡Correo verificado! Ya puedes iniciar sesión.", checkEmail:"Revisa tu correo — enviamos un enlace de verificación a",
+    resend:"Reenviar", tokenExpired:"El enlace de verificación ha caducado.", invalidToken:"Enlace de verificación inválido.",
+    subtitle:"Gestión de tareas simple y hermosa." },
+  fr:{ googleBtn:"Continuer avec Google", or:"ou", signIn:"Se connecter", signUp:"Créer un compte",
+    lblName:"Nom complet", lblEmail:"Adresse e-mail", lblPw:"Mot de passe", lblConfirm:"Confirmer le mot de passe",
+    namePh:"Jean Dupont", emailPh:"vous@exemple.com",
+    signInBtn:"Se connecter", signUpBtn:"Créer un compte",
+    haveAccount:"Vous avez déjà un compte?", noAccount:"Pas encore de compte?",
+    signInLink:"Connectez-vous", signUpLink:"Créez-en un",
+    reqLen:"Au moins 8 caractères", reqUp:"Lettre majuscule", reqLow:"Lettre minuscule",
+    reqNum:"Chiffre", reqSp:"Caractère spécial",
+    weak:"Faible", medium:"Moyen", strong:"Fort",
+    mismatch:"Les mots de passe ne correspondent pas",
+    errMissing:"Veuillez remplir tous les champs.", errEmail:"Adresse e-mail invalide.",
+    errWeak:"Le mot de passe est trop faible.", errTaken:"Cet e-mail est déjà enregistré.",
+    errCreds:"E-mail ou mot de passe incorrect.", errNotVerified:"Veuillez vérifier votre e-mail avant de vous connecter.",
+    errDb:"Service indisponible. Réessayez plus tard.",
+    verifiedOk:"E-mail vérifié ! Vous pouvez maintenant vous connecter.", checkEmail:"Vérifiez votre boîte mail — nous avons envoyé un lien à",
+    resend:"Renvoyer", tokenExpired:"Le lien de vérification a expiré.", invalidToken:"Lien de vérification invalide.",
+    subtitle:"Gestion de tâches simple et belle." },
+  de:{ googleBtn:"Mit Google fortfahren", or:"oder", signIn:"Anmelden", signUp:"Konto erstellen",
+    lblName:"Vollständiger Name", lblEmail:"E-Mail-Adresse", lblPw:"Passwort", lblConfirm:"Passwort bestätigen",
+    namePh:"Max Mustermann", emailPh:"sie@beispiel.de",
+    signInBtn:"Anmelden", signUpBtn:"Konto erstellen",
+    haveAccount:"Hast du bereits ein Konto?", noAccount:"Noch kein Konto?",
+    signInLink:"Anmelden", signUpLink:"Erstelle eins",
+    reqLen:"Mindestens 8 Zeichen", reqUp:"Großbuchstabe", reqLow:"Kleinbuchstabe",
+    reqNum:"Zahl", reqSp:"Sonderzeichen",
+    weak:"Schwach", medium:"Mittel", strong:"Stark",
+    mismatch:"Passwörter stimmen nicht überein",
+    errMissing:"Bitte fülle alle Felder aus.", errEmail:"Ungültige E-Mail-Adresse.",
+    errWeak:"Das Passwort ist zu schwach.", errTaken:"Diese E-Mail ist bereits registriert.",
+    errCreds:"Falsche E-Mail oder falsches Passwort.", errNotVerified:"Bitte bestätige deine E-Mail vor der Anmeldung.",
+    errDb:"Dienst nicht verfügbar. Bitte versuche es später.",
+    verifiedOk:"E-Mail bestätigt! Du kannst dich jetzt anmelden.", checkEmail:"Prüfe deine E-Mails — wir haben einen Verifizierungslink gesendet an",
+    resend:"Erneut senden", tokenExpired:"Der Verifizierungslink ist abgelaufen.", invalidToken:"Ungültiger Verifizierungslink.",
+    subtitle:"Einfaches, schönes Aufgabenmanagement." },
+  ru:{ googleBtn:"Продолжить с Google", or:"или", signIn:"Войти", signUp:"Создать аккаунт",
+    lblName:"Полное имя", lblEmail:"Электронная почта", lblPw:"Пароль", lblConfirm:"Подтвердите пароль",
+    namePh:"Иван Иванов", emailPh:"you@example.com",
+    signInBtn:"Войти", signUpBtn:"Создать аккаунт",
+    haveAccount:"Уже есть аккаунт?", noAccount:"Нет аккаунта?",
+    signInLink:"Войдите", signUpLink:"Создайте",
+    reqLen:"Не менее 8 символов", reqUp:"Заглавная буква", reqLow:"Строчная буква",
+    reqNum:"Цифра", reqSp:"Спецсимвол",
+    weak:"Слабый", medium:"Средний", strong:"Сильный",
+    mismatch:"Пароли не совпадают",
+    errMissing:"Пожалуйста, заполните все поля.", errEmail:"Неверный адрес электронной почты.",
+    errWeak:"Пароль слишком слабый.", errTaken:"Этот email уже зарегистрирован.",
+    errCreds:"Неверный email или пароль.", errNotVerified:"Пожалуйста, подтвердите email перед входом.",
+    errDb:"Сервис недоступен. Попробуйте позже.",
+    verifiedOk:"Email подтверждён! Теперь можно войти.", checkEmail:"Проверьте почту — мы отправили ссылку на",
+    resend:"Отправить снова", tokenExpired:"Ссылка для подтверждения истекла.", invalidToken:"Недействительная ссылка.",
+    subtitle:"Простое и красивое управление задачами." },
+  pt:{ googleBtn:"Continuar com Google", or:"ou", signIn:"Entrar", signUp:"Criar conta",
+    lblName:"Nome completo", lblEmail:"Endereço de e-mail", lblPw:"Senha", lblConfirm:"Confirmar senha",
+    namePh:"João Silva", emailPh:"voce@exemplo.com",
+    signInBtn:"Entrar", signUpBtn:"Criar conta",
+    haveAccount:"Já tem uma conta?", noAccount:"Não tem uma conta?",
+    signInLink:"Entre", signUpLink:"Crie uma",
+    reqLen:"Pelo menos 8 caracteres", reqUp:"Letra maiúscula", reqLow:"Letra minúscula",
+    reqNum:"Número", reqSp:"Caractere especial",
+    weak:"Fraca", medium:"Média", strong:"Forte",
+    mismatch:"As senhas não coincidem",
+    errMissing:"Por favor preencha todos os campos.", errEmail:"Endereço de e-mail inválido.",
+    errWeak:"A senha é muito fraca.", errTaken:"Este e-mail já está registrado.",
+    errCreds:"E-mail ou senha incorretos.", errNotVerified:"Por favor verifique seu e-mail antes de entrar.",
+    errDb:"Serviço indisponível. Tente novamente mais tarde.",
+    verifiedOk:"E-mail verificado! Você já pode entrar.", checkEmail:"Verifique seu e-mail — enviamos um link para",
+    resend:"Reenviar", tokenExpired:"O link de verificação expirou.", invalidToken:"Link de verificação inválido.",
+    subtitle:"Gestão de tarefas simples e bonita." },
+  zh:{ googleBtn:"使用 Google 继续", or:"或", signIn:"登录", signUp:"创建账户",
+    lblName:"全名", lblEmail:"电子邮件地址", lblPw:"密码", lblConfirm:"确认密码",
+    namePh:"张三", emailPh:"you@example.com",
+    signInBtn:"登录", signUpBtn:"创建账户",
+    haveAccount:"已有账户？", noAccount:"没有账户？",
+    signInLink:"登录", signUpLink:"创建一个",
+    reqLen:"至少 8 个字符", reqUp:"大写字母", reqLow:"小写字母",
+    reqNum:"数字", reqSp:"特殊字符",
+    weak:"弱", medium:"中", strong:"强",
+    mismatch:"密码不匹配",
+    errMissing:"请填写所有字段。", errEmail:"无效的电子邮件地址。",
+    errWeak:"密码太弱。", errTaken:"此电子邮件已注册。",
+    errCreds:"电子邮件或密码不正确。", errNotVerified:"请在登录前验证您的电子邮件。",
+    errDb:"服务不可用，请稍后重试。",
+    verifiedOk:"电子邮件已验证！您现在可以登录。", checkEmail:"请查看您的邮件 — 我们发送了验证链接至",
+    resend:"重新发送", tokenExpired:"验证链接已过期。", invalidToken:"无效的验证链接。",
+    subtitle:"简单、美观的任务管理。" },
+  ja:{ googleBtn:"Google で続ける", or:"または", signIn:"サインイン", signUp:"アカウント作成",
+    lblName:"氏名", lblEmail:"メールアドレス", lblPw:"パスワード", lblConfirm:"パスワードの確認",
+    namePh:"山田 太郎", emailPh:"you@example.com",
+    signInBtn:"サインイン", signUpBtn:"アカウントを作成",
+    haveAccount:"すでにアカウントをお持ちですか？", noAccount:"アカウントをお持ちでないですか？",
+    signInLink:"サインイン", signUpLink:"作成する",
+    reqLen:"8文字以上", reqUp:"大文字", reqLow:"小文字",
+    reqNum:"数字", reqSp:"特殊文字",
+    weak:"弱い", medium:"普通", strong:"強い",
+    mismatch:"パスワードが一致しません",
+    errMissing:"すべてのフィールドを入力してください。", errEmail:"無効なメールアドレスです。",
+    errWeak:"パスワードが弱すぎます。", errTaken:"このメールはすでに登録されています。",
+    errCreds:"メールまたはパスワードが正しくありません。", errNotVerified:"サインイン前にメールを確認してください。",
+    errDb:"サービスが利用できません。後でもう一度お試しください。",
+    verifiedOk:"メールが確認されました！サインインできます。", checkEmail:"メールを確認してください — 確認リンクを送信しました：",
+    resend:"再送信", tokenExpired:"確認リンクが期限切れです。", invalidToken:"無効な確認リンクです。",
+    subtitle:"シンプルで美しいタスク管理。" },
+};
+
+// ── Detect language ───────────────────────────────────────────────────────────
+function detectLang(){
+  try{
+    const s = localStorage.getItem('mytasks_settings');
+    if(s){ const d=JSON.parse(s); if(d.language && TL[d.language]) return d.language; }
+  }catch(e){}
+  const nav = (navigator.language || navigator.userLanguage || 'en').split('-')[0].toLowerCase();
+  return TL[nav] ? nav : 'en';
+}
+const lang = detectLang();
+const T = TL[lang];
+const RTL_LANGS = ['he','ar'];
+if(RTL_LANGS.includes(lang)){
+  document.documentElement.dir = 'rtl';
+  document.documentElement.lang = lang;
+}
+
+// ── Apply translations ────────────────────────────────────────────────────────
+document.getElementById('googleBtnText').textContent = T.googleBtn;
+document.getElementById('orText').textContent = T.or;
+document.getElementById('lblName').textContent = T.lblName;
+document.getElementById('lblEmail').textContent = T.lblEmail;
+document.getElementById('lblPw').textContent = T.lblPw;
+document.getElementById('lblConfirm').textContent = T.lblConfirm;
+document.getElementById('authName').placeholder = T.namePh;
+document.getElementById('authEmail').placeholder = T.emailPh;
+document.getElementById('reqLenText').textContent = T.reqLen;
+document.getElementById('reqUpText').textContent = T.reqUp;
+document.getElementById('reqLowText').textContent = T.reqLow;
+document.getElementById('reqNumText').textContent = T.reqNum;
+document.getElementById('reqSpText').textContent = T.reqSp;
+document.getElementById('toggleHint').textContent = T.noAccount;
+document.getElementById('toggleBtn').textContent = T.signUpLink;
+document.getElementById('submitText').textContent = T.signInBtn;
+document.getElementById('loginSubtitle').textContent = T.subtitle;
+
+// ── Mode: login | register | verified ────────────────────────────────────────
+let mode = 'login'; // 'login' | 'register'
+let pendingEmail = '';
+
+function setMode(m){
+  mode = m;
+  const isReg = m === 'register';
+  document.getElementById('nameField').style.display     = isReg ? '' : 'none';
+  document.getElementById('strengthBlock').style.display = isReg ? '' : 'none';
+  document.getElementById('confirmField').style.display  = isReg ? '' : 'none';
+  document.getElementById('submitText').textContent = isReg ? T.signUpBtn : T.signInBtn;
+  document.getElementById('toggleHint').textContent = isReg ? T.haveAccount : T.noAccount;
+  document.getElementById('toggleBtn').textContent  = isReg ? T.signInLink  : T.signUpLink;
+  document.getElementById('authPw').autocomplete = isReg ? 'new-password' : 'current-password';
+  document.getElementById('authAlert').style.display = 'none';
+  document.getElementById('mismatchMsg').style.display = 'none';
+  updateSubmitState();
+}
+
+document.getElementById('toggleBtn').addEventListener('click', () => {
+  setMode(mode === 'login' ? 'register' : 'login');
+});
+
+// ── Password visibility toggle ────────────────────────────────────────────────
+function makeEyeToggle(btnId, inputId){
+  document.getElementById(btnId).addEventListener('click', () => {
+    const inp = document.getElementById(inputId);
+    const showing = inp.type === 'text';
+    inp.type = showing ? 'password' : 'text';
+  });
+}
+makeEyeToggle('eyeBtn', 'authPw');
+makeEyeToggle('eyeBtn2', 'authConfirm');
+
+// ── Password strength ─────────────────────────────────────────────────────────
+function checkPwRequirements(pw){
+  return {
+    len:  pw.length >= 8,
+    up:   /[A-Z]/.test(pw),
+    low:  /[a-z]/.test(pw),
+    num:  /[0-9]/.test(pw),
+    sp:   /[^A-Za-z0-9]/.test(pw),
+  };
+}
+function updateStrength(pw){
+  const r = checkPwRequirements(pw);
+  const met = Object.values(r).filter(Boolean).length;
+
+  const ids = {len:'req-len', up:'req-up', low:'req-low', num:'req-num', sp:'req-sp'};
+  Object.entries(r).forEach(([k,v]) => {
+    const li = document.getElementById(ids[k]);
+    li.classList.toggle('met', v);
+  });
+
+  const fill  = document.getElementById('strengthFill');
+  const label = document.getElementById('strengthLabel');
+  if(!pw){ fill.className='auth-strength-fill'; fill.style.width='0'; label.textContent=''; return; }
+  if(met <= 2){
+    fill.className='auth-strength-fill weak'; fill.style.width='33%'; label.textContent=T.weak;
+  } else if(met <= 4){
+    fill.className='auth-strength-fill medium'; fill.style.width='66%'; label.textContent=T.medium;
+  } else {
+    fill.className='auth-strength-fill strong'; fill.style.width='100%'; label.textContent=T.strong;
+  }
+}
+document.getElementById('authPw').addEventListener('input', e => {
+  if(mode === 'register') updateStrength(e.target.value);
+  checkConfirmMatch();
+  updateSubmitState();
+});
+
+// ── Confirm match check ───────────────────────────────────────────────────────
+function checkConfirmMatch(){
+  if(mode !== 'register') return true;
+  const pw  = document.getElementById('authPw').value;
+  const cfm = document.getElementById('authConfirm').value;
+  const msg = document.getElementById('mismatchMsg');
+  if(cfm && pw !== cfm){
+    msg.textContent = T.mismatch;
+    msg.style.display = '';
+    return false;
+  }
+  msg.style.display = 'none';
+  return true;
+}
+document.getElementById('authConfirm').addEventListener('input', () => {
+  checkConfirmMatch();
+  updateSubmitState();
+});
+document.getElementById('authName').addEventListener('input', updateSubmitState);
+document.getElementById('authEmail').addEventListener('input', updateSubmitState);
+
+// ── Submit button enabled state ───────────────────────────────────────────────
+function updateSubmitState(){
+  const btn   = document.getElementById('authSubmit');
+  const email = document.getElementById('authEmail').value.trim();
+  const pw    = document.getElementById('authPw').value;
+  if(mode === 'login'){
+    btn.disabled = !email || !pw;
+    return;
+  }
+  // register
+  const name  = document.getElementById('authName').value.trim();
+  const cfm   = document.getElementById('authConfirm').value;
+  const reqs  = checkPwRequirements(pw);
+  const allReqs = Object.values(reqs).every(Boolean);
+  btn.disabled = !name || !email || !pw || !allReqs || pw !== cfm;
+}
+
+// ── Show alert banner ─────────────────────────────────────────────────────────
+function showAlert(html, type){
+  const el = document.getElementById('authAlert');
+  el.innerHTML = html;
+  el.className = 'auth-alert auth-alert-' + type;
+  el.style.display = '';
+}
+
+// ── Handle URL params (verified / error) ─────────────────────────────────────
+(function(){
+  const sp = new URLSearchParams(location.search);
+  if(sp.get('verified') === '1'){
+    showAlert(T.verifiedOk, 'success');
+  } else if(sp.get('error')){
+    const e = sp.get('error');
+    const map = {
+      invalid_token: T.invalidToken,
+      token_expired: T.tokenExpired,
+      db: T.errDb,
+    };
+    showAlert(map[e] || e, 'error');
+  }
+  // Clean URL
+  if(sp.toString()) history.replaceState(null,'',location.pathname);
+})();
+
+// ── Submit handler ────────────────────────────────────────────────────────────
+document.getElementById('authForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  document.getElementById('authAlert').style.display = 'none';
+
+  const email = document.getElementById('authEmail').value.trim().toLowerCase();
+  const pw    = document.getElementById('authPw').value;
+  const btn   = document.getElementById('authSubmit');
+  const spin  = document.getElementById('authSpinner');
+  const stxt  = document.getElementById('submitText');
+
+  // Client-side validation
+  if(!email || !pw || (mode==='register' && !document.getElementById('authName').value.trim())){
+    showAlert(T.errMissing, 'error'); return;
+  }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    showAlert(T.errEmail, 'error'); return;
+  }
+  if(mode === 'register'){
+    const reqs = checkPwRequirements(pw);
+    if(!Object.values(reqs).every(Boolean)){ showAlert(T.errWeak, 'error'); return; }
+    if(pw !== document.getElementById('authConfirm').value){ showAlert(T.mismatch, 'error'); return; }
+  }
+
+  btn.disabled = true;
+  spin.style.display = '';
+  stxt.style.display = 'none';
+
+  try {
+    if(mode === 'register'){
+      const name = document.getElementById('authName').value.trim();
+      const res = await fetch('/api/auth/register', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({name, email, password: pw}),
+      });
+      const data = await res.json();
+      if(data.error){
+        const map = {
+          email_taken: T.errTaken,
+          invalid_email: T.errEmail,
+          weak_password: T.errWeak,
+          missing_fields: T.errMissing,
+          db_unavailable: T.errDb,
+          bcrypt_unavailable: T.errDb,
+        };
+        showAlert(map[data.error] || data.error, 'error');
+        btn.disabled = false;
+      } else {
+        pendingEmail = email;
+        // Show success state — ask user to check email
+        showCheckEmail(email, data.emailSent);
+      }
+    } else {
+      const res = await fetch('/api/auth/login', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({email, password: pw}),
+      });
+      const data = await res.json();
+      if(data.error){
+        const map = {
+          invalid_credentials: T.errCreds,
+          not_verified: T.errNotVerified,
+          missing_fields: T.errMissing,
+          db_unavailable: T.errDb,
+          bcrypt_unavailable: T.errDb,
+        };
+        if(data.error === 'not_verified'){
+          showNotVerified(email);
+        } else {
+          showAlert(map[data.error] || data.error, 'error');
+          btn.disabled = false;
+        }
+      } else {
+        window.location.href = data.redirect || '/mytasks';
+      }
+    }
+  } catch(err){
+    showAlert(T.errDb, 'error');
+    btn.disabled = false;
+  } finally {
+    spin.style.display = 'none';
+    stxt.style.display = '';
+  }
+});
+
+// ── Post-register: check email view ──────────────────────────────────────────
+function showCheckEmail(email, emailSent){
+  const card = document.getElementById('loginCard');
+  card.innerHTML = `
+    <div class="auth-check-email">
+      <div style="font-size:52px;margin-bottom:16px;">📬</div>
+      <h2 class="auth-check-title">${escHtml(T.checkEmail)}</h2>
+      <p class="auth-check-addr">${escHtml(email)}</p>
+      ${!emailSent ? `<p class="auth-check-note" style="color:var(--text-tertiary);font-size:13px;">(Email delivery unavailable — contact support)</p>` : ''}
+      <button type="button" class="auth-resend-btn" id="resendBtn">${escHtml(T.resend)}</button>
+      <p style="margin-top:20px;font-size:13px;color:var(--text-tertiary)">
+        <a href="/login" style="color:var(--accent);">${escHtml(T.signInLink)}</a>
+      </p>
+    </div>`;
+  document.getElementById('resendBtn').addEventListener('click', async () => {
+    const rb = document.getElementById('resendBtn');
+    rb.disabled = true;
+    await fetch('/api/auth/resend-verification', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email}),
+    });
+    rb.textContent = '✓ Sent';
+    setTimeout(() => { rb.disabled = false; rb.textContent = T.resend; }, 30000);
+  });
+}
+
+// ── Not-verified: show resend option ─────────────────────────────────────────
+function showNotVerified(email){
+  const btn  = document.getElementById('authSubmit');
+  const spin = document.getElementById('authSpinner');
+  btn.disabled = false;
+  spin.style.display = 'none';
+  const resendHtml = `<span>${T.errNotVerified} </span><button type="button" class="auth-alert-link" id="resendAlertBtn">${T.resend}</button>`;
+  showAlert(resendHtml, 'warning');
+  document.getElementById('resendAlertBtn').addEventListener('click', async () => {
+    await fetch('/api/auth/resend-verification', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email}),
+    });
+    showAlert('✓ ' + T.resend, 'success');
+  });
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
 
 </body>
 </html>

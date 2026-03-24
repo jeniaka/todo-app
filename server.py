@@ -22,8 +22,14 @@ from mail import (
     smtp_configured, send_email, smtp_status, print_smtp_status,
     build_email, build_invite_email, build_task_assigned_email,
     build_task_done_email, build_overdue_email, build_member_joined_email,
+    build_verification_email,
     SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, SMTP_DEBUG,
 )
+try:
+    import bcrypt as _bcrypt
+    BCRYPT_AVAILABLE = True
+except ImportError:
+    BCRYPT_AVAILABLE = False
 
 # ─── Config ──────────────────────────────────────────────────────────────────
 PORT               = int(os.environ.get("PORT", 8090))
@@ -620,6 +626,25 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/login":
             return self.ok("text/html; charset=utf-8", load_template("login.html").encode())
 
+        # Email verification link
+        if path.startswith("/verify/"):
+            token = path[len("/verify/"):]
+            if db is None:
+                return self.redirect("/login?error=db")
+            user_doc = db["users"].find_one({"verifyToken": token})
+            if not user_doc:
+                return self.redirect("/login?error=invalid_token")
+            if user_doc.get("verified"):
+                return self.redirect("/login?verified=1")
+            expire = user_doc.get("verifyExpires", 0)
+            if expire and int(time.time() * 1000) > expire:
+                return self.redirect("/login?error=token_expired")
+            db["users"].update_one(
+                {"_id": user_doc["_id"]},
+                {"$set": {"verified": True}, "$unset": {"verifyToken": "", "verifyExpires": ""}}
+            )
+            return self.redirect("/login?verified=1")
+
         # OAuth
         if path == "/auth/google":
             if not GOOGLE_CLIENT_ID:
@@ -922,6 +947,137 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = urlparse(self.path).path
+
+        # ── Email/password register ──────────────────────────────────────────
+        if path == "/api/auth/register":
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length))
+            name  = body.get("name", "").strip()
+            email = body.get("email", "").strip().lower()
+            pw    = body.get("password", "")
+            if not name or not email or not pw:
+                return self.ok("application/json", json.dumps({"error": "missing_fields"}).encode())
+            if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email):
+                return self.ok("application/json", json.dumps({"error": "invalid_email"}).encode())
+            if len(pw) < 8:
+                return self.ok("application/json", json.dumps({"error": "weak_password"}).encode())
+            if db is None:
+                return self.ok("application/json", json.dumps({"error": "db_unavailable"}).encode())
+            if not BCRYPT_AVAILABLE:
+                return self.ok("application/json", json.dumps({"error": "bcrypt_unavailable"}).encode())
+            existing = db["users"].find_one({"email": email})
+            if existing:
+                return self.ok("application/json", json.dumps({"error": "email_taken"}).encode())
+            pw_hash = _bcrypt.hashpw(pw.encode(), _bcrypt.gensalt()).decode()
+            verify_token = secrets.token_urlsafe(32)
+            verify_expires = int(time.time() * 1000) + 86400 * 1000  # 24 h
+            user_id = f"email:{email}"
+            db["users"].insert_one({
+                "_id": user_id,
+                "name": name,
+                "email": email,
+                "picture": "",
+                "passwordHash": pw_hash,
+                "verified": False,
+                "verifyToken": verify_token,
+                "verifyExpires": verify_expires,
+                "createdAt": int(time.time() * 1000),
+                "authMethod": "email",
+            })
+            # Send verification email
+            host = self.headers.get("Host", "localhost")
+            is_local = host.startswith("localhost") or host.startswith("127.")
+            scheme = "http" if is_local else "https"
+            verify_url = f"{scheme}://{host}/verify/{verify_token}"
+            html = build_verification_email(name, verify_url)
+            ok_mail, err_mail = send_email(email, "Verify your MyTasks email", html)
+            if not ok_mail:
+                print(f"[register] verification email failed: {err_mail}")
+            return self.ok("application/json", json.dumps({"ok": True, "emailSent": ok_mail}).encode())
+
+        # ── Email/password login ─────────────────────────────────────────────
+        if path == "/api/auth/login":
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length))
+            email = body.get("email", "").strip().lower()
+            pw    = body.get("password", "")
+            if not email or not pw:
+                return self.ok("application/json", json.dumps({"error": "missing_fields"}).encode())
+            if db is None:
+                return self.ok("application/json", json.dumps({"error": "db_unavailable"}).encode())
+            if not BCRYPT_AVAILABLE:
+                return self.ok("application/json", json.dumps({"error": "bcrypt_unavailable"}).encode())
+            user_doc = db["users"].find_one({"email": email, "authMethod": "email"})
+            if not user_doc:
+                return self.ok("application/json", json.dumps({"error": "invalid_credentials"}).encode())
+            if not _bcrypt.checkpw(pw.encode(), user_doc["passwordHash"].encode()):
+                return self.ok("application/json", json.dumps({"error": "invalid_credentials"}).encode())
+            if not user_doc.get("verified"):
+                return self.ok("application/json", json.dumps({"error": "not_verified"}).encode())
+            user = {
+                "id":      user_doc["_id"],
+                "name":    user_doc.get("name", ""),
+                "email":   user_doc.get("email", ""),
+                "picture": user_doc.get("picture", ""),
+            }
+            cookies_in = SimpleCookie(self.headers.get("Cookie", ""))
+            # Handle pending invite
+            invite_token = cookies_in["pending_invite"].value if "pending_invite" in cookies_in else None
+            joined_group = None
+            if invite_token and db is not None:
+                joined_group = db["groups"].find_one({"members.inviteToken": invite_token})
+                if joined_group:
+                    for m in joined_group["members"]:
+                        if m.get("inviteToken") == invite_token and m.get("status") == "pending":
+                            m["userId"] = user["id"]
+                            m["name"] = user.get("name", "")
+                            m["picture"] = user.get("picture", "")
+                            m["status"] = "active"
+                            m["joinedAt"] = int(time.time() * 1000)
+                            m.pop("inviteToken", None)
+                            break
+                    save_group(joined_group, user["id"])
+            redirect_to = "/mytasks"
+            if joined_group and joined_group.get("slug"):
+                redirect_to = f"/groups/{joined_group['slug']}"
+            elif "redirect_after_login" in cookies_in:
+                rval = cookies_in["redirect_after_login"].value
+                if rval and rval.startswith("/") and "//" not in rval and "@" not in rval:
+                    redirect_to = rval
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Set-Cookie", self.session_cookie(user))
+            if invite_token:
+                self.send_header("Set-Cookie", "pending_invite=; Path=/; Max-Age=0")
+            self.send_header("Set-Cookie", "redirect_after_login=; Path=/; Max-Age=0")
+            self.end_headers()
+            self.wfile.write(json.dumps({"ok": True, "redirect": redirect_to}).encode())
+            return
+
+        # ── Resend verification email ────────────────────────────────────────
+        if path == "/api/auth/resend-verification":
+            length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(length))
+            email = body.get("email", "").strip().lower()
+            if not email or db is None:
+                return self.ok("application/json", json.dumps({"error": "missing_fields"}).encode())
+            user_doc = db["users"].find_one({"email": email, "authMethod": "email"})
+            if not user_doc or user_doc.get("verified"):
+                # Don't reveal whether account exists
+                return self.ok("application/json", json.dumps({"ok": True}).encode())
+            verify_token = secrets.token_urlsafe(32)
+            verify_expires = int(time.time() * 1000) + 86400 * 1000
+            db["users"].update_one(
+                {"_id": user_doc["_id"]},
+                {"$set": {"verifyToken": verify_token, "verifyExpires": verify_expires}}
+            )
+            host = self.headers.get("Host", "localhost")
+            is_local = host.startswith("localhost") or host.startswith("127.")
+            scheme = "http" if is_local else "https"
+            verify_url = f"{scheme}://{host}/verify/{verify_token}"
+            html = build_verification_email(user_doc.get("name", ""), verify_url)
+            send_email(email, "Verify your MyTasks email", html)
+            return self.ok("application/json", json.dumps({"ok": True}).encode())
 
         if path == "/auth/logout":
             self.send_response(302)
