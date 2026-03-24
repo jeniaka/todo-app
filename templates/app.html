@@ -268,7 +268,7 @@
       <button class="icon-btn" id="gbSettingsBtn" title="Members" style="display:none">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 1.63 14.06 10 10 0 1 1-15.4-12.72"/></svg>
       </button>
-      <button class="icon-btn gt-del" id="gbDeleteBtn" title="Delete group" style="color:var(--priority-high)">🗑️</button>
+      <button class="icon-btn gt-del" id="gbDeleteBtn" title="Delete group" style="color:var(--priority-high);display:none">🗑️</button>
     </div>
 
     <!-- Add task bar (matches personal task form style) -->
@@ -294,6 +294,31 @@
         <div style="padding:0 12px 6px">
           <select class="gb-select" id="gbAssignSelect" style="width:100%"></select>
         </div>
+        <details class="add-more-options" id="gbMoreOptions">
+          <summary data-i18n="moreOptions">More options</summary>
+          <div class="add-more-body">
+            <div class="add-more-row">
+              <label data-i18n="estimate">Estimate</label>
+              <select class="gb-select" id="gbEstimate">
+                <option value="">—</option>
+                <option value="0.25">15m</option>
+                <option value="0.5">30m</option>
+                <option value="1">1h</option>
+                <option value="2">2h</option>
+                <option value="4">4h</option>
+                <option value="8">8h</option>
+              </select>
+            </div>
+            <div class="add-more-row">
+              <label data-i18n="dueDate">Due date</label>
+              <input type="datetime-local" class="modal-input" id="gbDueDate" style="padding:4px 8px;font-size:12px">
+            </div>
+            <div class="add-more-row">
+              <label data-i18n="notifyWhenDone">Notify when done</label>
+              <input type="checkbox" id="gbNotifyDone" style="width:16px;height:16px;cursor:pointer">
+            </div>
+          </div>
+        </details>
         <div class="add-dropdown-footer">
           <button class="add-btn" id="gbAddSubmit" type="submit" data-i18n="add">Add</button>
         </div>
@@ -305,7 +330,6 @@
       <div class="filter-row">
         <button class="filter-btn active" id="gbFilterAll" data-i18n="allTasks">All</button>
         <button class="filter-btn" id="gbFilterMine" data-i18n="myTasksFilter">Mine</button>
-        <button class="filter-btn" id="gbFilterUnassigned" data-i18n="filterUnassigned">Unassigned</button>
       </div>
       <select class="gb-select" id="gbSortSelect">
         <option value="newest">Newest</option>

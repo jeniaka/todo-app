@@ -136,6 +136,10 @@ const TL = {
     quickInvite:'Invite',unsupportedFile:'Unsupported file type',
     noTasksFound:'No tasks found in file',importError:'Import failed',
     dragToMove:'Drag to move',dropHere:'Drop here',statusChanged:'Status changed',
+    subtasksBlockDone:'Complete all sub-tasks first',
+    notifyWhenDone:'Notify me when done',
+    estimate:'Estimate',
+    showMore:'Show more',showLess:'Show less',
     jiraExportTitle:'How to export from Jira',
     jiraStep1:'Go to your Jira project',jiraStep2:'Click "Issues" in the left sidebar',
     jiraStep3:'Click "View all issues and filters"',jiraStep4:'Apply filters to select issues',
@@ -1159,7 +1163,7 @@ function langLocale() { return LOCALE_MAP[state.lang] || state.lang; }
 
 function absTime(ts) {
   if (!ts) return '';
-  return new Date(ts).toLocaleString(langLocale(), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  return new Date(ts).toLocaleString(langLocale(), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false });
 }
 
 // ─── API ──────────────────────────────────────────────────────────────────────
@@ -1557,15 +1561,17 @@ function renderGroupBoard() {
 
   document.getElementById('gbInviteBtn').style.display = myRole==='admin' ? '' : 'none';
   document.getElementById('gbSettingsBtn').style.display = myRole==='admin' ? '' : 'none';
+  document.getElementById('gbDeleteBtn').style.display = myRole==='admin' ? '' : 'none';
   // Show import row for admins/managers
   const importRow = document.getElementById('gbImportRow');
   if (importRow) importRow.style.display = (myRole==='admin'||myRole==='manager') ? '' : 'none';
 
+  // Build assignee options — no "Unassigned", defaults to self
   const assignOpts = myRole==='admin'||myRole==='manager'
     ? activeMembers.map(m => `<option value="${m.userId}"${m.userId===userId?' selected':''}>${m.name}</option>`).join('')
-    : `<option value="${userId}">${window.__USER__?.name}</option>`;
-  document.getElementById('gbAssignSelect').innerHTML = `<option value="">${tl.unassigned||'Unassigned'}</option>${assignOpts}`;
-  if (myRole === 'member') document.getElementById('gbAssignSelect').disabled = true;
+    : `<option value="${userId}" selected>${window.__USER__?.name}</option>`;
+  document.getElementById('gbAssignSelect').innerHTML = assignOpts;
+  document.getElementById('gbAssignSelect').disabled = myRole === 'member';
 
   // Update input placeholder and priority pill labels with current language
   const gbInput = document.getElementById('gbTaskInput');
@@ -1582,7 +1588,6 @@ function renderGroupBoard() {
   // Update filter/sort buttons
   document.getElementById('gbFilterAll').textContent = tl.allTasks || 'All';
   document.getElementById('gbFilterMine').textContent = tl.myTasksFilter || 'Mine';
-  document.getElementById('gbFilterUnassigned').textContent = tl.filterUnassigned || 'Unassigned';
   const gbSortSelect = document.getElementById('gbSortSelect');
   if (gbSortSelect) {
     gbSortSelect.options[0].text = tl.sortNewest || 'Newest';
@@ -1603,7 +1608,6 @@ function getFilteredGroupTasks() {
   const userId = window.__USER__?.id;
   let tasks = [...(g.tasks || [])];
   if (state.groupFilter === 'mine') tasks = tasks.filter(tk => tk.assignedTo === userId);
-  if (state.groupFilter === 'unassigned') tasks = tasks.filter(tk => !tk.assignedTo);
   if (state.groupSort === 'priority') {
     const pOrd = {high:0,medium:1,low:2};
     tasks.sort((a,b) => (pOrd[a.priority]??3) - (pOrd[b.priority]??3));
@@ -1624,38 +1628,61 @@ function renderGroupTaskList() {
   const members = g.members.filter(m=>m.status==='active');
   const getMember = id => members.find(m=>m.userId===id);
 
-  document.getElementById('gbTaskList').innerHTML = tasks.length ? tasks.map(task => {
+  const listEl = document.getElementById('gbTaskList');
+  listEl.innerHTML = tasks.length ? tasks.map(task => {
     const assignee = getMember(task.assignedTo);
-    const pColors = {high:'#EF4444',medium:'#F59E0B',low:'#6366F1',none:'#D1D5DB'};
     const canDelete = myRole==='admin'||myRole==='manager'||task.createdBy===userId;
-    const subs = task.subtasks || [];
-    const subsDone = subs.filter(s=>s.done).length;
-    const subBar = subs.length ? `<span class="gt-sub-count">${subsDone}/${subs.length}</span>` : '';
     const taskStatus = getTaskStatus(task);
     const isDone = taskStatus === 'done';
     const isInProg = taskStatus === 'in_progress';
+    const p = task.priority || 'none';
     const cbClass = isDone ? ' ticked' : isInProg ? ' in-progress' : '';
-    const rowClass = isDone ? ' gt-done' : isInProg ? ' in-progress-card' : '';
-    return `<div class="group-task-row${rowClass}" data-tid="${task.id}" style="cursor:pointer">
-      <button class="task-cb${cbClass}" data-gtcheck="${task.id}" aria-label="Cycle status">
-        ${isDone?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 12 4 10"/></svg>`:''}
-      </button>
-      <span class="gt-title">${esc(task.text)}${subBar}</span>
-      <span class="gt-assignee">
-        ${assignee ? (assignee.picture ? `<img class="gm-avatar sm" src="${assignee.picture}">` : `<div class="gm-avatar gm-avatar-fb sm">${(assignee.name||'?')[0]}</div>`) + `<span>${assignee.name}</span>` : `<span class="gt-unassigned">${tl.unassigned||'Unassigned'}</span>`}
-      </span>
-      <span class="gt-priority" style="background:${pColors[task.priority]||pColors.none}"></span>
-      ${canDelete ? `<button class="gt-del" data-gtdel="${task.id}" aria-label="Delete">✕</button>` : ''}
-    </div>`;
+    const cardClass = isDone ? ' done-card' : isInProg ? ' in-progress-card' : '';
+    const subs = task.subtasks || [];
+    const blocked = !isDone && subs.some(s => !s.done);
+    const dur = isDone && task.completedAt ? duration(task.createdAt, task.completedAt) : '';
+    const dueBadge = formatDueBadge(task);
+    const assigneeBadge = assignee
+      ? `<span class="task-assignee-badge">${assignee.picture ? `<img class="gm-avatar" src="${assignee.picture}" style="width:14px;height:14px">` : `<span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--accent-soft);font-size:9px;font-weight:700">${(assignee.name||'?')[0].toUpperCase()}</span>`}<span>${esc(assignee.name)}</span></span>`
+      : '';
+    return `<div class="task-card${cardClass}" data-tid="${task.id}" data-id="${task.id}" data-p="${p}" role="button" tabindex="0">
+  <div class="task-inner">
+    <button class="task-cb${cbClass}${blocked ? ' blocked' : ''}" data-gtcheck="${task.id}" aria-label="Cycle status"${blocked ? ' title="Complete all sub-tasks first"' : ''}>
+      ${isDone ? `<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}
+    </button>
+    <div class="task-body">
+      <div class="task-title">${esc(task.text)}</div>
+      <div class="task-meta">
+        <span class="task-time">${relativeTime(task.createdAt)}</span>
+        ${dur ? `<span class="task-dur">${t('took')} ${dur}</span>` : ''}
+        ${dueBadge}
+        ${assigneeBadge}
+      </div>
+      ${subBarHTML(task)}
+    </div>
+    ${canDelete ? `<button class="task-card-del" data-gtdel="${task.id}" aria-label="Delete">✕</button>` : ''}
+  </div>
+</div>`;
   }).join('') : `<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">${tl.noTasks||'No tasks yet'}</div></div>`;
 
-  document.getElementById('gbTaskList').querySelectorAll('[data-gtcheck]').forEach(btn => {
+  // Animate cards in
+  listEl.querySelectorAll('.task-card').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.04}s`;
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+  });
+
+  listEl.querySelectorAll('[data-gtcheck]').forEach(btn => {
     btn.addEventListener('click', async e => {
       e.stopPropagation();
       const task = g.tasks.find(tk => tk.id === btn.dataset.gtcheck);
       if (!task) return;
       if (myRole === 'member' && task.assignedTo !== userId) return;
       const currentStatus = getTaskStatus(task);
+      // Block completing a task with unfinished subtasks
+      if (currentStatus === 'in_progress' && (task.subtasks||[]).some(s => !s.done)) {
+        showToast(tl.subtasksBlockDone || 'Complete all sub-tasks first', 'error');
+        return;
+      }
       let nextStatus;
       if (currentStatus === 'todo') {
         nextStatus = 'in_progress';
@@ -1678,11 +1705,12 @@ function renderGroupTaskList() {
         task.startedAt = null;
       }
       renderGroupTaskList();
+      renderGbAnalytics();
       await apiUpdateGroupTask(g._id, task.id, {status: nextStatus, done: task.done, startedAt: task.startedAt || null, completedAt: task.completedAt || null});
     });
   });
 
-  document.getElementById('gbTaskList').querySelectorAll('[data-gtdel]').forEach(btn => {
+  listEl.querySelectorAll('[data-gtdel]').forEach(btn => {
     btn.addEventListener('click', async e => {
       e.stopPropagation();
       const taskId = btn.dataset.gtdel;
@@ -1692,13 +1720,10 @@ function renderGroupTaskList() {
         message: `"${task?.text}"`,
         confirmText: tl.yes || 'Yes',
         onConfirm: async () => {
-          // Animate row out before removing
-          const row = document.querySelector(`.group-task-row[data-id="${taskId}"]`);
-          if (row) {
-            row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            row.style.opacity = '0';
-            row.style.transform = 'translateX(30px)';
-            await new Promise(r => setTimeout(r, 300));
+          const card = document.querySelector(`.task-card[data-id="${taskId}"]`);
+          if (card) {
+            card.classList.add('removing');
+            await new Promise(r => setTimeout(r, 380));
           }
           g.tasks = g.tasks.filter(tk => tk.id !== taskId);
           renderGroupTaskList();
@@ -1708,18 +1733,18 @@ function renderGroupTaskList() {
     });
   });
 
-  // Click on task row opens detail modal
-  document.getElementById('gbTaskList').querySelectorAll('.group-task-row').forEach(row => {
-    row.addEventListener('click', e => {
+  // Click on task card opens detail modal
+  listEl.querySelectorAll('.task-card[data-tid]').forEach(card => {
+    card.addEventListener('click', e => {
       if (e.target.closest('[data-gtcheck]') || e.target.closest('[data-gtdel]')) return;
-      const task = g.tasks.find(tk => tk.id === row.dataset.tid);
+      const task = g.tasks.find(tk => tk.id === card.dataset.tid);
       if (task) showGroupTaskDetail(task);
     });
   });
 }
 
 function updateGbFilterBtns() {
-  ['All','Mine','Unassigned'].forEach(f => {
+  ['All','Mine'].forEach(f => {
     document.getElementById('gbFilter'+f)?.classList.toggle('active', state.groupFilter===f.toLowerCase());
   });
 }
@@ -1765,9 +1790,30 @@ function showGroupTaskDetail(task) {
       <div style="margin:8px 0">
         <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:6px">${tl.assignedTo||'Assigned to'}</label>
         <select class="gb-select" id="gtdAssign" style="width:100%"${myRole==='member'?' disabled':''}>
-          <option value="">${tl.unassigned||'Unassigned'}</option>
           ${members.map(m=>`<option value="${m.userId}"${m.userId===task.assignedTo?' selected':''}>${m.name}</option>`).join('')}
         </select>
+      </div>
+      <div style="display:flex;gap:12px;margin:8px 0">
+        <div style="flex:1">
+          <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:6px">${tl.estimate||'Estimate'}</label>
+          <select class="gb-select" id="gtdEstimate" style="width:100%"${!canEdit?' disabled':''}>
+            <option value="">—</option>
+            <option value="0.25"${task.estimatedHours===0.25?' selected':''}>15m</option>
+            <option value="0.5"${task.estimatedHours===0.5?' selected':''}>30m</option>
+            <option value="1"${task.estimatedHours===1?' selected':''}>1h</option>
+            <option value="2"${task.estimatedHours===2?' selected':''}>2h</option>
+            <option value="4"${task.estimatedHours===4?' selected':''}>4h</option>
+            <option value="8"${task.estimatedHours===8?' selected':''}>8h</option>
+          </select>
+        </div>
+        <div style="flex:1">
+          <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:6px">${tl.dueDate||'Due date'}</label>
+          <input type="datetime-local" class="modal-input" id="gtdDueDate" style="padding:6px 8px;font-size:12px"${!canEdit?' disabled':''} value="${task.dueDate ? new Date(task.dueDate).toISOString().slice(0,16) : ''}">
+        </div>
+      </div>
+      <div style="margin:8px 0;display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="gtdNotifyDone"${task.notifyOnDone?' checked':''}${!canEdit?' disabled':''} style="width:15px;height:15px;cursor:pointer;accent-color:var(--accent)">
+        <label for="gtdNotifyDone" style="font-size:13px;color:var(--text-secondary);cursor:pointer">${tl.notifyWhenDone||'Notify me when done'}</label>
       </div>
       <div style="margin:12px 0 6px">
         <div class="subtask-header">
@@ -1877,12 +1923,17 @@ function showGroupTaskDetail(task) {
     const newText = el.querySelector('#gtdTitle').value.trim();
     const newNotes = el.querySelector('#gtdNotes').value.trim();
     const newAssign = el.querySelector('#gtdAssign').value || null;
+    const newEstimate = el.querySelector('#gtdEstimate')?.value ? parseFloat(el.querySelector('#gtdEstimate').value) : null;
+    const newDueDateVal = el.querySelector('#gtdDueDate')?.value;
+    const newDueDate = newDueDateVal ? new Date(newDueDateVal).getTime() : null;
+    const newNotifyDone = el.querySelector('#gtdNotifyDone')?.checked || false;
     if (!newText) { el.querySelector('#gtdTitle').focus(); return; }
-    const updates = {text: newText, description: newNotes, priority: localPriority, assignedTo: newAssign, subtasks: localSubtasks};
+    const updates = {text: newText, description: newNotes, priority: localPriority, assignedTo: newAssign, subtasks: localSubtasks, estimatedHours: newEstimate, dueDate: newDueDate, notifyOnDone: newNotifyDone};
     // Update local state
     Object.assign(task, updates);
     close();
     renderGroupTaskList();
+    renderGbAnalytics();
     await apiUpdateGroupTask(g._id, task.id, updates);
   });
 
@@ -3440,23 +3491,35 @@ async function loadGbActivities() {
       listEl.innerHTML = `<div class="dash-empty">${tl.noData||'No activity yet'}</div>`;
       return;
     }
-    listEl.innerHTML = acts.slice(0,10).map(a => {
-      const timeStr = relativeTime(a.timestamp);
+    const INITIAL = 3, PAGE = 10;
+    let shown = INITIAL;
+    function renderActs() {
       const verb = {
         task_created: tl.actTaskCreated||'created',
         task_completed: tl.actTaskCompleted||'completed',
         task_started: tl.actTaskStarted||'started',
         task_assigned: tl.actTaskAssigned||'assigned',
         member_joined: tl.actMemberJoined||'joined the group',
-      }[a.type] || a.type;
-      const taskPart = a.taskText ? ` "${esc(a.taskText)}"` : '';
-      const targetPart = a.targetUser ? ` → ${esc(a.targetUser)}` : '';
-      return `<div class="dash-activity-item">
-        <span class="dash-activity-dot"></span>
-        <span class="dash-activity-text"><strong>${esc(a.userName||'')}</strong> ${verb}${taskPart}${targetPart}</span>
-        <span class="dash-activity-time">${timeStr}</span>
-      </div>`;
-    }).join('');
+      };
+      const rows = acts.slice(0, shown).map(a => {
+        const timeStr = relativeTime(a.timestamp);
+        const v = verb[a.type] || a.type;
+        const taskPart = a.taskText ? ` "${esc(a.taskText)}"` : '';
+        const targetPart = a.targetUser ? ` → ${esc(a.targetUser)}` : '';
+        return `<div class="dash-activity-item">
+          <span class="dash-activity-dot"></span>
+          <span class="dash-activity-text"><strong>${esc(a.userName||'')}</strong> ${v}${taskPart}${targetPart}</span>
+          <span class="dash-activity-time">${timeStr}</span>
+        </div>`;
+      }).join('');
+      const hasMore = acts.length > shown;
+      listEl.innerHTML = rows + (hasMore
+        ? `<button class="link-btn" id="gbActMore" style="margin-top:6px;font-size:12px">${tl.showMore||'Show more'} (${Math.min(acts.length - shown, PAGE)})</button>`
+        : (shown > INITIAL ? `<button class="link-btn" id="gbActLess" style="margin-top:6px;font-size:12px">${tl.showLess||'Show less'}</button>` : ''));
+      listEl.querySelector('#gbActMore')?.addEventListener('click', () => { shown = Math.min(shown + PAGE, acts.length); renderActs(); });
+      listEl.querySelector('#gbActLess')?.addEventListener('click', () => { shown = INITIAL; renderActs(); });
+    }
+    renderActs();
   } catch(_) {
     listEl.innerHTML = `<div class="dash-empty">${tl.noData||'No activity yet'}</div>`;
   }
@@ -3469,6 +3532,13 @@ async function updateTaskStatus(taskId, newStatus) {
   if (!task) return;
   const oldStatus = task.status || (task.done ? 'done' : 'todo');
   if (oldStatus === newStatus) return;
+  // Block moving to done when subtasks are pending
+  if (newStatus === 'done' && (task.subtasks||[]).some(s => !s.done)) {
+    const tl = TL[state.lang] || TL.en;
+    showToast(tl.subtasksBlockDone || 'Complete all sub-tasks first', 'error');
+    renderGbAnalytics(); renderGroupTaskList();
+    return;
+  }
   const now = Date.now();
   task.status = newStatus;
   if (newStatus === 'in_progress') {
@@ -3493,7 +3563,16 @@ async function updateTaskStatus(taskId, newStatus) {
 }
 
 function setupDragAndDrop() {
+  const myRole = state.activeGroup?.myRole;
+  const myUserId = window.__USER__?.id;
   document.querySelectorAll('.kanban-card').forEach(card => {
+    // Members can only drag their own tasks
+    const taskId = card.dataset.taskId;
+    const task = (state.activeGroup?.tasks || []).find(t => t.id === taskId);
+    if (myRole === 'member' && task?.assignedTo !== myUserId) {
+      card.setAttribute('draggable', 'false');
+      return;
+    }
     card.setAttribute('draggable', 'true');
     card.addEventListener('dragstart', e => {
       e.dataTransfer.setData('text/plain', card.dataset.taskId);
@@ -3531,7 +3610,12 @@ function setupDragAndDrop() {
 
 let _touchDragCard = null, _touchClone = null;
 function setupTouchDrag() {
+  const myRoleTD = state.activeGroup?.myRole;
+  const myUserIdTD = window.__USER__?.id;
   document.querySelectorAll('.kanban-card').forEach(card => {
+    const taskIdTD = card.dataset.taskId;
+    const taskTD = (state.activeGroup?.tasks || []).find(t => t.id === taskIdTD);
+    if (myRoleTD === 'member' && taskTD?.assignedTo !== myUserIdTD) return;
     card.addEventListener('touchstart', e => {
       _touchDragCard = card;
       _touchClone = card.cloneNode(true);
@@ -4486,22 +4570,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const input = document.getElementById('gbTaskInput');
     const text = input.value.trim();
     if (!text) { input.focus(); return; }
-    const assignTo = document.getElementById('gbAssignSelect').value || null;
+    const assignTo = document.getElementById('gbAssignSelect').value || window.__USER__?.id || null;
     const priority = state.gbNewPriority || 'low';
+    const estimateEl = document.getElementById('gbEstimate');
+    const estimatedHours = estimateEl?.value ? parseFloat(estimateEl.value) : null;
+    const dueDateEl = document.getElementById('gbDueDate');
+    const dueDate = dueDateEl?.value ? new Date(dueDateEl.value).getTime() : null;
+    const notifyOnDone = document.getElementById('gbNotifyDone')?.checked || false;
     const submitBtn = document.getElementById('gbAddSubmit');
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '…'; }
     try {
-      const task = await apiAddGroupTask(state.activeGroup._id, {text, assignedTo: assignTo, priority});
+      const task = await apiAddGroupTask(state.activeGroup._id, {text, assignedTo: assignTo, priority, estimatedHours, dueDate, notifyOnDone});
       if (task && task.id) {
         state.activeGroup.tasks.unshift(task);
         input.value = '';
         gbDropdown.classList.remove('open');
-        // Reset priority pill to low
+        // Reset form fields
         state.gbNewPriority = 'low';
         document.querySelectorAll('[data-gbp]').forEach(b => b.classList.toggle('active', b.dataset.gbp === 'low'));
+        if (estimateEl) estimateEl.value = '';
+        if (dueDateEl) dueDateEl.value = '';
+        if (document.getElementById('gbNotifyDone')) document.getElementById('gbNotifyDone').checked = false;
         renderGroupTaskList();
       } else {
-        showToast((TL[state.lang]||TL.en).confirmDeleteTask ? '⚠️ Could not add task' : '⚠️ Could not add task', 'error');
+        showToast('⚠️ Could not add task', 'error');
       }
     } catch (err) {
       showToast('⚠️ Network error — please try again', 'error');
@@ -4512,7 +4604,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('gbFilterAll').addEventListener('click', () => { state.groupFilter='all'; renderGroupTaskList(); updateGbFilterBtns(); });
   document.getElementById('gbFilterMine').addEventListener('click', () => { state.groupFilter='mine'; renderGroupTaskList(); updateGbFilterBtns(); });
-  document.getElementById('gbFilterUnassigned').addEventListener('click', () => { state.groupFilter='unassigned'; renderGroupTaskList(); updateGbFilterBtns(); });
   document.getElementById('gbSortSelect').addEventListener('change', e => { state.groupSort=e.target.value; renderGroupTaskList(); });
 
   document.getElementById('gbInviteBtn').addEventListener('click', showInviteModal);

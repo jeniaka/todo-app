@@ -21,7 +21,7 @@ from urllib.parse import urlparse, parse_qs
 from mail import (
     smtp_configured, send_email, smtp_status, print_smtp_status,
     build_email, build_invite_email, build_task_assigned_email,
-    build_overdue_email, build_member_joined_email,
+    build_task_done_email, build_overdue_email, build_member_joined_email,
     SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, SMTP_DEBUG,
 )
 
@@ -255,7 +255,7 @@ def record_activity(group_id, activity):
     try:
         db["groups"].update_one(
             {"_id": group_id},
-            {"$push": {"activities": {"$each": [activity], "$slice": -50}}}
+            {"$push": {"activities": {"$each": [activity], "$slice": -30}}}
         )
     except Exception as e:
         print(f"⚠ record_activity failed: {e}")
@@ -1036,6 +1036,7 @@ class Handler(BaseHTTPRequestHandler):
                     "createdBy": user["id"],
                     "assignedTo": assigned_to,
                     "subtasks": [],
+                    "notifyOnDone": body.get("notifyOnDone", False),
                 }
                 g["tasks"].insert(0, task)
                 save_group(g, user["id"])
@@ -1246,6 +1247,7 @@ class Handler(BaseHTTPRequestHandler):
                     if "dueDate" in body: t["dueDate"] = body["dueDate"]
                     if "startedAt" in body: t["startedAt"] = body["startedAt"]
                     if "overdueNotified" in body: t["overdueNotified"] = body["overdueNotified"]
+                    if "notifyOnDone" in body: t["notifyOnDone"] = body["notifyOnDone"]
                     if "status" in body:
                         old_status = t.get("status", "todo")
                         t["status"] = body["status"]
@@ -1302,6 +1304,24 @@ class Handler(BaseHTTPRequestHandler):
                     "timestamp": int(time.time() * 1000),
                 })
                 record_activity(g["_id"], activity_to_record)
+            # Send "notify when done" email if task was just completed
+            if activity_to_record and activity_to_record.get("type") == "task_completed" and smtp_configured():
+                completed_task = next((t for t in g["tasks"] if t["id"] == parts[5]), None)
+                if completed_task and completed_task.get("notifyOnDone"):
+                    creator_id = completed_task.get("createdBy")
+                    if creator_id:
+                        creator_member = next((m for m in g["members"] if m.get("userId") == creator_id), None)
+                        if creator_member and creator_member.get("email"):
+                            html = build_task_done_email(
+                                completer_name=user.get("name","Someone"),
+                                task_text=completed_task["text"],
+                                group_name=g["name"],
+                                group_color=g.get("color","#22C55E"),
+                            )
+                            subj = f'✅ Done: "{completed_task["text"]}" in {g["name"]}'
+                            _ok2, _err2 = send_email(creator_member["email"], subj, html)
+                            if not _ok2:
+                                print(f"[notify-done-email] failed: {_err2}")
             return self.ok("application/json", b'{"ok":true}')
 
         # PUT /api/groups/{id}/members/{userId}

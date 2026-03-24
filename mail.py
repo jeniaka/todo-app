@@ -169,6 +169,23 @@ def build_task_assigned_email(assigner_name, task_text, group_name, group_color,
     )
 
 
+def build_task_done_email(completer_name, task_text, group_name, group_color):
+    body = f"""
+    <p style="margin:0 0 20px 0;font-size:15px;color:#6B6B6B;text-align:center;">
+      <strong style="color:#1A1A1A;">{completer_name}</strong> completed a task you created
+    </p>
+    <div style="background:#F0FDF4;border-radius:12px;padding:20px 24px;border-left:4px solid {group_color};margin-bottom:8px;">
+      <p style="margin:0;font-size:16px;font-weight:600;color:#1A1A1A;">✅ {task_text}</p>
+      <p style="margin:6px 0 0 0;font-size:13px;color:#9B9B9B;">in {group_name}</p>
+    </div>"""
+    return build_email(
+        title=f'✅ Done: "{task_text}"',
+        body_html=body,
+        cta_text="View Group",
+        cta_url="",
+    )
+
+
 def build_overdue_email(task_text, due_date_ms, group_name):
     """Build an overdue task notification email."""
     due_str = ""

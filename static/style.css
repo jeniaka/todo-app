@@ -436,13 +436,20 @@ body{
   -webkit-tap-highlight-color:transparent;
 }
 .add-p-btn:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
-.add-p-btn[data-p=low].active{color:var(--priority-low);border-color:var(--priority-low);background:rgba(99,102,241,0.1)}
-.add-p-btn[data-p=medium].active{color:var(--priority-medium);border-color:var(--priority-medium);background:rgba(245,158,11,0.1)}
-.add-p-btn[data-p=high].active{color:var(--priority-high);border-color:var(--priority-high);background:rgba(239,68,68,0.1)}
+.add-p-btn[data-p=low].active,.add-p-btn[data-gbp=low].active{color:var(--priority-low);border-color:var(--priority-low);background:rgba(99,102,241,0.1)}
+.add-p-btn[data-p=medium].active,.add-p-btn[data-gbp=medium].active{color:var(--priority-medium);border-color:var(--priority-medium);background:rgba(245,158,11,0.1)}
+.add-p-btn[data-p=high].active,.add-p-btn[data-gbp=high].active{color:var(--priority-high);border-color:var(--priority-high);background:rgba(239,68,68,0.1)}
 .add-dropdown-footer{
   display:flex;align-items:center;justify-content:space-between;
   padding:4px 2px 10px;gap:8px;
 }
+.add-more-options{padding:0 2px 4px;font-size:13px}
+.add-more-options summary{cursor:pointer;color:var(--text-secondary);padding:4px 0;list-style:none;outline:none}
+.add-more-options summary::-webkit-details-marker{display:none}
+.add-more-options summary::before{content:'▸ ';font-size:11px}
+.add-more-options[open] summary::before{content:'▾ '}
+.add-more-body{display:flex;flex-direction:column;gap:6px;padding-block-start:6px}
+.add-more-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:var(--text-secondary)}
 
 /* Legacy dropdown (kept for safety) */
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -1299,6 +1306,16 @@ body{
 .task-cb.in-progress{background:#3B82F6;border-color:#3B82F6;animation:pulseDot 1.5s infinite}
 .task-card.in-progress-card{border-left:3px solid #3B82F6}
 .group-task-row.in-progress-card{border-left:3px solid #3B82F6}
+/* Group task assignee badge inside task-meta */
+.task-assignee-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary)}
+/* Inline delete button on group task card */
+.task-card-del{
+  width:24px;height:24px;border:none;background:transparent;cursor:pointer;flex-shrink:0;
+  color:var(--text-tertiary);font-size:13px;border-radius:4px;align-self:flex-start;
+  display:flex;align-items:center;justify-content:center;margin-block-start:2px;
+  transition:color var(--duration-fast),background var(--duration-fast);
+}
+.task-card-del:hover{color:var(--priority-high);background:rgba(239,68,68,0.1)}
 @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:0.6}}
 
 /* ─── 3-segment progress bar ─────────────────────────────────────────────── */
