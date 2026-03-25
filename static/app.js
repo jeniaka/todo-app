@@ -1959,39 +1959,7 @@ function showGroupTaskDetail(task) {
   }
 
   // Mic button for group task detail notes
-  const gtdMicBtn = el.querySelector('#gtdMicBtn');
-  if (gtdMicBtn && SpeechRecognition) {
-    gtdMicBtn.addEventListener('click', () => {
-      if (!recognition) initSpeech();
-      const textarea = el.querySelector('#gtdNotes');
-      let finalText = textarea.value;
-      recognition.onresult = ev => {
-        let interim = '';
-        for (let i = ev.resultIndex; i < ev.results.length; i++) {
-          if (ev.results[i].isFinal) finalText += ev.results[i][0].transcript + ' ';
-          else interim += ev.results[i][0].transcript;
-        }
-        textarea.value = finalText + interim;
-      };
-      recognition.onend = () => {
-        isListening = false;
-        gtdMicBtn.classList.remove('recording');
-        textarea.value = finalText.trim();
-      };
-      recognition.onerror = ev => {
-        isListening = false;
-        gtdMicBtn.classList.remove('recording');
-        if (ev.error === 'not-allowed') showToast(t('micPermissionDenied') || 'Microphone access denied', 'error');
-      };
-      if (isListening) { recognition.stop(); return; }
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
-      try { recognition.start(); } catch(_) { initSpeech(); recognition.start(); }
-      isListening = true;
-      gtdMicBtn.classList.add('recording');
-    });
-  }
+  setupSpeechToText(el.querySelector('#gtdNotes'), el.querySelector('#gtdMicBtn'));
 
   // Priority pills
   el.querySelectorAll('[data-gtdp]').forEach(btn => {
@@ -2015,22 +1983,7 @@ function showGroupTaskDetail(task) {
   el.querySelector('#gtdSubInput').addEventListener('keydown', e2 => { if (e2.key === 'Enter') { e2.preventDefault(); addSubLocal(); } });
 
   // Subtask mic
-  const gtdSubMic = el.querySelector('#gtdSubMic');
-  if (SpeechRecognition && gtdSubMic) {
-    gtdSubMic.addEventListener('click', () => {
-      if (!recognition) initSpeech();
-      recognition.onresult = e2 => {
-        el.querySelector('#gtdSubInput').value = Array.from(e2.results).map(r=>r[0].transcript).join('');
-      };
-      recognition.onend = () => { isListening = false; gtdSubMic.classList.remove('mic-active'); };
-      if (isListening) { recognition.stop(); return; }
-      recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
-      try { recognition.start(); } catch(_) { initSpeech(); recognition.start(); }
-      isListening = true; gtdSubMic.classList.add('mic-active');
-    });
-  } else if (gtdSubMic) {
-    gtdSubMic.style.display = 'none';
-  }
+  setupSpeechToText(el.querySelector('#gtdSubInput'), el.querySelector('#gtdSubMic'));
 
   const close = () => { el.classList.remove('open'); setTimeout(() => el.remove(), 200); };
   el.querySelector('#gtdCancel').addEventListener('click', close);
@@ -2845,11 +2798,9 @@ function renderActiveChart() {
 }
 
 // ─── Speech to Text ───────────────────────────────────────────────────────────
-// Uses the browser's built-in Web Speech API (powered by Google on Chrome/Android,
-// Siri on Safari) — no API key needed, supports all app languages.
+// Uses the browser's built-in Web Speech API — no API key needed.
+// Each mic button gets its OWN recognition instance to avoid shared-state bugs.
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition = null;
-let isListening = false;
 
 // BCP-47 locale tags for speech recognition (same langs as UI)
 const SPEECH_LOCALE_MAP = {
@@ -2858,70 +2809,62 @@ const SPEECH_LOCALE_MAP = {
   zh:'zh-CN', ja:'ja-JP',
 };
 
-function initSpeech() {
-  if (!SpeechRecognition) return;
-  recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.interimResults = true;
+function setupSpeechToText(inputEl, micBtn) {
+  if (!SpeechRecognition) { if (micBtn) micBtn.style.display = 'none'; return; }
+  if (!micBtn) return;
+
+  const recognition = new SpeechRecognition();
+  recognition.continuous = false;     // one phrase at a time — no duplication
+  recognition.interimResults = false; // only fire when result is final
   recognition.maxAlternatives = 1;
 
+  let listening = false;
+
+  micBtn.addEventListener('click', () => {
+    if (listening) { recognition.stop(); return; }
+    recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
+    // For plain inputs clear first; for textareas we append
+    if (inputEl.tagName !== 'TEXTAREA') inputEl.value = '';
+    try { recognition.start(); } catch (_) {
+      // If already started, stop and restart
+      recognition.stop();
+      setTimeout(() => recognition.start(), 150);
+    }
+  });
+
   recognition.onstart = () => {
-    isListening = true;
-    updateMicBtn(true);
+    listening = true;
+    micBtn.classList.add('recording', 'mic-active');
+    micBtn.setAttribute('aria-label', t('stopRecording') || 'Stop recording');
   };
 
   recognition.onresult = e => {
-    const transcript = Array.from(e.results)
-      .map(r => r[0].transcript).join('');
-    const inp = document.getElementById('addInput');
-    if (inp) inp.value = transcript;
+    const transcript = e.results[0][0].transcript;
+    if (inputEl.tagName === 'TEXTAREA') {
+      const existing = inputEl.value.trim();
+      inputEl.value = existing ? existing + ' ' + transcript : transcript;
+    } else {
+      inputEl.value = transcript;
+    }
+    inputEl.dispatchEvent(new Event('input', { bubbles: true }));
   };
 
   recognition.onend = () => {
-    isListening = false;
-    updateMicBtn(false);
-    // Auto-submit if there's text
-    const inp = document.getElementById('addInput');
-    if (inp && inp.value.trim()) {
-      inp.focus();
-    }
+    listening = false;
+    micBtn.classList.remove('recording', 'mic-active');
+    micBtn.setAttribute('aria-label', t('startRecording') || 'Start recording');
+    if (inputEl.tagName !== 'TEXTAREA' && inputEl.value.trim()) inputEl.focus();
   };
 
   recognition.onerror = e => {
-    isListening = false;
-    updateMicBtn(false);
-    if (e.error !== 'no-speech' && e.error !== 'aborted') {
+    listening = false;
+    micBtn.classList.remove('recording', 'mic-active');
+    if (e.error === 'not-allowed') {
+      showToast(t('micPermissionDenied') || 'Microphone access denied', 'error');
+    } else if (e.error !== 'no-speech' && e.error !== 'aborted') {
       showToast('🎤 ' + e.error, 'warning');
     }
   };
-}
-
-function updateMicBtn(listening) {
-  const btn = document.getElementById('micBtn');
-  if (!btn) return;
-  btn.classList.toggle('mic-active', listening);
-  btn.setAttribute('aria-label', listening ? 'Stop listening' : 'Voice input');
-}
-function updateSubMicBtn(listening) {
-  const btn = document.getElementById('subMicBtn');
-  if (!btn) return;
-  btn.classList.toggle('mic-active', listening);
-}
-
-function toggleSpeech() {
-  if (!SpeechRecognition) {
-    showToast('🎤 Speech not supported in this browser', 'warning');
-    return;
-  }
-  if (!recognition) initSpeech();
-  if (isListening) {
-    recognition.stop();
-    return;
-  }
-  recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
-  const inp = document.getElementById('addInput');
-  if (inp) inp.value = '';
-  try { recognition.start(); } catch (_) { initSpeech(); recognition.start(); }
 }
 
 // ─── Visual Time Picker ────────────────────────────────────────────────────────
@@ -4474,12 +4417,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Theme button ──────────────────────────────────────────────────────────
   document.getElementById('themeBtn').addEventListener('click', toggleTheme);
 
-  // ── Mic button ────────────────────────────────────────────────────────────
-  const micBtn = document.getElementById('micBtn');
-  if (micBtn) {
-    if (!SpeechRecognition) micBtn.style.display = 'none'; // hide on unsupported browsers
-    else micBtn.addEventListener('click', toggleSpeech);
-  }
+  // ── Mic button (personal task input) ─────────────────────────────────────
+  setupSpeechToText(document.getElementById('addInput'), document.getElementById('micBtn'));
 
   // ── Add form ──────────────────────────────────────────────────────────────
   document.getElementById('addForm').addEventListener('submit', async e => {
@@ -4487,7 +4426,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const inp = document.getElementById('addInput');
     const text = inp.value;
     if (!text.trim()) return;
-    if (isListening && recognition) recognition.stop();
     inp.value = '';    // clear immediately — don't wait for API
     inp.focus();
     await addTodo(text);
@@ -4579,44 +4517,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('drawerDesc').addEventListener('input', scheduleDrawerSave);
 
   // ── Description mic button (speech-to-text for notes field) ───────────────
-  const descMicBtn = document.getElementById('descMicBtn');
-  if (descMicBtn) {
-    if (!SpeechRecognition) { descMicBtn.style.display = 'none'; }
-    else {
-      descMicBtn.addEventListener('click', () => {
-        if (!recognition) initSpeech();
-        const textarea = document.getElementById('drawerDesc');
-        let finalText = textarea.value;
-        recognition.onresult = ev => {
-          let interim = '';
-          for (let i = ev.resultIndex; i < ev.results.length; i++) {
-            if (ev.results[i].isFinal) finalText += ev.results[i][0].transcript + ' ';
-            else interim += ev.results[i][0].transcript;
-          }
-          textarea.value = finalText + interim;
-          scheduleDrawerSave();
-        };
-        recognition.onend = () => {
-          isListening = false;
-          descMicBtn.classList.remove('recording');
-          textarea.value = finalText.trim();
-          scheduleDrawerSave();
-        };
-        recognition.onerror = ev => {
-          isListening = false;
-          descMicBtn.classList.remove('recording');
-          if (ev.error === 'not-allowed') showToast(t('micPermissionDenied') || 'Microphone access denied', 'error');
-        };
-        if (isListening) { recognition.stop(); return; }
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
-        try { recognition.start(); } catch(_) { initSpeech(); recognition.start(); }
-        isListening = true;
-        descMicBtn.classList.add('recording');
-      });
-    }
-  }
+  setupSpeechToText(document.getElementById('drawerDesc'), document.getElementById('descMicBtn'));
 
   // Priority chips
   ['none','low','medium','high'].forEach(p => {
@@ -4701,30 +4602,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Subtask mic
-  const subMicBtn = document.getElementById('subMicBtn');
-  if (subMicBtn) {
-    if (!SpeechRecognition) subMicBtn.style.display = 'none';
-    else subMicBtn.addEventListener('click', () => {
-      if (!recognition) initSpeech();
-      // Override onresult to target subtask input
-      recognition.onresult = e => {
-        const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
-        const inp = document.getElementById('subtaskInput');
-        if (inp) inp.value = transcript;
-      };
-      recognition.onend = () => {
-        isListening = false;
-        updateMicBtn(false);
-        updateSubMicBtn(false);
-      };
-      if (isListening) { recognition.stop(); return; }
-      recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
-      document.getElementById('subtaskInput').value = '';
-      try { recognition.start(); } catch (_) { initSpeech(); recognition.start(); }
-      isListening = true;
-      updateSubMicBtn(true);
-    });
-  }
+  setupSpeechToText(document.getElementById('subtaskInput'), document.getElementById('subMicBtn'));
 
   document.getElementById('subtaskList').addEventListener('click', async e => {
     const todo = state.todos.find(x => x.id === state.activeDrawer);
@@ -4905,29 +4783,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Mic button for group add input
-  const gbMicBtn = document.getElementById('gbMicBtn');
-  if (gbMicBtn) {
-    if (!SpeechRecognition) gbMicBtn.style.display = 'none';
-    else gbMicBtn.addEventListener('click', () => {
-      if (!recognition) initSpeech();
-      const origEnd = recognition.onend;
-      recognition.onend = e2 => {
-        isListening = false;
-        gbMicBtn.classList.remove('mic-active');
-      };
-      recognition.onresult = e2 => {
-        const transcript = Array.from(e2.results).map(r => r[0].transcript).join('');
-        gbInput.value = transcript;
-        gbDropdown.classList.add('open');
-      };
-      if (isListening) { recognition.stop(); return; }
-      recognition.lang = SPEECH_LOCALE_MAP[state.lang] || 'en-US';
-      gbInput.value = '';
-      try { recognition.start(); } catch (_) { initSpeech(); recognition.start(); }
-      isListening = true;
-      gbMicBtn.classList.add('mic-active');
-    });
-  }
+  setupSpeechToText(gbInput, document.getElementById('gbMicBtn'));
 
   // Time picker trigger for group add form
   setupTimePickerTrigger(document.getElementById('gbDuePicker'), null);
