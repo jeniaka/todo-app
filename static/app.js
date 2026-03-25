@@ -1967,6 +1967,10 @@ function showGroupTaskDetail(task) {
       if (!canEdit) return;
       localPriority = btn.dataset.gtdp;
       el.querySelectorAll('[data-gtdp]').forEach(b => b.classList.toggle('active', b.dataset.gtdp === localPriority));
+      // Bounce + sound feedback
+      btn.classList.add('picking');
+      btn.addEventListener('animationend', () => btn.classList.remove('picking'), { once: true });
+      playSound('priority_' + localPriority);
     });
   });
 
@@ -2625,9 +2629,13 @@ async function toggleTodo(id, checkEl) {
     todo.done = true;
     todo.completedAt = Date.now();
     if (checkEl) {
+      checkEl.classList.add('just-checked');
+      setTimeout(() => checkEl.classList.remove('just-checked'), 400);
       const rect = checkEl.getBoundingClientRect();
       burst(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      spawnSparkles(rect.left + rect.width / 2, rect.top + rect.height / 2, '#34D399');
     }
+    playSound('complete');
     if (todo.notifyOnDone) {
       showToast(`✓ ${t('taskDone')}`, 'success');
       playNotifSound();
@@ -2636,6 +2644,7 @@ async function toggleTodo(id, checkEl) {
     todo.done = false;
     todo.completedAt = null;
     todo.startedAt = null;
+    playSound('uncomplete');
   }
   render();
   await apiSave();
@@ -2795,6 +2804,126 @@ function renderActiveChart() {
       }
     });
   }
+}
+
+// ─── Sound Effects (Web Audio API) ───────────────────────────────────────────
+let _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return _audioCtx;
+}
+
+function playSound(type) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  try {
+    const ctx = getAudioCtx();
+    const gain = ctx.createGain();
+    gain.connect(ctx.destination);
+
+    const osc = ctx.createOscillator();
+    osc.connect(gain);
+
+    const now = ctx.currentTime;
+    switch (type) {
+      case 'complete': {
+        // Pleasant ascending chime: low G → high C
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(392, now);
+        osc.frequency.exponentialRampToValueAtTime(784, now + 0.12);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc.start(now); osc.stop(now + 0.45);
+        break;
+      }
+      case 'uncomplete': {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523, now);
+        osc.frequency.exponentialRampToValueAtTime(330, now + 0.15);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now); osc.stop(now + 0.3);
+        break;
+      }
+      case 'add': {
+        // Soft satisfying pop
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(680, now);
+        osc.frequency.exponentialRampToValueAtTime(440, now + 0.08);
+        gain.gain.setValueAtTime(0.13, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.start(now); osc.stop(now + 0.18);
+        break;
+      }
+      case 'priority_high': {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, now);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.start(now); osc.stop(now + 0.15);
+        break;
+      }
+      case 'priority_medium': {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(330, now);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.start(now); osc.stop(now + 0.15);
+        break;
+      }
+      case 'priority_low': {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, now);
+        gain.gain.setValueAtTime(0.09, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.start(now); osc.stop(now + 0.18);
+        break;
+      }
+      case 'delete': {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.22);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.start(now); osc.stop(now + 0.22);
+        break;
+      }
+      case 'open': {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(540, now);
+        osc.frequency.exponentialRampToValueAtTime(660, now + 0.1);
+        gain.gain.setValueAtTime(0.07, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+        osc.start(now); osc.stop(now + 0.2);
+        break;
+      }
+    }
+  } catch(_) { /* AudioContext blocked — silently skip */ }
+}
+
+// ─── Visual Effects ───────────────────────────────────────────────────────────
+function spawnSparkles(x, y, color = '#5B9BF8') {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colors = [color, '#FBBF24', '#34D399', '#F87171', '#a78bfa'];
+  for (let i = 0; i < 7; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'sparkle-dot';
+    const angle = (i / 7) * Math.PI * 2;
+    const dist = 20 + Math.random() * 25;
+    dot.style.cssText = `left:${x + Math.cos(angle) * dist}px;top:${y + Math.sin(angle) * dist}px;background:${colors[i % colors.length]};animation-delay:${i * 30}ms`;
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 700);
+  }
+}
+
+function addRipple(el, e) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const r = el.getBoundingClientRect();
+  const rip = document.createElement('span');
+  rip.className = 'ripple';
+  rip.style.left = (e.clientX - r.left - 30) + 'px';
+  rip.style.top  = (e.clientY - r.top - 30) + 'px';
+  el.appendChild(rip);
+  setTimeout(() => rip.remove(), 600);
 }
 
 // ─── Speech to Text ───────────────────────────────────────────────────────────
@@ -3061,6 +3190,7 @@ async function addTodo(text) {
   state.todos.unshift(todo);
   resetPriorityPicker();
   render();
+  playSound('add');
   // Confetti burst from add button
   const btn = document.getElementById('addSubmit');
   if (btn) {
@@ -4497,7 +4627,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     const card = e.target.closest('.task-card');
-    if (card) openDrawer(parseInt(card.dataset.id));
+    if (card) {
+      addRipple(card, e);
+      playSound('open');
+      openDrawer(parseInt(card.dataset.id));
+    }
   });
 
   document.getElementById('taskList').addEventListener('keydown', e => {
@@ -4521,17 +4655,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Priority chips
   ['none','low','medium','high'].forEach(p => {
-    document.getElementById('dp_' + p).addEventListener('click', async () => {
+    const btn = document.getElementById('dp_' + p);
+    btn.addEventListener('click', async () => {
       const todo = state.todos.find(x => x.id === state.activeDrawer);
       if (!todo) return;
       todo.priority = p;
+      // Bounce animation + sound
+      btn.classList.add('picking');
+      btn.addEventListener('animationend', () => btn.classList.remove('picking'), { once: true });
+      if (p !== 'none') playSound('priority_' + p);
       renderDrawer(todo);
       render();
       // Flash the updated card
       const card = document.querySelector(`.task-card[data-id="${todo.id}"]`);
       if (card) {
         card.classList.remove('priority-updated');
-        void card.offsetWidth; // force reflow
+        void card.offsetWidth;
         card.classList.add('priority-updated');
         card.addEventListener('animationend', () => card.classList.remove('priority-updated'), { once: true });
       }
@@ -4779,6 +4918,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.querySelectorAll('[data-gbp]').forEach(b =>
         b.classList.toggle('active', b.dataset.gbp === btn.dataset.gbp)
       );
+      btn.classList.add('picking');
+      btn.addEventListener('animationend', () => btn.classList.remove('picking'), { once: true });
+      playSound('priority_' + btn.dataset.gbp);
     });
   });
 
