@@ -73,11 +73,20 @@ html,body{width:100%;max-width:100vw;overflow-x:hidden;-webkit-text-size-adjust:
   --duration-normal: 200ms;
   --duration-slow: 350ms;
 
+  /* ── Status (semantic) ── */
+  --status-todo: #8B93A7;
+  --status-todo-soft: rgba(139, 147, 167, 0.14);
+  --status-progress: #3B82F6;
+  --status-progress-soft: rgba(59, 130, 246, 0.14);
+  --status-done: #22C55E;
+  --status-done-soft: rgba(34, 197, 94, 0.14);
+
   /* ── Typography ── */
-  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --nav-h: 56px;
   --max-w: 680px;
+  --max-w-board: 1080px;
 }
 
 /* Dark mode = default, light theme override */
@@ -2137,6 +2146,179 @@ input:focus, textarea:focus, select:focus {
 /* Smooth modal open */
 .confirm-overlay { animation: fadeIn 0.18s ease; }
 .confirm-card    { animation: scaleIn 0.22s var(--ease-out); }
+
+/* ─── View toggle (List ⇄ Board) ─────────────────────────────────────────── */
+.view-toggle{
+  display:flex;gap:2px;background:var(--bg-secondary);
+  border:1px solid var(--border);border-radius:var(--radius-md);
+  padding:3px;flex-shrink:0;
+}
+.vt-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:calc(var(--radius-md) - 3px);border:none;
+  background:transparent;color:var(--text-tertiary);
+  font-size:12.5px;font-weight:600;font-family:var(--font-body);
+  cursor:pointer;min-height:30px;white-space:nowrap;
+  transition:background var(--duration-fast),color var(--duration-fast),box-shadow var(--duration-fast);
+  -webkit-tap-highlight-color:transparent;
+}
+.vt-btn:hover{color:var(--text-primary)}
+.vt-btn.active{
+  background:var(--bg-elevated);color:var(--text-primary);
+  box-shadow:var(--shadow-sm),inset 0 0 0 1px var(--border);
+}
+.vt-btn svg{flex-shrink:0}
+@media(max-width:480px){.vt-btn span{display:none}.vt-btn{padding:6px 10px}}
+
+/* ─── Status pill (Monday-style) ─────────────────────────────────────────── */
+.status-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:1px 9px;border-radius:var(--radius-full);
+  font-size:11px;font-weight:600;letter-spacing:0.01em;
+  white-space:nowrap;line-height:1.7;
+}
+.status-pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.status-pill.st-todo{background:var(--status-todo-soft);color:var(--status-todo)}
+.status-pill.st-prog{background:var(--status-progress-soft);color:var(--status-progress)}
+.status-pill.st-done{background:var(--status-done-soft);color:var(--status-done)}
+
+/* Priority chip on cards */
+.prio-chip{
+  display:inline-flex;align-items:center;
+  padding:1px 8px;border-radius:var(--radius-full);
+  font-size:11px;font-weight:600;line-height:1.7;white-space:nowrap;
+}
+.prio-chip.pr-high{background:rgba(248,113,113,0.13);color:var(--priority-high)}
+.prio-chip.pr-medium{background:rgba(251,191,36,0.13);color:#D97706}
+[data-theme=dark] .prio-chip.pr-medium{color:var(--priority-medium)}
+.prio-chip.pr-low{background:rgba(96,165,250,0.13);color:var(--priority-low)}
+
+/* ─── Board (Kanban) view ────────────────────────────────────────────────── */
+.main.board-wide{max-width:var(--max-w-board)}
+.board{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;align-items:start;padding-block-end:8px;
+}
+.board-col{
+  background:var(--bg-secondary);
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;flex-direction:column;min-width:0;
+  transition:background var(--duration-fast),border-color var(--duration-fast),box-shadow var(--duration-fast);
+}
+.board-col.drag-over{
+  background:var(--accent-soft);
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent),0 0 24px var(--accent-soft);
+}
+.board-col-head{
+  display:flex;align-items:center;gap:8px;
+  padding:11px 14px 9px;
+  font-size:12px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;
+  border-block-end:2px solid transparent;
+}
+.board-col[data-status=todo] .board-col-head{color:var(--status-todo);border-color:var(--status-todo)}
+.board-col[data-status=in_progress] .board-col-head{color:var(--status-progress);border-color:var(--status-progress)}
+.board-col[data-status=done] .board-col-head{color:var(--status-done);border-color:var(--status-done)}
+.board-col-count{
+  margin-inline-start:auto;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-full);padding:0 8px;
+  font-size:11px;font-weight:700;line-height:1.7;color:var(--text-secondary);
+}
+.board-col-body{
+  display:flex;flex-direction:column;gap:8px;
+  padding:10px;min-height:60px;
+  max-height:calc(100dvh - 320px);overflow-y:auto;
+}
+@media(max-width:768px){.board-col-body{max-height:none;overflow-y:visible}}
+.board-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-md);padding:11px 12px;
+  cursor:pointer;position:relative;
+  box-shadow:var(--shadow-sm);
+  opacity:0;transform:translateY(10px);
+  transition:opacity var(--duration-normal) var(--ease-out),
+             transform var(--duration-normal) var(--ease-out),
+             box-shadow var(--duration-fast),border-color var(--duration-fast);
+  -webkit-tap-highlight-color:transparent;
+}
+.board-card.in{opacity:1;transform:none}
+.board-card:hover{box-shadow:var(--shadow-md);border-color:var(--border-strong);transform:translateY(-1px)}
+.board-card:active{cursor:grabbing}
+.board-card.dragging{
+  opacity:0.45;
+  box-shadow:none;
+}
+.board-card[data-p=high]{border-inline-start:3px solid var(--priority-high)}
+.board-card[data-p=medium]{border-inline-start:3px solid var(--priority-medium)}
+.board-card[data-p=low]{border-inline-start:3px solid var(--priority-low)}
+.board-card-title{
+  font-size:13.5px;font-weight:500;color:var(--text-primary);
+  line-height:1.45;word-break:break-word;margin-block-end:6px;
+}
+.board-col[data-status=done] .board-card-title{color:var(--text-tertiary);text-decoration:line-through;text-decoration-color:var(--text-tertiary)}
+.board-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.board-card-meta .gm-avatar{margin-inline-end:0;border-width:1px}
+.board-card-meta .due-badge,.board-card-meta .time-badge{font-size:10.5px}
+.board-card .sub-bar{margin-block-start:6px}
+.board-empty{
+  border:1.5px dashed var(--border-strong);border-radius:var(--radius-md);
+  padding:18px 10px;text-align:center;
+  font-size:12px;color:var(--text-tertiary);
+}
+.touch-drag-ghost{
+  position:fixed;z-index:10000;pointer-events:none;
+  opacity:0.92;transform:rotate(2.5deg) scale(1.04);
+  box-shadow:0 16px 44px rgba(0,0,0,0.35);
+  border-radius:var(--radius-md);transition:none;
+}
+
+/* Quick add at column bottom */
+.board-quick-add{padding:0 10px 10px}
+.bqa-btn{
+  display:flex;align-items:center;gap:7px;width:100%;
+  padding:8px 10px;border-radius:var(--radius-md);border:none;
+  background:transparent;color:var(--text-tertiary);
+  font-size:13px;font-weight:600;font-family:var(--font-body);
+  cursor:pointer;text-align:start;min-height:36px;
+  transition:background var(--duration-fast),color var(--duration-fast);
+  -webkit-tap-highlight-color:transparent;
+}
+.bqa-btn:hover{background:var(--bg-card);color:var(--text-primary)}
+.bqa-input{
+  width:100%;padding:9px 11px;border-radius:var(--radius-md);
+  border:1.5px solid var(--accent);background:var(--bg-card);
+  font-family:var(--font-body);font-size:13.5px;color:var(--text-primary);
+  outline:none;box-shadow:0 0 0 3px var(--accent-soft);
+}
+
+/* Mobile: Trello-style horizontal snap columns */
+@media(max-width:768px){
+  .board{
+    display:flex;overflow-x:auto;gap:10px;
+    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    margin-inline:-14px;padding-inline:14px;
+    scrollbar-width:none;
+  }
+  .board::-webkit-scrollbar{display:none}
+  .board-col{min-width:80vw;scroll-snap-align:center;flex-shrink:0}
+}
+
+/* Board card pop on drop */
+@keyframes boardDropIn{
+  0%{transform:scale(0.96)}
+  55%{transform:scale(1.025)}
+  100%{transform:scale(1)}
+}
+.board-card.dropped{animation:boardDropIn 0.3s var(--ease-spring)}
+
+/* ─── Navbar brand mark ──────────────────────────────────────────────────── */
+.nav-mark{
+  width:24px;height:24px;border-radius:7px;flex-shrink:0;
+  background:var(--gradient);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;box-shadow:0 2px 8px var(--accent-medium);
+}
 
 /* ─── Respect reduced motion ─────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,7 @@
 todos.json
 __pycache__/
+.claude/
+userdata/
 *.pyc
 .env
 *.pem

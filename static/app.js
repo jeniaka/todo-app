@@ -18,6 +18,8 @@ const state = {
   gbNewPriority: 'low',
   notifications: [],
   unreadCount: 0,
+  viewMode: localStorage.getItem('viewMode') === 'board' ? 'board' : 'list',
+  gbViewMode: localStorage.getItem('gbViewMode') === 'board' ? 'board' : 'list',
 };
 
 // ─── Translations ─────────────────────────────────────────────────────────────
@@ -37,6 +39,8 @@ const LANGS = [
 const TL = {
   en: {
     appTitle:'My Tasks',add:'Add',filterAll:'All',filterActive:'Active',filterDone:'Done',
+    listView:'List',boardView:'Board',addCard:'Add task',
+    taskAdded:'Task added',taskDeleted:'Task deleted',taskSaved:'Saved',movedTo:'Moved to',
     addTaskPlaceholder:'What needs to be done?',
     clearCompleted:'Clear completed',
     noTasks:'No tasks yet',noTasksSub:'Add something above to get started.',
@@ -1690,6 +1694,68 @@ function renderGroupTaskList() {
   const getMember = id => members.find(m=>m.userId===id);
 
   const listEl = document.getElementById('gbTaskList');
+  const gbMain = document.querySelector('#groupBoardPage .main');
+
+  // ── Board (Kanban) view ──
+  if (state.gbViewMode === 'board') {
+    if (gbMain) gbMain.classList.add('board-wide');
+    renderBoard(listEl, tasks, {
+      getAssignee: task => getMember(task.assignedTo),
+      canDrag: task => !(myRole === 'member' && task.assignedTo !== userId),
+      onCardClick: task => showGroupTaskDetail(task),
+      onDrop: async (id, status) => {
+        const task = (g.tasks || []).find(tk => String(tk.id) === String(id));
+        const before = task ? getTaskStatus(task) : null;
+        await updateTaskStatus(id, status);
+        const after = task ? getTaskStatus(task) : null;
+        renderGroupTaskList();
+        renderGbAnalytics();
+        if (task && before !== after) {
+          const labels = { todo: tl.todo || 'To Do', in_progress: tl.inProgress || 'In Progress', done: tl.taskDone || 'Done' };
+          showToast(`${tl.movedTo || 'Moved to'} ${labels[status]}`, status === 'done' ? 'success' : 'info');
+          if (status === 'done') {
+            playSound('complete');
+            const el = document.querySelector(`#gbTaskList .board-card[data-bid="${CSS.escape(String(id))}"]`);
+            if (el) {
+              el.classList.add('dropped');
+              const r = el.getBoundingClientRect();
+              burst(r.left + r.width / 2, r.top + r.height / 2, 14);
+            }
+          }
+        }
+      },
+      onQuickAdd: async (text, status) => {
+        try {
+          const task = await apiAddGroupTask(g._id, { text, assignedTo: userId, priority: 'low' });
+          if (task && task.id) {
+            g.tasks.unshift(task);
+            if (status !== 'todo') await updateTaskStatus(task.id, status);
+            renderGroupTaskList();
+            renderGbAnalytics();
+            playSound('add');
+            showToast(tl.taskAdded || 'Task added', 'success');
+          } else {
+            showToast('⚠️ Could not add task', 'error');
+            renderGroupTaskList();
+          }
+        } catch (_) {
+          showToast('⚠️ Network error — please try again', 'error');
+          renderGroupTaskList();
+        }
+      },
+    });
+    // Stats / clear-completed row (same as list view)
+    const doneCountB = g.tasks.filter(tk => getTaskStatus(tk) === 'done').length;
+    const statsRowB = document.getElementById('gbStatsRow');
+    const canClearB = myRole === 'admin' || myRole === 'manager';
+    if (statsRowB) {
+      statsRowB.style.display = (doneCountB > 0 && canClearB) ? '' : 'none';
+      const cntB = document.getElementById('gbStatsCount');
+      if (cntB) cntB.textContent = `${doneCountB} ${tl.tasksDone || 'done'}`;
+    }
+    return;
+  }
+  if (gbMain) gbMain.classList.remove('board-wide');
   listEl.innerHTML = tasks.length ? tasks.map(task => {
     const assignee = getMember(task.assignedTo);
     const canDelete = myRole==='admin'||myRole==='manager'||task.createdBy===userId;
@@ -1714,6 +1780,7 @@ function renderGroupTaskList() {
     <div class="task-body">
       <div class="task-title">${esc(task.text)}</div>
       <div class="task-meta">
+        ${statusPillHTML(taskStatus)}
         <span class="task-time">${relativeTime(task.createdAt)}</span>
         ${dur ? `<span class="task-dur">${t('took')} ${dur}</span>` : ''}
         ${dueBadge}
@@ -1788,6 +1855,7 @@ function renderGroupTaskList() {
           }
           g.tasks = g.tasks.filter(tk => tk.id !== taskId);
           renderGroupTaskList();
+          showToast(tl.taskDeleted || 'Task deleted', 'success');
           await apiDeleteGroupTask(g._id, taskId);
         }
       });
@@ -2490,6 +2558,17 @@ function formatDueBadge(todo) {
   return html;
 }
 
+function statusPillHTML(status) {
+  const tl = TL[state.lang] || TL.en;
+  const map = {
+    todo:        { cls: 'st-todo', label: tl.todo || 'To Do' },
+    in_progress: { cls: 'st-prog', label: tl.inProgress || 'In Progress' },
+    done:        { cls: 'st-done', label: tl.taskDone || 'Done' },
+  };
+  const m = map[status] || map.todo;
+  return `<span class="status-pill ${m.cls}">${m.label}</span>`;
+}
+
 function taskCardHTML(todo) {
   const status   = getTaskStatus(todo);
   const dur      = status === 'done' && todo.completedAt ? duration(todo.createdAt, todo.completedAt) : '';
@@ -2508,6 +2587,7 @@ function taskCardHTML(todo) {
     <div class="task-body">
       <div class="task-title">${esc(todo.text)}</div>
       <div class="task-meta">
+        ${statusPillHTML(status)}
         <span class="task-time">${relativeTime(todo.createdAt)}</span>
         ${dur ? `<span class="task-dur">${t('took')} ${dur}</span>` : ''}
         ${dueBadge}
@@ -2524,6 +2604,264 @@ function skeletonHTML() {
       <div class="skel-line" style="width:${[72,48,85][i]}%;margin-block-end:10px"></div>
       <div class="skel-line" style="width:30%"></div>
     </div>`).join('');
+}
+
+// ─── Board (Kanban) view — shared renderer for personal + group ───────────────
+function boardCardHTML(task, opts) {
+  const p = task.priority || 'none';
+  const dueBadge = formatDueBadge(task);
+  const assignee = opts.getAssignee ? opts.getAssignee(task) : null;
+  const avatar = assignee
+    ? (assignee.picture
+        ? `<img class="gm-avatar" src="${assignee.picture}" style="width:18px;height:18px" title="${esc(assignee.name || '')}">`
+        : `<div class="gm-avatar gm-avatar-fb" style="width:18px;height:18px;font-size:9px" title="${esc(assignee.name || '')}">${(assignee.name || '?')[0].toUpperCase()}</div>`)
+    : '';
+  const prioChip = p !== 'none'
+    ? `<span class="prio-chip pr-${p}">${t('priority' + p[0].toUpperCase() + p.slice(1))}</span>`
+    : '';
+  return `<div class="board-card" data-bid="${esc(String(task.id))}" data-p="${p}" role="button" tabindex="0">
+    <div class="board-card-title">${esc(task.text)}</div>
+    <div class="board-card-meta">${prioChip}${dueBadge}${avatar}</div>
+    ${subBarHTML(task)}
+  </div>`;
+}
+
+function renderBoard(container, tasks, opts) {
+  const tl = TL[state.lang] || TL.en;
+  const cols = [
+    { status: 'todo',        label: tl.todo || 'To Do' },
+    { status: 'in_progress', label: tl.inProgress || 'In Progress' },
+    { status: 'done',        label: tl.taskDone || 'Done' },
+  ];
+  container.innerHTML = `<div class="board">${cols.map(col => {
+    const colTasks = tasks.filter(tk => getTaskStatus(tk) === col.status);
+    return `<div class="board-col" data-status="${col.status}">
+      <div class="board-col-head">${col.label}<span class="board-col-count">${colTasks.length}</span></div>
+      <div class="board-col-body">
+        ${colTasks.map(tk => boardCardHTML(tk, opts)).join('') || `<div class="board-empty">${tl.noTasks || 'No tasks'}</div>`}
+      </div>
+      ${opts.onQuickAdd ? `<div class="board-quick-add" data-qa="${col.status}">
+        <button class="bqa-btn" type="button">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          ${tl.addCard || 'Add task'}
+        </button>
+      </div>` : ''}
+    </div>`;
+  }).join('')}</div>`;
+
+  // Entrance animation (staggered)
+  container.querySelectorAll('.board-card').forEach((el, i) => {
+    el.style.transitionDelay = `${Math.min(i * 0.03, 0.24)}s`;
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+  });
+
+  // Card click / keyboard open
+  const findTask = id => tasks.find(tk => String(tk.id) === String(id));
+  container.querySelectorAll('.board-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const task = findTask(card.dataset.bid);
+      if (task && opts.onCardClick) opts.onCardClick(task);
+    });
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const task = findTask(card.dataset.bid);
+        if (task && opts.onCardClick) opts.onCardClick(task);
+      }
+    });
+  });
+
+  // Quick-add at column bottom
+  if (opts.onQuickAdd) {
+    container.querySelectorAll('.board-quick-add').forEach(qa => {
+      const btn = qa.querySelector('.bqa-btn');
+      btn.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.className = 'bqa-input';
+        input.type = 'text';
+        input.placeholder = tl.addTaskPlaceholder || 'What needs to be done?';
+        input.setAttribute('aria-label', tl.addCard || 'Add task');
+        qa.replaceChildren(input);
+        input.focus();
+        let settled = false;
+        const restore = () => { settled = true; qa.replaceChildren(btn); };
+        const submit = () => {
+          if (settled) return;
+          const text = input.value.trim();
+          settled = true;
+          if (text) opts.onQuickAdd(text, qa.dataset.qa);
+          else qa.replaceChildren(btn);
+        };
+        input.addEventListener('keydown', e => {
+          if (e.key === 'Enter') { e.preventDefault(); submit(); }
+          else if (e.key === 'Escape') { e.stopPropagation(); restore(); }
+        });
+        input.addEventListener('blur', () => setTimeout(submit, 120));
+      });
+    });
+  }
+
+  initBoardDnd(container, tasks, opts);
+}
+
+function initBoardDnd(container, tasks, opts) {
+  if (!opts.onDrop) return;
+  const canDrag = opts.canDrag || (() => true);
+  container.querySelectorAll('.board-card').forEach(card => {
+    const task = tasks.find(tk => String(tk.id) === String(card.dataset.bid));
+    if (!task || !canDrag(task)) { card.setAttribute('draggable', 'false'); return; }
+    card.setAttribute('draggable', 'true');
+    card.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', String(card.dataset.bid));
+      e.dataTransfer.effectAllowed = 'move';
+      card.classList.add('dragging');
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      container.querySelectorAll('.board-col').forEach(c => c.classList.remove('drag-over'));
+    });
+    attachBoardTouchDrag(card, task, container, opts);
+  });
+  container.querySelectorAll('.board-col').forEach(col => {
+    col.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      col.classList.add('drag-over');
+    });
+    col.addEventListener('dragleave', e => {
+      if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+    });
+    col.addEventListener('drop', e => {
+      e.preventDefault();
+      col.classList.remove('drag-over');
+      const id = e.dataTransfer.getData('text/plain');
+      if (id) opts.onDrop(id, col.dataset.status);
+    });
+  });
+}
+
+// Long-press touch drag — 180ms threshold so normal scroll/tap still works
+function attachBoardTouchDrag(card, task, container, opts) {
+  let ghost = null, pressTimer = null, dragging = false, startX = 0, startY = 0;
+  const cleanup = () => {
+    clearTimeout(pressTimer);
+    if (ghost) ghost.remove();
+    ghost = null;
+    dragging = false;
+    card.style.opacity = '';
+    container.querySelectorAll('.board-col').forEach(c => c.classList.remove('drag-over'));
+  };
+  card.addEventListener('touchstart', e => {
+    const touch = e.touches[0];
+    startX = touch.clientX; startY = touch.clientY;
+    pressTimer = setTimeout(() => {
+      dragging = true;
+      ghost = card.cloneNode(true);
+      ghost.classList.add('touch-drag-ghost', 'in');
+      ghost.style.width = card.offsetWidth + 'px';
+      ghost.style.left = (startX - card.offsetWidth / 2) + 'px';
+      ghost.style.top = (startY - 24) + 'px';
+      document.body.appendChild(ghost);
+      card.style.opacity = '0.35';
+      if (navigator.vibrate) navigator.vibrate(8);
+    }, 180);
+  }, { passive: true });
+  card.addEventListener('touchmove', e => {
+    const touch = e.touches[0];
+    if (!dragging) {
+      // Finger moved before long-press completed → treat as scroll
+      if (Math.abs(touch.clientX - startX) > 8 || Math.abs(touch.clientY - startY) > 8) clearTimeout(pressTimer);
+      return;
+    }
+    e.preventDefault();
+    ghost.style.left = (touch.clientX - ghost.offsetWidth / 2) + 'px';
+    ghost.style.top = (touch.clientY - 24) + 'px';
+    container.querySelectorAll('.board-col').forEach(col => {
+      const r = col.getBoundingClientRect();
+      col.classList.toggle('drag-over',
+        touch.clientX >= r.left && touch.clientX <= r.right && touch.clientY >= r.top && touch.clientY <= r.bottom);
+    });
+  }, { passive: false });
+  card.addEventListener('touchend', e => {
+    clearTimeout(pressTimer);
+    if (!dragging) return;
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    let target = null;
+    container.querySelectorAll('.board-col').forEach(col => {
+      const r = col.getBoundingClientRect();
+      if (touch.clientX >= r.left && touch.clientX <= r.right && touch.clientY >= r.top && touch.clientY <= r.bottom) target = col;
+    });
+    const status = target ? target.dataset.status : null;
+    cleanup();
+    if (status && opts.onDrop) opts.onDrop(String(task.id), status);
+  });
+  card.addEventListener('touchcancel', cleanup);
+}
+
+// ─── Personal board (My Tasks) ────────────────────────────────────────────────
+async function movePersonalTask(id, newStatus) {
+  const todo = state.todos.find(x => String(x.id) === String(id));
+  if (!todo) return;
+  const tl = TL[state.lang] || TL.en;
+  const cur = getTaskStatus(todo);
+  if (cur === newStatus) return;
+  if (newStatus === 'done' && (todo.subtasks || []).some(s => !s.done)) {
+    showToast(tl.subtasksBlockDone || 'Complete all sub-tasks first', 'error');
+    render();
+    return;
+  }
+  todo.status = newStatus;
+  if (newStatus === 'in_progress') {
+    todo.done = false;
+    todo.completedAt = null;
+    if (!todo.startedAt) todo.startedAt = Date.now();
+  } else if (newStatus === 'done') {
+    todo.done = true;
+    todo.completedAt = Date.now();
+  } else {
+    todo.done = false;
+    todo.completedAt = null;
+    todo.startedAt = null;
+  }
+  render();
+  const labels = { todo: tl.todo || 'To Do', in_progress: tl.inProgress || 'In Progress', done: tl.taskDone || 'Done' };
+  showToast(`${tl.movedTo || 'Moved to'} ${labels[newStatus]}`, newStatus === 'done' ? 'success' : 'info');
+  if (newStatus === 'done') {
+    playSound('complete');
+    const el = document.querySelector(`.board-card[data-bid="${CSS.escape(String(id))}"]`);
+    if (el) {
+      el.classList.add('dropped');
+      const r = el.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height / 2, 14);
+    }
+  } else {
+    const el = document.querySelector(`.board-card[data-bid="${CSS.escape(String(id))}"]`);
+    if (el) el.classList.add('dropped');
+  }
+  await apiSave();
+}
+
+function renderPersonalBoard(listEl) {
+  const tl = TL[state.lang] || TL.en;
+  renderBoard(listEl, state.todos, {
+    onCardClick: task => { playSound('open'); openDrawer(task.id); },
+    onDrop: (id, status) => movePersonalTask(id, status),
+    onQuickAdd: async (text, status) => {
+      const todo = migrateTodo({
+        id: Date.now(), text: text.trim(),
+        done: status === 'done', status,
+        priority: 'none', createdAt: Date.now(),
+      });
+      if (status === 'in_progress') todo.startedAt = Date.now();
+      if (status === 'done') todo.completedAt = Date.now();
+      state.todos.unshift(todo);
+      render();
+      playSound('add');
+      showToast(tl.taskAdded || 'Task added', 'success');
+      await apiSave();
+    },
+  });
 }
 
 // ─── Intersection observer ────────────────────────────────────────────────────
@@ -2555,34 +2893,46 @@ function render() {
   document.getElementById('statsText').textContent = (typeof t('remaining') === 'function' ? t('remaining')(activePendingCount) : '') + ' · ' + (typeof t('completed') === 'function' ? t('completed')(doneCount) : '');
   document.getElementById('statsCount').textContent = total ? `${doneCount} / ${total}` : '';
 
-  // Task list
-  const visible = state.todos.filter(todo => {
-    const s = getTaskStatus(todo);
-    if (state.filter === 'all') return true;
-    if (state.filter === 'done') return s === 'done';
-    return s !== 'done'; // active = todo or in_progress
-  });
-
+  // Task list — list or board view
   const listEl = document.getElementById('taskList');
-  if (!visible.length) {
-    const emptyKeys = {
-      all:    ['noTasks', 'noTasksSub'],
-      active: ['allDone', 'allDoneSub'],
-      done:   ['noneCompleted', 'noneCompletedSub'],
-    };
-    const [tk, sk] = emptyKeys[state.filter];
-    listEl.innerHTML = `<div class="empty">
-      <div class="empty-icon">${state.filter === 'done' ? '✦' : '○'}</div>
-      <div class="empty-title">${t(tk)}</div>
-      <div class="empty-sub">${t(sk)}</div>
-    </div>`;
+  const mainEl = document.getElementById('main-content');
+  const filterRowEl = mainEl ? mainEl.querySelector('.filter-row') : null;
+
+  if (state.viewMode === 'board') {
+    if (mainEl) mainEl.classList.add('board-wide');
+    if (filterRowEl) filterRowEl.style.display = 'none';
+    renderPersonalBoard(listEl);
   } else {
-    listEl.innerHTML = visible.map(taskCardHTML).join('');
-    listEl.querySelectorAll('.task-card').forEach((el, i) => {
-      el.style.transitionDelay = `${i * 0.05}s`;
-      io.observe(el);
-      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+    if (mainEl) mainEl.classList.remove('board-wide');
+    if (filterRowEl) filterRowEl.style.display = '';
+
+    const visible = state.todos.filter(todo => {
+      const s = getTaskStatus(todo);
+      if (state.filter === 'all') return true;
+      if (state.filter === 'done') return s === 'done';
+      return s !== 'done'; // active = todo or in_progress
     });
+
+    if (!visible.length) {
+      const emptyKeys = {
+        all:    ['noTasks', 'noTasksSub'],
+        active: ['allDone', 'allDoneSub'],
+        done:   ['noneCompleted', 'noneCompletedSub'],
+      };
+      const [tk, sk] = emptyKeys[state.filter];
+      listEl.innerHTML = `<div class="empty">
+        <div class="empty-icon">${state.filter === 'done' ? '✦' : '○'}</div>
+        <div class="empty-title">${t(tk)}</div>
+        <div class="empty-sub">${t(sk)}</div>
+      </div>`;
+    } else {
+      listEl.innerHTML = visible.map(taskCardHTML).join('');
+      listEl.querySelectorAll('.task-card').forEach((el, i) => {
+        el.style.transitionDelay = `${i * 0.05}s`;
+        io.observe(el);
+        requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+      });
+    }
   }
 
   applyI18n();
@@ -3191,6 +3541,7 @@ async function addTodo(text) {
   resetPriorityPicker();
   render();
   playSound('add');
+  showToast(t('taskAdded') !== 'taskAdded' ? t('taskAdded') : 'Task added', 'success');
   // Confetti burst from add button
   const btn = document.getElementById('addSubmit');
   if (btn) {
@@ -4607,6 +4958,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     b.addEventListener('click', () => setFilter(b.dataset.filter))
   );
 
+  // ── View toggles (List ⇄ Board) ──────────────────────────────────────────
+  document.querySelectorAll('#viewToggle .vt-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === state.viewMode);
+    b.addEventListener('click', () => {
+      if (state.viewMode === b.dataset.view) return;
+      state.viewMode = b.dataset.view;
+      localStorage.setItem('viewMode', state.viewMode);
+      document.querySelectorAll('#viewToggle .vt-btn').forEach(x =>
+        x.classList.toggle('active', x.dataset.view === state.viewMode));
+      render();
+    });
+  });
+  document.querySelectorAll('#gbViewToggle .vt-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === state.gbViewMode);
+    b.addEventListener('click', () => {
+      if (state.gbViewMode === b.dataset.view) return;
+      state.gbViewMode = b.dataset.view;
+      localStorage.setItem('gbViewMode', state.gbViewMode);
+      document.querySelectorAll('#gbViewToggle .vt-btn').forEach(x =>
+        x.classList.toggle('active', x.dataset.view === state.gbViewMode));
+      if (state.activeGroup) renderGroupTaskList();
+    });
+  });
+
   // ── Clear done ────────────────────────────────────────────────────────────
   document.getElementById('clearDoneBtn').addEventListener('click', async () => {
     const doneCards = document.querySelectorAll('.task-card.done-card');
@@ -4615,6 +4990,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await new Promise(r => setTimeout(r, 420));
     state.todos = state.todos.filter(x => getTaskStatus(x) !== 'done');
     render();
+    showToast((TL[state.lang]||TL.en).clearCompleted || 'Completed tasks cleared', 'success');
     await apiSave();
   });
 
@@ -4681,8 +5057,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('drawerSaveBtn').addEventListener('click', async () => {
     flushDrawerSave();
     render();
-    await apiSave();
     closeDrawer();
+    showToast((TL[state.lang]||TL.en).taskSaved || 'Saved', 'success');
+    await apiSave();
   });
 
   // Status dropdown change
@@ -4716,6 +5093,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         state.todos = state.todos.filter(x => x.id !== id);
         render();
+        showToast((TL[state.lang]||TL.en).taskDeleted || 'Task deleted', 'success');
         await apiSave();
       }
     });
@@ -4970,6 +5348,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (document.getElementById('gbNotifyDone')) document.getElementById('gbNotifyDone').checked = false;
         renderGroupTaskList();
+        showToast((TL[state.lang]||TL.en).taskAdded || 'Task added', 'success');
       } else {
         showToast('⚠️ Could not add task', 'error');
       }
