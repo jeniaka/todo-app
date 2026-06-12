@@ -46,9 +46,20 @@ else:
     print(f"OK: SESSION_SECRET loaded ({len(SESSION_SECRET)} chars)")
 ANTHROPIC_API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
 
+def email_pref(user_id, key, default=True):
+    """Per-user email notification preference from saved settings."""
+    try:
+        notif = load_settings(user_id).get("notifications", {})
+        return bool(notif.get(key, default))
+    except Exception:
+        return default
+
+
 def check_and_send_overdue_emails(user):
     """Check for overdue tasks and send notification emails."""
     if not smtp_configured():
+        return
+    if not email_pref(user["id"], "emailOverdue"):
         return
     now = int(time.time() * 1000)
 
@@ -969,7 +980,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.redirect("/mytasks")
 
         # SPA app routes — serve app.html (frontend handles routing)
-        SPA_ROUTES = {"/mytasks", "/analytics", "/groups"}
+        SPA_ROUTES = {"/mytasks", "/analytics", "/groups", "/settings"}
         if path in SPA_ROUTES or path.startswith("/groups/"):
             user = self.get_session()
             if not user:
@@ -1242,8 +1253,8 @@ class Handler(BaseHTTPRequestHandler):
                 if assigned_to and assigned_to != user["id"]:
                     create_notification(assigned_to, "task_assigned", group_id, g["name"],
                         task_text=task["text"], from_user=user.get("name",""))
-                    # Send email to assignee if SMTP configured
-                    if smtp_configured():
+                    # Send email to assignee if SMTP configured (and they opted in)
+                    if smtp_configured() and email_pref(assigned_to, "emailTaskAssigned"):
                         assignee_member = next((m for m in g["members"] if m.get("userId") == assigned_to), None)
                         if assignee_member and assignee_member.get("email"):
                             host = self.headers.get("Host","")
@@ -1521,7 +1532,7 @@ class Handler(BaseHTTPRequestHandler):
                 completed_task = next((t for t in g["tasks"] if t["id"] == parts[5]), None)
                 if completed_task and completed_task.get("notifyOnDone"):
                     creator_id = completed_task.get("createdBy")
-                    if creator_id:
+                    if creator_id and email_pref(creator_id, "emailTaskDone"):
                         creator_member = next((m for m in g["members"] if m.get("userId") == creator_id), None)
                         if creator_member and creator_member.get("email"):
                             html = build_task_done_email(

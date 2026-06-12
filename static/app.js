@@ -41,6 +41,11 @@ const TL = {
     appTitle:'My Tasks',add:'Add',filterAll:'All',filterActive:'Active',filterDone:'Done',
     listView:'List',boardView:'Board',addCard:'Add task',
     taskAdded:'Task added',taskDeleted:'Task deleted',taskSaved:'Saved',movedTo:'Moved to',
+    settings:'Settings',profile:'Profile',appearance:'Appearance',
+    themeChanged:'Theme',completedPct:'% done',
+    setEmailAssigned:'Task assigned email',setEmailAssignedDesc:'Email me when a task is assigned to me',
+    setEmailDone:'Task completed email',setEmailDoneDesc:'Email me when a "notify when done" task I created completes',
+    setEmailOverdue:'Overdue alert email',setEmailOverdueDesc:'Email me when my tasks become overdue',
     addTaskPlaceholder:'What needs to be done?',
     clearCompleted:'Clear completed',
     noTasks:'No tasks yet',noTasksSub:'Add something above to get started.',
@@ -163,6 +168,13 @@ const TL = {
   },
   he: {
     appTitle:'המשימות שלי',add:'הוסף',filterAll:'הכל',filterActive:'פעיל',filterDone:'הושלם',
+    settings:'הגדרות',profile:'פרופיל',appearance:'מראה וערכות נושא',
+    themeChanged:'ערכת נושא',completedPct:'% הושלם',
+    setEmailAssigned:'אימייל על משימה שהוקצתה',setEmailAssignedDesc:'שלח לי אימייל כשמוקצית לי משימה',
+    setEmailDone:'אימייל על השלמת משימה',setEmailDoneDesc:'שלח לי אימייל כשמשימה עם "עדכן בסיום" מושלמת',
+    setEmailOverdue:'אימייל על איחור',setEmailOverdueDesc:'שלח לי אימייל כשמשימות שלי באיחור',
+    listView:'רשימה',boardView:'לוח',addCard:'הוסף משימה',
+    taskAdded:'המשימה נוספה',taskDeleted:'המשימה נמחקה',taskSaved:'נשמר',movedTo:'הועבר אל',
     addTaskPlaceholder:'מה צריך לעשות?',
     clearCompleted:'נקה שהושלמו',
     noTasks:'אין משימות עדיין',noTasksSub:'הוסף משימה למעלה כדי להתחיל.',
@@ -2465,6 +2477,8 @@ function applyLanguage(code) {
   renderLangList();
   // Update nav toggle title
   updateNavToggle();
+  // Re-position bottom-nav indicator (direction may have flipped)
+  updateActiveNavigation(window.location.pathname);
   // Re-render charts if open (labels change with language)
   if (inlineAnalyticsOpen) {
     setTimeout(renderInlineAnalytics, 0);
@@ -2474,26 +2488,68 @@ function applyLanguage(code) {
   }
 }
 
-// ─── Theme ────────────────────────────────────────────────────────────────────
-function applyTheme(theme) {
+// ─── Themes ───────────────────────────────────────────────────────────────────
+const THEMES = [
+  { id: 'aurora',   label: 'Aurora',   mode: 'dark',  meta: '#0A0C16',
+    bg: '#0A0C16', card: '#11141F', grad: 'linear-gradient(135deg,#7C5CFF,#22D3EE)' },
+  { id: 'daylight', label: 'Daylight', mode: 'light', meta: '#F3F4FB',
+    bg: '#F3F4FB', card: '#FFFFFF', grad: 'linear-gradient(135deg,#7C5CFF,#22D3EE)' },
+  { id: 'sunset',   label: 'Sunset',   mode: 'dark',  meta: '#150B12',
+    bg: '#150B12', card: '#190D15', grad: 'linear-gradient(135deg,#FF7849,#FF4D8D)' },
+  { id: 'noir',     label: 'Noir',     mode: 'dark',  meta: '#000000',
+    bg: '#000000', card: '#0A0A0C', grad: 'linear-gradient(135deg,#FFD60A,#FF9F0A)' },
+];
+
+function normalizeTheme(theme) {
+  if (theme === 'dark') return 'aurora';
+  if (theme === 'light') return 'daylight';
+  return THEMES.some(t => t.id === theme) ? theme : 'aurora';
+}
+
+let _themeFadeTimer = null;
+function applyTheme(theme, { fade = false } = {}) {
+  theme = normalizeTheme(theme);
+  const def = THEMES.find(t => t.id === theme);
+  if (fade && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('theme-fade');
+    clearTimeout(_themeFadeTimer);
+    _themeFadeTimer = setTimeout(() => document.documentElement.classList.remove('theme-fade'), 620);
+  }
   document.documentElement.dataset.theme = theme;
+  document.documentElement.dataset.mode = def.mode;
   const themeMeta = document.getElementById('themeColor');
-  if (themeMeta) themeMeta.content = theme === 'dark' ? '#0A0C16' : '#F3F4FB';
+  if (themeMeta) themeMeta.content = def.meta;
   const icon = document.getElementById('themeIcon');
   if (icon) {
-    // Sun icon for dark (click to go light), Moon icon for light (click to go dark)
-    icon.innerHTML = theme === 'dark'
+    // Sun icon for dark themes (click to go light), moon for light
+    icon.innerHTML = def.mode === 'dark'
       ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
       : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
   }
 }
 
+// Persist theme: localStorage mirror (instant load) + MongoDB settings (per user)
+async function setTheme(theme, { fade = true } = {}) {
+  theme = normalizeTheme(theme);
+  applyTheme(theme, { fade });
+  localStorage.setItem('theme', theme);
+  if (state.settings) {
+    state.settings.theme = theme;
+    await apiSaveSettings();
+  }
+}
+
+let _lastDarkTheme = 'aurora';
 function toggleTheme() {
-  const cur    = document.documentElement.dataset.theme;
-  const isDark = cur === 'dark' || (!cur && window.matchMedia('(prefers-color-scheme:dark)').matches);
-  const next   = isDark ? 'light' : 'dark';
-  applyTheme(next);
-  localStorage.setItem('theme', next);
+  const cur = normalizeTheme(document.documentElement.dataset.theme ||
+    (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'aurora' : 'daylight'));
+  const def = THEMES.find(t => t.id === cur);
+  let next;
+  if (def.mode === 'dark') { _lastDarkTheme = cur; next = 'daylight'; }
+  else next = _lastDarkTheme || 'aurora';
+  setTheme(next);
+  const sp = document.getElementById('settingsPage');
+  if (sp && sp.style.display !== 'none') renderSettingsPage();
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -2891,6 +2947,14 @@ function render() {
       <span class="hstat hs-total"><span class="hstat-dot"></span><span class="hstat-num">${state.todos.length}</span> ${tlH.totalTasks || 'Total'}</span>
       <span class="hstat hs-prog"><span class="hstat-dot"></span><span class="hstat-num">${hsProg}</span> ${tlH.inProgress || 'In Progress'}</span>
       <span class="hstat hs-done"><span class="hstat-dot"></span><span class="hstat-num">${hsDone}</span> ${tlH.taskDone || 'Done'}</span>`;
+    // Count-up on first paint only
+    if (!window.__heroCounted && state.todos.length) {
+      window.__heroCounted = true;
+      const nums = heroStats.querySelectorAll('.hstat-num');
+      animateCount(nums[0], state.todos.length);
+      animateCount(nums[1], hsProg);
+      animateCount(nums[2], hsDone);
+    }
   }
 
   // Progress — 3 segments
@@ -3921,6 +3985,162 @@ function checkWeeklyReport() {
   showToast(`📊 ${done} tasks completed this week`, 'info');
 }
 
+// ─── Count-up animation ───────────────────────────────────────────────────────
+function animateCount(el, target, dur = 900) {
+  if (!el) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = target; return; }
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min((now - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * eased);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ─── Settings page (Profile / Appearance / Notifications / Language) ──────────
+function renderSettingsPage() {
+  const el = document.getElementById('settingsMain');
+  if (!el) return;
+  const tl = TL[state.lang] || TL.en;
+  const u = window.__USER__ || {};
+  const total = state.todos.length;
+  const done = state.todos.filter(x => getTaskStatus(x) === 'done').length;
+  const prog = state.todos.filter(x => getTaskStatus(x) === 'in_progress').length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const curTheme = normalizeTheme(document.documentElement.dataset.theme);
+  const n = (state.settings && state.settings.notifications) || {};
+  const nv = (k, d = true) => (n[k] !== undefined ? !!n[k] : d);
+  const R = 40, C = 2 * Math.PI * R;
+
+  const icoUser = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+  const icoPalette = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>';
+  const icoBell = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
+  const icoGlobe = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+
+  el.innerHTML = `
+    <div class="settings-head">
+      <h1 class="settings-title">${tl.settings || 'Settings'}</h1>
+    </div>
+
+    <section class="set-section">
+      <div class="set-section-title">${icoUser} ${tl.profile || 'Profile'}</div>
+      <div class="set-profile">
+        <div class="set-avatar-wrap">
+          <svg class="set-avatar-ring" viewBox="0 0 92 92" width="84" height="84" aria-hidden="true">
+            <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent-2)"/>
+            </linearGradient></defs>
+            <circle class="ring-bg" cx="46" cy="46" r="${R}"/>
+            <circle class="ring-fill" id="setRing" cx="46" cy="46" r="${R}" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"/>
+          </svg>
+          ${u.picture
+            ? `<img class="set-avatar" src="${u.picture}" referrerpolicy="no-referrer" alt="">`
+            : `<div class="set-avatar-fb">${esc((u.name || '?')[0].toUpperCase())}</div>`}
+        </div>
+        <div class="set-profile-info">
+          <div class="set-profile-name">${esc(u.name || '')}</div>
+          <div class="set-profile-email">${esc(u.email || '')}</div>
+          <div class="set-stats">
+            <div class="set-stat"><span class="set-stat-num" id="setStatTotal">0</span><span class="set-stat-label">${tl.totalTasks || 'Total'}</span></div>
+            <div class="set-stat"><span class="set-stat-num" id="setStatProg">0</span><span class="set-stat-label">${tl.inProgress || 'In Progress'}</span></div>
+            <div class="set-stat"><span class="set-stat-num" id="setStatDone">0</span><span class="set-stat-label">${tl.taskDone || 'Done'}</span></div>
+            <div class="set-stat"><span class="set-stat-num" id="setStatPct">0</span><span class="set-stat-label">${tl.completedPct || '% done'}</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="set-section">
+      <div class="set-section-title">${icoPalette} ${tl.appearance || 'Appearance'}</div>
+      <div class="theme-grid">
+        ${THEMES.map(t => `
+          <button class="theme-card${t.id === curTheme ? ' selected' : ''}" data-settheme="${t.id}" aria-pressed="${t.id === curTheme}">
+            <span class="theme-swatch" style="background:${t.bg}">
+              <span class="sw-grad" style="background:${t.grad}"></span>
+              <span class="sw-bar" style="background:${t.card};border:1px solid rgba(128,128,160,0.3)"></span>
+            </span>
+            <span class="theme-card-label">${t.label}
+              <span class="theme-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            </span>
+          </button>`).join('')}
+      </div>
+    </section>
+
+    <section class="set-section">
+      <div class="set-section-title">${icoBell} ${tl.notifications || 'Notifications'}</div>
+      ${[
+        ['emailTaskAssigned', tl.setEmailAssigned || 'Task assigned email', tl.setEmailAssignedDesc || 'Email me when a task is assigned to me'],
+        ['emailTaskDone', tl.setEmailDone || 'Task completed email', tl.setEmailDoneDesc || 'Email me when a "notify when done" task I created completes'],
+        ['emailOverdue', tl.setEmailOverdue || 'Overdue alert email', tl.setEmailOverdueDesc || 'Email me when my tasks become overdue'],
+        ['notificationSound', tl.notifSound || 'Notification sound', tl.notifSoundDesc || 'Play sound for notifications'],
+        ['badgeCount', tl.notifBadge || 'Badge count', tl.notifBadgeDesc || 'Show task count in the browser tab title'],
+      ].map(([k, title, desc]) => `
+        <div class="set-row">
+          <div class="set-row-info"><div class="set-row-title">${title}</div><div class="set-row-desc">${desc}</div></div>
+          <button class="toggle-switch${nv(k) ? ' on' : ''}" data-setnotif="${k}" role="switch" aria-checked="${nv(k)}" aria-label="${title}"></button>
+        </div>`).join('')}
+    </section>
+
+    <section class="set-section">
+      <div class="set-section-title">${icoGlobe} ${tl.languages || 'Language'}</div>
+      <div class="lang-grid">
+        ${LANGS.map(l => `<button class="lang-tile${state.lang === l.code ? ' current' : ''}" data-setlang="${l.code}">${l.label}</button>`).join('')}
+      </div>
+    </section>
+  `;
+
+  // Count-up stats + progress ring sweep
+  animateCount(document.getElementById('setStatTotal'), total);
+  animateCount(document.getElementById('setStatProg'), prog);
+  animateCount(document.getElementById('setStatDone'), done);
+  animateCount(document.getElementById('setStatPct'), pct);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const ring = document.getElementById('setRing');
+    if (ring) ring.style.strokeDashoffset = (C * (1 - pct / 100)).toFixed(1);
+  }));
+
+  // Theme cards — live switch + persist + crossfade
+  el.querySelectorAll('[data-settheme]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.settheme;
+      if (normalizeTheme(document.documentElement.dataset.theme) === id) return;
+      await setTheme(id);
+      renderSettingsPage();
+      showToast(`${tl.themeChanged || 'Theme'}: ${THEMES.find(t => t.id === id).label}`, 'success');
+    });
+  });
+
+  // Notification toggles — persist to MongoDB settings
+  el.querySelectorAll('[data-setnotif]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const k = btn.dataset.setnotif;
+      if (!state.settings) state.settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+      if (!state.settings.notifications) state.settings.notifications = {};
+      const cur = state.settings.notifications[k];
+      const next = !(cur !== undefined ? cur : true);
+      state.settings.notifications[k] = next;
+      btn.classList.toggle('on', next);
+      btn.setAttribute('aria-checked', String(next));
+      await apiSaveSettings();
+      showToast((TL[state.lang] || TL.en).taskSaved || 'Saved', 'success');
+    });
+  });
+
+  // Language tiles — live switch + RTL flip + persist
+  el.querySelectorAll('[data-setlang]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const code = btn.dataset.setlang;
+      if (code === state.lang) return;
+      applyLanguage(code);
+      if (state.settings) { state.settings.language = code; await apiSaveSettings(); }
+      renderSettingsPage();
+      showToast('✓ ' + (LANGS.find(l => l.code === code)?.label || code), 'success');
+    });
+  });
+}
+
 // ─── Router ───────────────────────────────────────────────────────────────────
 function updateNavToggle() {
   const btn = document.getElementById('navToggle');
@@ -3964,6 +4184,8 @@ async function handleRoute(path) {
   // Close any open overlays before switching view
   if (state.activeDrawer !== null) closeDrawer();
   document.getElementById('gtDetailModal')?.remove();
+  const settingsPageEl = document.getElementById('settingsPage');
+  if (settingsPageEl) settingsPageEl.style.display = 'none';
 
   if (path === '/mytasks' || path === '/') {
     disconnectGroupSSE();
@@ -3982,6 +4204,21 @@ async function handleRoute(path) {
     // Redirect analytics to mytasks — analytics is now inline
     navigateTo('/mytasks', true);
     return;
+
+  } else if (path === '/settings') {
+    disconnectGroupSSE();
+    state.groupsView = false;
+    state.activeGroup = null;
+    state.chartView = false;
+    document.getElementById('chartsView').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('groupsPage').style.display = 'none';
+    document.getElementById('groupBoardPage').style.display = 'none';
+    if (settingsPageEl) settingsPageEl.style.display = '';
+    renderSettingsPage();
+    animatePageIn(settingsPageEl);
+    document.title = `${tl.settings || 'Settings'} — ${appName}`;
+    updateActiveNavigation(path);
 
   } else if (path === '/groups') {
     disconnectGroupSSE();
@@ -4046,12 +4283,24 @@ async function handleRoute(path) {
 
 function updateActiveNavigation(path) {
   const onGroups = path === '/groups' || path.startsWith('/groups/');
+  const onSettings = path === '/settings';
   const navToggle = document.getElementById('navToggle');
   if (navToggle) navToggle.classList.toggle('nav-active', onGroups);
-  document.querySelectorAll('#bottomNav .bnav-btn').forEach(b => {
-    const isGroupsBtn = b.dataset.bnav === '/groups';
-    b.classList.toggle('active', isGroupsBtn === onGroups);
+  const navSettings = document.getElementById('navSettingsBtn');
+  if (navSettings) navSettings.classList.toggle('nav-active', onSettings);
+  const target = onSettings ? '/settings' : onGroups ? '/groups' : '/mytasks';
+  let activeIdx = 0;
+  document.querySelectorAll('#bottomNav .bnav-btn').forEach((b, i) => {
+    const act = b.dataset.bnav === target;
+    b.classList.toggle('active', act);
+    if (act) activeIdx = i;
   });
+  // Slide the bottom-nav indicator pill to the active tab (RTL-aware)
+  const ind = document.getElementById('bnavInd');
+  if (ind) {
+    const rtl = document.documentElement.dir === 'rtl';
+    ind.style.transform = `translateX(${(rtl ? -1 : 1) * activeIdx * 100}%)`;
+  }
 }
 
 function updatePageTitle() {
@@ -4911,6 +5160,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load settings from server
   state.settings = await apiLoadSettings();
 
+  // Theme — server-saved theme wins over the localStorage mirror
+  if (state.settings.theme) {
+    const srvTheme = normalizeTheme(state.settings.theme);
+    if (srvTheme !== normalizeTheme(document.documentElement.dataset.theme)) applyTheme(srvTheme);
+    localStorage.setItem('theme', srvTheme);
+  }
+
   // Language — server setting takes priority over localStorage
   const savedLang = state.settings.language || localStorage.getItem('lang') || 'en';
   applyLanguage(savedLang);
@@ -5297,6 +5553,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('#bottomNav .bnav-btn').forEach(b => {
     b.addEventListener('click', () => navigateTo(b.dataset.bnav));
   });
+
+  // ── Settings entry points ─────────────────────────────────────────────────
+  document.getElementById('navSettingsBtn')?.addEventListener('click', () => navigateTo('/settings'));
+  document.getElementById('menuSettingsBtn')?.addEventListener('click', () => {
+    closeMenu();
+    navigateTo('/settings');
+  });
+
+  // ── Ripple on primary buttons ─────────────────────────────────────────────
+  document.addEventListener('click', e => {
+    const rb = e.target.closest('.add-btn, .btn-save, .bnav-btn, .auth-submit, .theme-card');
+    if (rb) addRipple(rb, e);
+  }, true);
 
   // ── Groups ────────────────────────────────────────────────────────────────
   // navToggle is dynamically managed by updateNavToggle()
