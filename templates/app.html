@@ -19,7 +19,7 @@
   <link rel="apple-touch-icon" href="/static/icon-192.png">
   <title id="pageTitle">My Tasks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -139,10 +139,11 @@
 <div id="mainContent">
 <main class="main" id="main-content">
 
-  <!-- Hero (compact) -->
+  <!-- Hero (aurora) -->
   <header class="hero">
     <h1 class="hero-title" id="heroTitle" data-i18n="appTitle">My Tasks</h1>
     <p class="hero-date" id="heroDate"></p>
+    <div class="hero-stats" id="heroStats"></div>
   </header>
 
   <!-- Add form (with auto-open priority dropdown) -->
@@ -404,6 +405,18 @@
     </div>
   </div>
 </div>
+
+<!-- ─── Mobile bottom nav ───────────────────────────────────────────────────── -->
+<nav class="bottom-nav" id="bottomNav" aria-label="Primary">
+  <button class="bnav-btn active" data-bnav="/mytasks">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <span data-i18n="appTitle">My Tasks</span>
+  </button>
+  <button class="bnav-btn" data-bnav="/groups">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span data-i18n="groups">Groups</span>
+  </button>
+</nav>
 
 <!-- ─── Footer ──────────────────────────────────────────────────────────────── -->
 <footer class="site-footer">

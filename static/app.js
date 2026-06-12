@@ -1539,6 +1539,7 @@ function renderGroupsList(groups) {
           <span class="group-card-stats">${g.taskCount} tasks · ${g.doneCount} done</span>
           ${pending.length ? `<span class="pending-badge">${pending.length} pending</span>` : ''}
         </div>
+        <div class="group-progress"><div class="group-progress-fill" style="width:${g.taskCount ? Math.round(g.doneCount / g.taskCount * 100) : 0}%"></div></div>
       </div>
     </div>`;
   }).join('');
@@ -2476,6 +2477,8 @@ function applyLanguage(code) {
 // ─── Theme ────────────────────────────────────────────────────────────────────
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
+  const themeMeta = document.getElementById('themeColor');
+  if (themeMeta) themeMeta.content = theme === 'dark' ? '#0A0C16' : '#F3F4FB';
   const icon = document.getElementById('themeIcon');
   if (icon) {
     // Sun icon for dark (click to go light), Moon icon for light (click to go dark)
@@ -2877,6 +2880,18 @@ function render() {
   document.getElementById('heroDate').textContent = new Date().toLocaleDateString(
     langLocale(), { weekday:'long', year:'numeric', month:'long', day:'numeric' }
   );
+
+  // Hero stat chips (aurora)
+  const heroStats = document.getElementById('heroStats');
+  if (heroStats) {
+    const tlH = TL[state.lang] || TL.en;
+    const hsDone = state.todos.filter(x => getTaskStatus(x) === 'done').length;
+    const hsProg = state.todos.filter(x => getTaskStatus(x) === 'in_progress').length;
+    heroStats.innerHTML = `
+      <span class="hstat hs-total"><span class="hstat-dot"></span><span class="hstat-num">${state.todos.length}</span> ${tlH.totalTasks || 'Total'}</span>
+      <span class="hstat hs-prog"><span class="hstat-dot"></span><span class="hstat-num">${hsProg}</span> ${tlH.inProgress || 'In Progress'}</span>
+      <span class="hstat hs-done"><span class="hstat-dot"></span><span class="hstat-num">${hsDone}</span> ${tlH.taskDone || 'Done'}</span>`;
+  }
 
   // Progress — 3 segments
   const doneCount  = state.todos.filter(x => getTaskStatus(x) === 'done').length;
@@ -3923,6 +3938,15 @@ function updateNavToggle() {
   }
 }
 
+// Slide-in animation when a page container becomes visible
+function animatePageIn(el) {
+  if (!el) return;
+  el.classList.remove('page-enter');
+  void el.offsetWidth;
+  el.classList.add('page-enter');
+  el.addEventListener('animationend', () => el.classList.remove('page-enter'), { once: true });
+}
+
 function navigateTo(path, replace = false) {
   if (replace) {
     history.replaceState({ path }, '', path);
@@ -3950,6 +3974,7 @@ async function handleRoute(path) {
     document.getElementById('groupsPage').style.display = 'none';
     document.getElementById('groupBoardPage').style.display = 'none';
     document.getElementById('mainContent').style.display = '';
+    animatePageIn(document.getElementById('mainContent'));
     document.title = appName;
     updateActiveNavigation(path);
 
@@ -3967,6 +3992,7 @@ async function handleRoute(path) {
     document.getElementById('mainContent').style.display = 'none';
     document.getElementById('groupBoardPage').style.display = 'none';
     document.getElementById('groupsPage').style.display = '';
+    animatePageIn(document.getElementById('groupsPage'));
     document.title = `${tl.groups||'Groups'} — ${appName}`;
     updateActiveNavigation(path);
     const groups = await apiLoadGroups();
@@ -3984,6 +4010,7 @@ async function handleRoute(path) {
       document.getElementById('groupsPage').style.display = 'none';
       document.getElementById('mainContent').style.display = 'none';
       document.getElementById('groupBoardPage').style.display = '';
+      animatePageIn(document.getElementById('groupBoardPage'));
       updateActiveNavigation('/groups');
       // Load group by slug
       let g = null;
@@ -4018,8 +4045,13 @@ async function handleRoute(path) {
 }
 
 function updateActiveNavigation(path) {
+  const onGroups = path === '/groups' || path.startsWith('/groups/');
   const navToggle = document.getElementById('navToggle');
-  if (navToggle) navToggle.classList.toggle('nav-active', path === '/groups' || path.startsWith('/groups/'));
+  if (navToggle) navToggle.classList.toggle('nav-active', onGroups);
+  document.querySelectorAll('#bottomNav .bnav-btn').forEach(b => {
+    const isGroupsBtn = b.dataset.bnav === '/groups';
+    b.classList.toggle('active', isGroupsBtn === onGroups);
+  });
 }
 
 function updatePageTitle() {
@@ -5260,6 +5292,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
   }, 60000);
+
+  // ── Mobile bottom nav ─────────────────────────────────────────────────────
+  document.querySelectorAll('#bottomNav .bnav-btn').forEach(b => {
+    b.addEventListener('click', () => navigateTo(b.dataset.bnav));
+  });
 
   // ── Groups ────────────────────────────────────────────────────────────────
   // navToggle is dynamically managed by updateNavToggle()

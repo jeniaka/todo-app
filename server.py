@@ -424,7 +424,7 @@ def render_app(user):
 MANIFEST = json.dumps({
     "name": "My Tasks", "short_name": "Tasks",
     "start_url": "/", "display": "standalone",
-    "background_color": "#F8F7F4", "theme_color": "#F8F7F4",
+    "background_color": "#0A0C16", "theme_color": "#0A0C16",
     "icons": [
         {"src": "/static/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
         {"src": "/static/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
