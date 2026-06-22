@@ -1783,7 +1783,7 @@ function renderGroupTaskList() {
     const dur = isDone && task.completedAt ? duration(task.createdAt, task.completedAt) : '';
     const dueBadge = formatDueBadge(task);
     const assigneeBadge = assignee
-      ? `<span class="task-assignee-badge">${assignee.picture ? `<img class="gm-avatar" src="${assignee.picture}" style="width:14px;height:14px">` : `<span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--accent-soft);font-size:9px;font-weight:700">${(assignee.name||'?')[0].toUpperCase()}</span>`}<span>${esc(assignee.name)}</span></span>`
+      ? `<span class="task-assignee-badge">${assignee.picture ? `<img class="gm-avatar" src="${assignee.picture}" style="--avatar-size:14px">` : `<span class="avatar-fb" style="--avatar-size:14px">${(assignee.name||'?')[0].toUpperCase()}</span>`}<span>${esc(assignee.name)}</span></span>`
       : '';
     return `<div class="task-card${cardClass}" data-tid="${task.id}" data-id="${task.id}" data-p="${p}" role="button" tabindex="0">
   <div class="task-inner">
@@ -2672,8 +2672,8 @@ function boardCardHTML(task, opts) {
   const assignee = opts.getAssignee ? opts.getAssignee(task) : null;
   const avatar = assignee
     ? (assignee.picture
-        ? `<img class="gm-avatar" src="${assignee.picture}" style="width:18px;height:18px" title="${esc(assignee.name || '')}">`
-        : `<div class="gm-avatar gm-avatar-fb" style="width:18px;height:18px;font-size:9px" title="${esc(assignee.name || '')}">${(assignee.name || '?')[0].toUpperCase()}</div>`)
+        ? `<img class="gm-avatar" src="${assignee.picture}" style="--avatar-size:18px" title="${esc(assignee.name || '')}">`
+        : `<div class="gm-avatar gm-avatar-fb" style="--avatar-size:18px" title="${esc(assignee.name || '')}">${(assignee.name || '?')[0].toUpperCase()}</div>`)
     : '';
   const prioChip = p !== 'none'
     ? `<span class="prio-chip pr-${p}">${t('priority' + p[0].toUpperCase() + p.slice(1))}</span>`
@@ -4415,8 +4415,8 @@ function renderGbDashboard() {
     const pct = mt.length ? Math.round(md/mt.length*100) : 0;
     const status = pct>=60?'🟢':pct>=30?'🟡':'🔴';
     const avatar = m.picture
-      ? `<img class="gm-avatar" src="${m.picture}" style="width:28px;height:28px">`
-      : `<div class="gm-avatar gm-avatar-fb" style="width:28px;height:28px;font-size:11px">${(m.name||'?')[0].toUpperCase()}</div>`;
+      ? `<img class="gm-avatar" src="${m.picture}" style="--avatar-size:28px">`
+      : `<div class="gm-avatar gm-avatar-fb" style="--avatar-size:28px">${(m.name||'?')[0].toUpperCase()}</div>`;
     const doneW = mt.length ? (md/mt.length*100) : 0;
     const inProgW = mt.length ? (mi/mt.length*100) : 0;
     return `<div class="dash-member-row">
@@ -4436,8 +4436,8 @@ function renderGbDashboard() {
   function taskMiniCard(task) {
     const assignee = members.find(m=>m.userId===task.assignedTo);
     const avt = assignee?.picture
-      ? `<img class="gm-avatar" src="${assignee.picture}" style="width:20px;height:20px">`
-      : assignee ? `<div class="gm-avatar gm-avatar-fb" style="width:20px;height:20px;font-size:9px">${(assignee.name||'?')[0].toUpperCase()}</div>` : '';
+      ? `<img class="gm-avatar" src="${assignee.picture}" style="--avatar-size:20px">`
+      : assignee ? `<div class="gm-avatar gm-avatar-fb" style="--avatar-size:20px">${(assignee.name||'?')[0].toUpperCase()}</div>` : '';
     const isOverdue = task.dueDate && task.dueDate < now && !task.done && task.status !== 'done';
     const priorityColors = {high:'var(--priority-high)',medium:'var(--priority-medium)',low:'var(--priority-low)',none:'var(--text-tertiary)'};
     const pColor = priorityColors[task.priority||'none'];
